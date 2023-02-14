@@ -1,9 +1,10 @@
-import gi
+import os
+import string
 
+import gi
 gi.require_version('Gtk', '3.0')
 gi.require_version('PangoCairo', '1.0')
 from gi.repository import Gtk, Pango, PangoCairo
-import string
 
 
 keys = [key for key in list(string.printable)
@@ -25,7 +26,9 @@ class MainWindow:
 
         self.builder = Gtk.Builder()
 
-        self.builder.add_from_file("../ui/fm-ui.glade")
+        glade_file = os.path.join("..", "ui", "fm-ui.glade")
+        self.builder.add_from_file(glade_file)
+
 
         # Connect the signals defined in the Glade file to the methods in this class 
         self.builder.connect_signals(self)
