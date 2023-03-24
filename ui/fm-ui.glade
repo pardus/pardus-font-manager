@@ -7,137 +7,57 @@
     <property name="height-request">650</property>
     <property name="can-focus">False</property>
     <child>
-      <object class="GtkBox" id="vbox">
+      <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkBox" id="top_box">
-            <property name="height-request">100</property>
+          <object class="GtkStack" id="stack_start">
             <property name="visible">True</property>
             <property name="can-focus">False</property>
-            <property name="border-width">0</property>
-            <property name="orientation">vertical</property>
             <child>
-              <object class="GtkBox" id="header_box">
+              <object class="GtkBox" id="vbox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
-                <property name="homogeneous">True</property>
+                <property name="orientation">vertical</property>
                 <child>
-                  <object class="GtkHeaderBar" id="charmaps_header">
+                  <object class="GtkBox" id="header_box">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="title" translatable="yes">Char Maps</property>
-                    <child>
-                      <object class="GtkButton" id="add_button">
-                        <property name="label" translatable="yes">ADD</property>
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="receives-default">True</property>
-                        <property name="tooltip-text" translatable="yes">Add a new font</property>
-                      </object>
-                      <packing>
-                        <property name="pack-type">end</property>
-                      </packing>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="pack-type">end</property>
-                    <property name="position">0</property>
-                  </packing>
-                </child>
-                <child>
-                  <object class="GtkHeaderBar" id="fonts_header">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
-                    <property name="title" translatable="yes">System Fonts</property>
-                    <child>
-                      <placeholder/>
-                    </child>
-                  </object>
-                  <packing>
-                    <property name="expand">False</property>
-                    <property name="fill">True</property>
-                    <property name="pack-type">end</property>
-                    <property name="position">1</property>
-                  </packing>
-                </child>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="pack-type">end</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkLabel" id="label1">
-                <property name="height-request">70</property>
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="label" translatable="yes">..</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">True</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkScrolledWindow" id="scrolled_window">
-            <property name="width-request">800</property>
-            <property name="height-request">500</property>
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="hscrollbar-policy">never</property>
-            <property name="shadow-type">in</property>
-            <child>
-              <object class="GtkViewport">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <child>
-                  <object class="GtkBox" id="hbox">
-                    <property name="visible">True</property>
-                    <property name="can-focus">False</property>
+                    <property name="margin-top">30</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <placeholder/>
+                      <object class="GtkHeaderBar" id="charmaps_header">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="title" translatable="yes">Char Maps</property>
+                        <child>
+                          <object class="GtkButton" id="add_button">
+                            <property name="label" translatable="yes">ADD</property>
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="receives-default">True</property>
+                            <property name="tooltip-text" translatable="yes">Add a new font</property>
+                          </object>
+                          <packing>
+                            <property name="pack-type">end</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="pack-type">end</property>
+                        <property name="position">0</property>
+                      </packing>
                     </child>
                     <child>
-                      <object class="GtkScrolledWindow" id="right_scrolled">
+                      <object class="GtkHeaderBar" id="fonts_header">
                         <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="shadow-type">in</property>
+                        <property name="can-focus">False</property>
+                        <property name="title" translatable="yes">System Fonts</property>
                         <child>
-                          <object class="GtkViewport">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <child>
-                              <object class="GtkLabel" id="charmaps_lbl">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="has-tooltip">True</property>
-                                <property name="margin-start">10</property>
-                                <property name="margin-end">10</property>
-                                <property name="margin-top">10</property>
-                                <property name="margin-bottom">10</property>
-                                <property name="vexpand">True</property>
-                                <property name="label" translatable="yes">..</property>
-                                <property name="justify">fill</property>
-                                <property name="wrap">True</property>
-                                <property name="wrap-mode">word-char</property>
-                              </object>
-                            </child>
-                          </object>
+                          <placeholder/>
                         </child>
                       </object>
                       <packing>
@@ -148,14 +68,183 @@
                       </packing>
                     </child>
                   </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">0</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkScrolledWindow" id="scrolled_window">
+                    <property name="width-request">800</property>
+                    <property name="height-request">500</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">True</property>
+                    <property name="hscrollbar-policy">never</property>
+                    <property name="shadow-type">in</property>
+                    <child>
+                      <object class="GtkViewport">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <child>
+                          <object class="GtkBox" id="hbox">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="homogeneous">True</property>
+                            <child>
+                              <placeholder/>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="right_scrolled">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
+                                <child>
+                                  <object class="GtkViewport">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkStack" id="stack_map">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <child>
+                                          <object class="GtkLabel" id="charmaps_lbl">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="has-tooltip">True</property>
+                                            <property name="margin-start">10</property>
+                                            <property name="margin-end">10</property>
+                                            <property name="margin-top">10</property>
+                                            <property name="margin-bottom">10</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="label" translatable="yes">..</property>
+                                            <property name="justify">fill</property>
+                                            <property name="wrap">True</property>
+                                            <property name="wrap-mode">word-char</property>
+                                          </object>
+                                          <packing>
+                                            <property name="name">page_map</property>
+                                            <property name="title" translatable="yes">page_map</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkSpinner" id="spinner_charmaps">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="halign">center</property>
+                                            <property name="valign">center</property>
+                                            <property name="active">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="name">page_spinner_map</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="pack-type">end</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">1</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="label1">
+                    <property name="height-request">70</property>
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="tooltip-text" translatable="yes">a sentence containing the letters of the alphabet</property>
+                    <property name="label" translatable="yes">..</property>
+                    <property name="justify">center</property>
+                    <property name="wrap">True</property>
+                    <property name="wrap-mode">word-char</property>
+                    <property name="selectable">True</property>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">2</property>
+                  </packing>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="can-focus">False</property>
+                    <child>
+                      <object class="GtkEntry" id="entry">
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="shadow-type">out</property>
+                        <property name="primary-icon-tooltip-text" translatable="yes">ljkljjkkj</property>
+                        <property name="placeholder-text" translatable="yes">try me</property>
+                        <style>
+                          <class name="cvfgdf"/>
+                        </style>
+                      </object>
+                      <packing>
+                        <property name="expand">True</property>
+                        <property name="fill">True</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="try">
+                        <property name="label" translatable="yes">try</property>
+                        <property name="visible">True</property>
+                        <property name="can-focus">True</property>
+                        <property name="receives-default">True</property>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
+                        <property name="position">1</property>
+                      </packing>
+                    </child>
+                  </object>
+                  <packing>
+                    <property name="expand">False</property>
+                    <property name="fill">True</property>
+                    <property name="position">3</property>
+                  </packing>
                 </child>
               </object>
+              <packing>
+                <property name="name">page_list</property>
+                <property name="title" translatable="yes">page_list</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkSpinner" id="spinner_start">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="active">True</property>
+              </object>
+              <packing>
+                <property name="name">spinner_start</property>
+                <property name="title" translatable="yes">spinner_start</property>
+                <property name="position">1</property>
+              </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">0</property>
           </packing>
         </child>
       </object>
