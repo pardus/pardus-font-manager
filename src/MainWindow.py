@@ -14,51 +14,92 @@ class MainWindow:
 
     def __init__(self, app):
 
+        # Create the builder and load the Glade file
         self.builder = Gtk.Builder()
-
         glade_file = os.path.join("..", "ui", "fm-ui.glade")
         self.builder.add_from_file(glade_file)
 
-        # Connect the signals defined in the Glade file to the methods in this class 
+        # Connect signals from the Glade file to the methods in this class
         self.builder.connect_signals(self)
 
-        # Get the window object from the Glade file
+        # Get window and set properties
         self.window = self.builder.get_object("window")
-        self.window.set_title("Pardus Font Manager")
-        self.window.set_default_size(800, 600)
         self.window.set_border_width(10)
 
-        # Get objects from the Glade file
+        # Get widgets from the Glade file
         top_box = self.builder.get_object("top_box")
         vbox = self.builder.get_object("vbox")
         hbox = self.builder.get_object("hbox")
-
-        add_button = self.builder.get_object("add_button")
-        add_button.connect("clicked", self.on_add_button_clicked)
-
+        left_scrolled = self.builder.get_object("left_scrolled")
+        self.search_entry = self.builder.get_object("search_entry")
+        self.stack_start = self.builder.get_object("stack_start")
+        self.stack_map = self.builder.get_object("stack_map")
+        self.page_start = self.builder.get_object("page_start")
+        self.page_list = self.builder.get_object("page_list")
+        self.spinner_start = self.builder.get_object("spinner_start")
+        self.spinner_charmaps = self.builder.get_object("spinner_charmaps")
+        self.add_button = self.builder.get_object("add_button")
+        self.try_button = self.builder.get_object("try_button")
+        self.info_button = self.builder.get_object("info_button")
         self.charmaps_lbl = self.builder.get_object("charmaps_lbl")
-
-        self.fonts_list = Gtk.ListStore(str)  # Create a list to store the fonts
-        self.update_fonts_list()  # Populate the list with the currently installed fonts
-
         self.label = self.builder.get_object("label1")
 
-        self.fonts_view = Gtk.TreeView(model=self.fonts_list)  # Create a TreeView to display the list of fonts
+        self.info_button.set_visible(False)
+
+        # Connect signals to widget methods
+        self.search_entry.connect("changed", self.on_search_entry_changed)
+        self.add_button.connect("clicked", self.on_add_button_clicked)
+        self.try_button.connect("clicked", self.on_try_button_clicked)
+        self.info_button.connect("clicked", self.on_info_button_clicked)
+
+        # Create and populate the fonts list
+        self.fonts_list = Gtk.ListStore(str)
+        self.update_fonts_list()
+
+        # Create and set up the TreeView for the fonts list
+        self.fonts_view = Gtk.TreeView(model=self.fonts_list)
         self.fonts_view.set_headers_visible(False)
         self.fonts_view.append_column(Gtk.TreeViewColumn("Fonts", Gtk.CellRendererText(), text=0))
         self.fonts_view.get_selection().connect("changed", self.on_font_selected)
 
-        # Add a scrolled window
+        # Add a scrolled window for the fonts list
         scrolled_window = Gtk.ScrolledWindow()
         scrolled_window.add(self.fonts_view)
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        hbox.pack_start(scrolled_window, True, True, 0)
+        left_scrolled.pack_start(scrolled_window, True, True, 0)
 
-        # Set the application for the window to the Gtk.Application passed from the main file
+        # Set window properties
+        self.window.set_title("Pardus Font Manager")
+        self.window.set_default_size(800, 600)
         self.window.set_application(app)
-
-        # Show the window and all of its widgets 
         self.window.show_all()
+
+
+    def on_search_entry_changed(self, search_entry):
+            """
+            This function is called every time the search entry is changed.
+            It retrieves the current search text from the search entry widget,
+            filters the font list based on the search text, clears the current list of fonts,
+            and populates the list with the filtered fonts.
+            """
+            search_text = search_entry.get_text().lower()
+
+            # If the search box is empty, show all fonts
+            if not search_text:
+                self.update_fonts_list()
+                return
+
+            # Filter the font list by matching the search string with the font names
+            filtered_fonts = [(font_name, charmaps) for font_name,
+                              charmaps in font_charmaps.items() if search_text in font_name.lower()]
+
+            # Clear the current list of fonts
+            self.fonts_list.clear()
+
+            # Populate the list with the filtered fonts
+            for font_name, charmaps in filtered_fonts:
+                iter = self.fonts_list.append([font_name])
+                self.fonts_list.set(iter, 0, font_name)
 
 
     def on_font_selected(self, selection):
@@ -90,6 +131,8 @@ class MainWindow:
                         break
                 return remaining_elements
 
+            # Gives more info about selected font
+            self.info_button.set_visible(True)
 
             # This section was added due to the problem of listing charmaps of fonts that
             # contain spaces or similar characters in charmaps in charmaps
@@ -109,4 +152,10 @@ class MainWindow:
 
 
     def on_add_button_clicked(self, button):
+        pass
+
+    def on_try_button_clicked(self, button):
+        pass
+
+    def on_info_button_clicked(self, button):
         pass
