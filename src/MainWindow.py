@@ -32,6 +32,7 @@ class MainWindow:
         hbox = self.builder.get_object("hbox")
         left_scrolled = self.builder.get_object("left_scrolled")
         self.search_entry = self.builder.get_object("search_entry")
+        self.entry = self.builder.get_object("entry")
         self.stack_start = self.builder.get_object("stack_start")
         self.stack_map = self.builder.get_object("stack_map")
         self.page_start = self.builder.get_object("page_start")
@@ -44,7 +45,6 @@ class MainWindow:
         self.charmaps_lbl = self.builder.get_object("charmaps_lbl")
         self.label = self.builder.get_object("label1")
 
-        self.info_button.set_visible(False)
 
         # Connect signals to widget methods
         self.search_entry.connect("changed", self.on_search_entry_changed)
@@ -67,6 +67,9 @@ class MainWindow:
         scrolled_window.add(self.fonts_view)
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         left_scrolled.pack_start(scrolled_window, True, True, 0)
+
+        self.info_button.set_visible(False)
+        self.font_description = None
 
         # Set window properties
         self.window.set_title("Pardus Font Manager")
@@ -107,8 +110,8 @@ class MainWindow:
         if treeiter is not None:
             font_name = model[treeiter][0]
             print("Selected Font ---> ", font_name)
-            font_description = Pango.FontDescription.from_string(font_name)
-            self.label.override_font(font_description)
+            self.font_description = Pango.FontDescription.from_string(font_name)
+            self.label.override_font(self.font_description)
             self.label.set_text("The quick brown fox jumps over the lazy dog.")
 
             font_charmap = font_charmaps[font_name] # Get the charmap for the selected font
@@ -139,7 +142,7 @@ class MainWindow:
             font_charmap_without_gap = get_remaining_elements(font_charmap)
             font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
 
-            self.charmaps_lbl.override_font(font_description)
+            self.charmaps_lbl.override_font(self.font_description)
             self.charmaps_lbl.set_text(font_charmap_string)
 
 
@@ -154,8 +157,26 @@ class MainWindow:
     def on_add_button_clicked(self, button):
         pass
 
+
     def on_try_button_clicked(self, button):
-        pass
+        if self.font_description is None:
+            dialog = Gtk.MessageDialog(
+                transient_for=self.window,
+                flags=0,
+                message_type=Gtk.MessageType.WARNING,
+                buttons=Gtk.ButtonsType.OK_CANCEL,
+                text="No font selected",
+            )
+            dialog.format_secondary_text(
+                "Please choose a font from the list before trying again."
+            )
+            dialog.run()
+            dialog.destroy()
+        else:
+            text = self.entry.get_text()
+            self.label.override_font(self.font_description)
+            self.label.set_text(text)
+
 
     def on_info_button_clicked(self, button):
         pass
