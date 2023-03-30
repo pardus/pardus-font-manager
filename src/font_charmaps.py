@@ -23,14 +23,14 @@ def get_font_charmaps(font_file_path):
     """
     try:
         font = TTFont(font_file_path)
+        charmap = font.getBestCmap()
+        font_name = font['name'].getName(1, 3, 1, 1033).toUnicode()
+        char_list = [chr(code) for code in charmap.keys()]
+        font.close()
+        return {font_name: char_list}
     except Exception as e:
         print(f'Error: failed to load font file "{font_file_path}": {e}')
         return {}
-    charmap = font.getBestCmap()
-    font_name = font['name'].getName(1, 3, 1, 1033).toUnicode()
-    char_list = [chr(code) for code in charmap.keys()]
-    font.close()
-    return {font_name: char_list}
 
 
 def get_fonts_charmaps():
