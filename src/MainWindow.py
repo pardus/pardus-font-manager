@@ -109,39 +109,33 @@ class MainWindow:
         model, treeiter = selection.get_selected()
         if treeiter is not None:
             font_name = model[treeiter][0]
-            print("Selected Font ---> ", font_name)
             self.font_description = Pango.FontDescription.from_string(font_name)
+
+            features = {
+                'family': self.font_description.get_family(),
+                'size': self.font_description.get_size() / Pango.SCALE,
+                'weight': self.font_description.get_weight(),
+                'style': self.font_description.get_style(),
+                'variant': self.font_description.get_variant(),
+                'stretch': self.font_description.get_stretch()
+            }
+            # print("family : ", features["family"])
+            # print("size: ", features["size"])
+            # print("weight :", features["weight"])
+            # print("style: ", features["style"])
+            # print("variant: ", features["variant"]) 
+            # print("stretch: ", features["stretch"])
+
+
             self.label.override_font(self.font_description)
             self.label.set_text("The quick brown fox jumps over the lazy dog.")
 
             font_charmap = font_charmaps[font_name] # Get the charmap for the selected font
 
-            def get_remaining_elements(lst):
-                """
-                This function takes a list of strings as input and returns a new list
-                containing all the elements from the input list starting from the first
-                element that doesn't start with any whitespace or carriage return characters ('\r', ' '),
-                and skipping any elements that start with the same character(s)
-                as the first non-whitespace element.
-                """
-                first_element = [e for e in lst[0] if e not in ('\r', ' ')]
-                remaining_elements = []
-                for i in range(1, len(lst)):
-                    if lst[i][0] in first_element:
-                        continue
-                    else:
-                        remaining_elements = lst[i:]
-                        break
-                return remaining_elements
-
             # Gives more info about selected font
             self.info_button.set_visible(True)
 
-            # This section was added due to the problem of listing charmaps of fonts that
-            # contain spaces or similar characters in charmaps in charmaps
-            font_charmap_without_gap = get_remaining_elements(font_charmap)
-            font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
-
+            font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
             self.charmaps_lbl.override_font(self.font_description)
             self.charmaps_lbl.set_text(font_charmap_string)
 
