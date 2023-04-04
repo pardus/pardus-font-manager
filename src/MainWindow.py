@@ -2,8 +2,10 @@ import os
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Pango
-
+from gi.repository import Gtk, Pango, Gdk, GLib
+import subprocess
+import shutil
+from fontTools.ttLib import TTFont
 from font_charmaps import get_fonts_charmaps
 
 
@@ -16,7 +18,8 @@ class MainWindow:
 
         # Create the builder and load the Glade file
         self.builder = Gtk.Builder()
-        glade_file = os.path.join("..", "ui", "fm-ui.glade")
+        glade_file = os.path.dirname(os.path.abspath(__file__)) + "/../ui/fm-ui.glade"
+
         self.builder.add_from_file(glade_file)
 
         # Connect signals from the Glade file to the methods in this class
@@ -44,6 +47,14 @@ class MainWindow:
         self.info_button = self.builder.get_object("info_button")
         self.charmaps_lbl = self.builder.get_object("charmaps_lbl")
         self.label = self.builder.get_object("label1")
+        self.font_name_label = self.builder.get_object("font_name_label")
+        self.font_size_label = self.builder.get_object("font_size_label")
+        self.font_color_label = self.builder.get_object("font_color_label")
+        self.ok_button = self.builder.get_object("ok_button")
+        self.cancel_button = self.builder.get_object("cancel_button")
+        self.info_dialog = self.builder.get_object("info_dialog")
+        self.color_button = self.builder.get_object("color_button")
+        self.spin_button = self.builder.get_object("spin_button")
 
 
         # Connect signals to widget methods
@@ -142,6 +153,8 @@ class MainWindow:
 
     # + Call after adding new fonts, del unnecassary parts
     def update_fonts_list(self):
+        self.fonts_list.clear()
+
         for font_name, charmaps in font_charmaps.items():
             iter = self.fonts_list.append([font_name])
             # Set the font name in the row identified by the iter
@@ -171,6 +184,48 @@ class MainWindow:
             self.label.override_font(self.font_description)
             self.label.set_text(text)
 
-
     def on_info_button_clicked(self, button):
-        pass
+        """
+        This function is called when the info button is clicked.
+        It creates a new dialog with a font size spin button.
+        """
+        # self.info_dialog.set_title("Font Info")
+        # self.info_dialog.run()
+        # self.info_dialog.hide()
+
+        dialog = Gtk.Dialog(title="Font Info", parent=self.window, flags=0)
+        dialog.set_default_size(300, 300)
+        dialog.set_modal(True)
+
+        # Create the spin button for font size
+        font_size_label = Gtk.Label("Font Size:")
+        font_size_spin_button = Gtk.SpinButton.new_with_range(8, 96, 2)
+        font_size_spin_button.set_value(int(self.font_description.get_size() / Pango.SCALE))
+
+        # Add the font size spin button to the dialog
+        dialog_box = dialog.get_content_area()
+        dialog_box.add(font_size_label)
+        dialog_box.add(font_size_spin_button)
+
+        # Add an "OK" button to the dialog box
+        ok_button = dialog.add_button("OK", Gtk.ResponseType.OK)
+
+        # Add a "Cancel" button to the dialog box
+        cancel_button = dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
+
+        # Show the dialog
+        dialog.show_all()
+
+        # Connect the response signal to update the font description and label
+        def on_response(dialog, response_id):
+            if response_id == Gtk.ResponseType.OK:
+                # Update the font size
+                font_size = font_size_spin_button.get_value_as_int()
+
+                self.font_description.set_size(font_size * Pango.SCALE)
+                self.label.override_font(self.font_description)
+                self.label.set_text("The quick brown fox jumps over the lazy dog.")
+
+            dialog.destroy()
+
+        dialog.connect("response", on_response)
