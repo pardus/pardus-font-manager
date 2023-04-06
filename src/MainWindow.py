@@ -151,14 +151,14 @@ class MainWindow:
             self.charmaps_lbl.set_text(font_charmap_string)
 
 
-    # + Call after adding new fonts, del unnecassary parts
     def update_fonts_list(self):
-        self.fonts_list.clear()
+        # Get a list of font names sorted alphabetically
+        font_names = sorted(list(font_charmaps.keys()))
 
-        for font_name, charmaps in font_charmaps.items():
-            iter = self.fonts_list.append([font_name])
-            # Set the font name in the row identified by the iter
-            self.fonts_list.set(iter, 0, font_name)
+        # Populate the list store with the sorted font names
+        self.fonts_list.clear()
+        for font_name in font_names:
+            self.fonts_list.append([font_name])
 
 
     def on_add_button_clicked(self, button):
