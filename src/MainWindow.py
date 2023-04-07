@@ -214,7 +214,7 @@ class MainWindow:
             filepath = dialog.get_filename()
 
             # Create the .fonts directory if it doesn't exist
-            os.makedirs(os.path.expanduser("~/.fo nts"), exist_ok=True)
+            os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
 
             # Copy the font file to ~/.fonts
             shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
