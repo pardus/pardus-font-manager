@@ -45,7 +45,7 @@ class MainWindow:
         self.add_button = self.builder.get_object("add_button")
         self.try_button = self.builder.get_object("try_button")
         self.info_button = self.builder.get_object("info_button")
-        self.charmaps_lbl = self.builder.get_object("charmaps_lbl")
+        self.charmaps_label = self.builder.get_object("charmaps_label")
         self.label = self.builder.get_object("label1")
         self.font_name_label = self.builder.get_object("font_name_label")
         self.font_size_label = self.builder.get_object("font_size_label")
@@ -55,6 +55,7 @@ class MainWindow:
         self.info_dialog = self.builder.get_object("info_dialog")
         self.color_button = self.builder.get_object("color_button")
         self.spin_button = self.builder.get_object("spin_button")
+        self.remove_button = self.builder.get_object("remove_button")
 
 
         # Connect signals to widget methods
@@ -62,6 +63,7 @@ class MainWindow:
         self.add_button.connect("clicked", self.on_add_button_clicked)
         self.try_button.connect("clicked", self.on_try_button_clicked)
         self.info_button.connect("clicked", self.on_info_button_clicked)
+        self.remove_button.connect("clicked", self.on_remove_button_clicked)
 
         # Create and populate the fonts list
         self.fonts_list = Gtk.ListStore(str)
@@ -79,63 +81,83 @@ class MainWindow:
         scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
         left_scrolled.pack_start(scrolled_window, True, True, 0)
 
+        self.window.show_all()
         self.info_button.set_visible(False)
+        self.remove_button.set_visible(False)
         self.font_description = None
+        self.user_fonts = {}
+        self.load_user_fonts()
 
         # Set window properties
         self.window.set_title("Pardus Font Manager")
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
-        self.window.show_all()
+
+
+    def save_user_fonts(self):
+        with open('user_fonts.txt', 'w') as f:
+            for font_name, installed in self.user_fonts.items():
+                f.write('{}:{}\n'.format(font_name, int(installed)))
+
+
+    def load_user_fonts(self):
+        self.user_fonts = {}
+        try:
+            with open('user_fonts.txt', 'r') as f:
+                for line in f:
+                    font_name, installed = line.strip().split(':')
+                    self.user_fonts[font_name] = bool(int(installed))
+        except FileNotFoundError:
+            pass
 
 
     def on_search_entry_changed(self, search_entry):
-            """
-            This function is called every time the search entry is changed.
-            It retrieves the current search text from the search entry widget,
-            filters the font list based on the search text, clears the current list of fonts,
-            and populates the list with the filtered fonts.
-            """
-            search_text = search_entry.get_text().lower()
+        """
+        This function is called every time the search entry is changed.
+        It retrieves the current search text from the search entry widget,
+        filters the font list based on the search text, clears the current list of fonts,
+        and populates the list with the filtered fonts.
+        """
+        search_text = search_entry.get_text().lower()
 
-            # If the search box is empty, show all fonts
-            if not search_text:
-                self.update_fonts_list()
-                return
+        # If the search box is empty, show all fonts
+        if not search_text:
+            self.update_fonts_list()
+            return
 
-            # Filter the font list by matching the search string with the font names
-            filtered_fonts = [(font_name, charmaps) for font_name,
-                              charmaps in font_charmaps.items() if search_text in font_name.lower()]
+        # Filter the font list by matching the search string with the font names
+        filtered_fonts = [(font_name, charmaps) for font_name,
+                        charmaps in font_charmaps.items() if search_text in font_name.lower()]
 
-            # Clear the current list of fonts
-            self.fonts_list.clear()
+        # Clear the current list of fonts
+        self.fonts_list.clear()
 
-            # Populate the list with the filtered fonts
-            for font_name, charmaps in filtered_fonts:
-                iter = self.fonts_list.append([font_name])
-                self.fonts_list.set(iter, 0, font_name)
+        # Populate the list with the filtered fonts
+        for font_name, charmaps in filtered_fonts:
+            iter = self.fonts_list.append([font_name])
+            self.fonts_list.set(iter, 0, font_name)
 
 
     def on_font_selected(self, selection):
+        """
+        This function handles the selection of a font by the user.
+        It gets the selected font from the font selection dialog,
+        sets the font description of the label to the selected font,
+        and displays the character map of the font.
+        """
         model, treeiter = selection.get_selected()
         if treeiter is not None:
             font_name = model[treeiter][0]
             self.font_description = Pango.FontDescription.from_string(font_name)
 
-            features = {
-                'family': self.font_description.get_family(),
-                'size': self.font_description.get_size() / Pango.SCALE,
-                'weight': self.font_description.get_weight(),
-                'style': self.font_description.get_style(),
-                'variant': self.font_description.get_variant(),
-                'stretch': self.font_description.get_stretch()
-            }
-            # print("family : ", features["family"])
-            # print("size: ", features["size"])
-            # print("weight :", features["weight"])
-            # print("style: ", features["style"])
-            # print("variant: ", features["variant"]) 
-            # print("stretch: ", features["stretch"])
+            # Show the remove button only for the fonts that have been added by the user
+            if font_name in self.user_fonts:
+                if self.user_fonts[font_name]:
+                    self.remove_button.set_visible(True)
+                else:
+                    self.remove_button.set_visible(False)
+            else:
+                self.remove_button.set_visible(False)
 
 
             self.label.override_font(self.font_description)
@@ -147,8 +169,8 @@ class MainWindow:
             self.info_button.set_visible(True)
 
             font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
-            self.charmaps_lbl.override_font(self.font_description)
-            self.charmaps_lbl.set_text(font_charmap_string)
+            self.charmaps_label.override_font(self.font_description)
+            self.charmaps_label.set_text(font_charmap_string)
 
 
     def update_fonts_list(self):
@@ -162,7 +184,69 @@ class MainWindow:
 
 
     def on_add_button_clicked(self, button):
-        pass
+        """
+        This function allows the user to select a font file,
+        copies the font file to the user's font directory,
+        updates the font cache, and reads the charmaps for the new font.
+        Then it adds the font and its charmaps to a dictionary and
+        updates font list in the UI.
+        """
+        dialog = Gtk.FileChooserDialog(
+            "Please choose a font file", self.window, Gtk.FileChooserAction.OPEN,
+            (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+
+        filter_ttf = Gtk.FileFilter()
+        filter_ttf.set_name("TTF files")
+        filter_ttf.add_mime_type("application/x-font-ttf")
+        dialog.add_filter(filter_ttf)
+
+        filter_otf = Gtk.FileFilter()
+        filter_otf.set_name("OTF files")
+        filter_otf.add_mime_type("application/x-font-otf")
+        dialog.add_filter(filter_otf)
+
+        response = dialog.run()
+        if response != Gtk.ResponseType.OK:
+            dialog.destroy()
+            return
+
+        try:
+            filepath = dialog.get_filename()
+
+            # Create the .fonts directory if it doesn't exist
+            os.makedirs(os.path.expanduser("~/.fo nts"), exist_ok=True)
+
+            # Copy the font file to ~/.fonts
+            shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
+
+            # Update the font cache
+            subprocess.run(["fc-cache", "-f", "-v"], capture_output=True)
+            subprocess.run(["fc-cache", "-f", "-v", "-r"], capture_output=True)
+
+            # Read the charmaps for the new font
+            font_charmap = []
+            with open(filepath, 'rb') as f:
+                ttfont = TTFont(f)
+                for cmap in ttfont['cmap'].tables:
+                    if cmap.isUnicode():
+                        font_charmap.extend(chr(k) for k in cmap.cmap.keys())
+
+            # Add the font and its charmaps to the dictionary
+            font_filename = os.path.basename(filepath)
+            font_name, _ = os.path.splitext(font_filename)
+            font_charmaps[font_name] = font_charmap
+
+            # Mark font as installed by the user
+            self.user_fonts[font_name] = True
+
+            # Save user fonts
+            self.save_user_fonts()
+
+
+        except Exception as e:
+            print(f"An error occurred: {e}")
+
+        dialog.destroy()
 
 
     def on_try_button_clicked(self, button):
@@ -183,6 +267,7 @@ class MainWindow:
             text = self.entry.get_text()
             self.label.override_font(self.font_description)
             self.label.set_text(text)
+
 
     def on_info_button_clicked(self, button):
         """
@@ -216,6 +301,7 @@ class MainWindow:
         # Show the dialog
         dialog.show_all()
 
+
         # Connect the response signal to update the font description and label
         def on_response(dialog, response_id):
             if response_id == Gtk.ResponseType.OK:
@@ -229,3 +315,10 @@ class MainWindow:
             dialog.destroy()
 
         dialog.connect("response", on_response)
+
+
+    def on_remove_button_clicked(self, font_name):
+        """
+        This function enables users to delete the fonts that they have added.
+        """
+        pass
