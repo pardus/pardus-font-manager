@@ -366,10 +366,10 @@
                 </child>
                 <child>
                   <object class="GtkScrolledWindow" id="bottom_scrolled">
-                    <property name="height-request">80</property>
                     <property name="visible">True</property>
                     <property name="can-focus">True</property>
                     <property name="shadow-type">in</property>
+                    <property name="min-content-height">120</property>
                     <child>
                       <object class="GtkViewport">
                         <property name="visible">True</property>
@@ -429,6 +429,7 @@
                   <packing>
                     <property name="expand">False</property>
                     <property name="fill">True</property>
+                    <property name="pack-type">end</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
