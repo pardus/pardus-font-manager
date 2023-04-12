@@ -317,8 +317,55 @@ class MainWindow:
         dialog.connect("response", on_response)
 
 
-    def on_remove_button_clicked(self, font_name):
+    def delete_font_file(self, font_name):
+        try:
+            # Execute fc-list command to list fonts with the given name
+            output = subprocess.check_output(["fc-list", font_name, "-f", "%{file}\n"], universal_newlines=True)
+            # Split the output by newline to get a list of font file paths
+            font_files = output.strip().split("\n")
+            if font_files:
+                # Return the first font file path
+                return font_files[0]
+            else:
+                print("Font not found.")
+        except subprocess.CalledProcessError:
+            # Error occurred while executing fc-list command
+            print("Error: Failed to list fonts.")
+        return None
+
+    def delete_font(self, font_name):
+        font_file = self.delete_font_file(font_name)
+        if font_file:
+            # Extract the folder path from the font file path
+            font_folder = os.path.dirname(font_file)
+            # Delete the font file
+            os.remove(font_file)
+            print(f"Deleted font file: {font_file}")
+            # Delete the parent directory if it is empty
+            if not os.listdir(font_folder):
+                os.rmdir(font_folder)
+                print(f"Deleted empty folder: {font_folder}")
+
+
+    def on_remove_button_clicked(self, button):
         """
-        This function enables users to delete the fonts that they have added.
+        It removes the selected font from the user_fonts dictionary,
+        updates the fonts list, and saves the updated user_fonts dictionary.
         """
-        pass
+        # Get the selected font from the TreeView
+        selection = self.fonts_view.get_selection()
+        model, iter_ = selection.get_selected()
+        if iter_:
+            font_name = model[iter_][0]
+
+            # Remove the selected font from the user_fonts dictionary
+            if font_name in self.user_fonts:
+                del self.user_fonts[font_name]
+                self.delete_font(font_name)
+
+            # Update the fonts list in the TreeView
+            self.update_fonts_list()
+
+            # Save the updated user_fonts dictionary
+            self.save_user_fonts()
+
