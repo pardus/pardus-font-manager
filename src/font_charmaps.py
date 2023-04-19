@@ -63,5 +63,8 @@ def get_fonts_charmaps():
         for filename in font_files:
             font_file_path = os.path.join(font_path, filename)
             charmaps = get_font_charmaps(font_file_path)
+            user_added = font_file_path.startswith('/home')
+            charmaps.update({font_name: (char_list, user_added)
+                              for font_name, char_list in charmaps.items()})
             font_charmaps.update(charmaps)
     return font_charmaps

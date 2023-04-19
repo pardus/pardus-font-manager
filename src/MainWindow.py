@@ -57,7 +57,6 @@ class MainWindow:
         self.spin_button = self.builder.get_object("spin_button")
         self.remove_button = self.builder.get_object("remove_button")
 
-
         # Connect signals to widget methods
         self.search_entry.connect("changed", self.on_search_entry_changed)
         self.add_button.connect("clicked", self.on_add_button_clicked)
@@ -85,30 +84,11 @@ class MainWindow:
         self.info_button.set_visible(False)
         self.remove_button.set_visible(False)
         self.font_description = None
-        self.user_fonts = {}
-        self.load_user_fonts()
 
         # Set window properties
         self.window.set_title("Pardus Font Manager")
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
-
-
-    def save_user_fonts(self):
-        with open('user_fonts.txt', 'w') as f:
-            for font_name, installed in self.user_fonts.items():
-                f.write('{}:{}\n'.format(font_name, int(installed)))
-
-
-    def load_user_fonts(self):
-        self.user_fonts = {}
-        try:
-            with open('user_fonts.txt', 'r') as f:
-                for line in f:
-                    font_name, installed = line.strip().split(':')
-                    self.user_fonts[font_name] = bool(int(installed))
-        except FileNotFoundError:
-            pass
 
 
     def on_search_entry_changed(self, search_entry):
@@ -151,19 +131,14 @@ class MainWindow:
             self.font_description = Pango.FontDescription.from_string(font_name)
 
             # Show the remove button only for the fonts that have been added by the user
-            if font_name in self.user_fonts:
-                if self.user_fonts[font_name]:
-                    self.remove_button.set_visible(True)
-                else:
-                    self.remove_button.set_visible(False)
-            else:
-                self.remove_button.set_visible(False)
-
+            _, user_added = font_charmaps[font_name]
+            self.remove_button.set_visible(user_added)
 
             self.label.override_font(self.font_description)
             self.label.set_text("The quick brown fox jumps over the lazy dog.")
 
-            font_charmap = font_charmaps[font_name] # Get the charmap for the selected font
+            # Get the charmap and user_added flag for the selected font
+            font_charmap, user_added = font_charmaps[font_name]
 
             # Gives more info about selected font
             self.info_button.set_visible(True)
@@ -234,14 +209,10 @@ class MainWindow:
             # Add the font and its charmaps to the dictionary
             font_filename = os.path.basename(filepath)
             font_name, _ = os.path.splitext(font_filename)
-            font_charmaps[font_name] = font_charmap
+            font_charmaps[font_name] = (font_charmap, True)  # Set user_added to True
 
-            # Mark font as installed by the user
-            self.user_fonts[font_name] = True
 
-            # Save user fonts
-            self.save_user_fonts()
-
+            self.update_fonts_list()  # Change: Update the UI to show the new font in the list
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -333,6 +304,7 @@ class MainWindow:
             print("Error: Failed to list fonts.")
         return None
 
+
     def delete_font(self, font_name):
         font_file = self.delete_font_file(font_name)
         if font_file:
@@ -358,14 +330,9 @@ class MainWindow:
         if iter_:
             font_name = model[iter_][0]
 
-            # Remove the selected font from the user_fonts dictionary
-            if font_name in self.user_fonts:
-                del self.user_fonts[font_name]
-                self.delete_font(font_name)
+            # Remove the font from the font_charmaps dictionary
+            del font_charmaps[font_name]
+            self.delete_font(font_name)
 
             # Update the fonts list in the TreeView
             self.update_fonts_list()
-
-            # Save the updated user_fonts dictionary
-            self.save_user_fonts()
-
