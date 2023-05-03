@@ -38,7 +38,7 @@ class MainWindow:
         self.entry = self.builder.get_object("entry")
         self.stack_start = self.builder.get_object("stack_start")
         self.stack_map = self.builder.get_object("stack_map")
-        self.page_start = self.builder.get_object("page_start")
+        self.page_charmap = self.builder.get_object("page_charmap")
         self.page_list = self.builder.get_object("page_list")
         self.spinner_start = self.builder.get_object("spinner_start")
         self.spinner_charmaps = self.builder.get_object("spinner_charmaps")
@@ -46,7 +46,7 @@ class MainWindow:
         self.try_button = self.builder.get_object("try_button")
         self.info_button = self.builder.get_object("info_button")
         self.charmaps_label = self.builder.get_object("charmaps_label")
-        self.label = self.builder.get_object("label1")
+        self.label = self.builder.get_object("label_entry")
         self.font_name_label = self.builder.get_object("font_name_label")
         self.font_size_label = self.builder.get_object("font_size_label")
         self.font_color_label = self.builder.get_object("font_color_label")
@@ -55,14 +55,35 @@ class MainWindow:
         self.info_dialog = self.builder.get_object("info_dialog")
         self.color_button = self.builder.get_object("color_button")
         self.spin_button = self.builder.get_object("spin_button")
+        self.size_spin_button = self.builder.get_object("size_spin_button")
         self.remove_button = self.builder.get_object("remove_button")
+        self.increase_button = self.builder.get_object("increase_button")
+        self.decrease_button = self.builder.get_object("decrease_button")
+        self.title_box = self.builder.get_object("title_box")
+        self.mlozturk = self.builder.get_object("mlozturk")
+        # self.title_header = self.builder.get_object("title_header")
+        # self.settings_button = self.builder.get_object("settings_button")
+        # self.about_button = self.builder.get_object("about_button")
+
+        # self.window.set_titlebar(self.title_header)
+
+        adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
+        self.size_spin_button.set_adjustment(adjustment)
+
+
+        self.spinner_start.start()
 
         # Connect signals to widget methods
         self.search_entry.connect("changed", self.on_search_entry_changed)
         self.add_button.connect("clicked", self.on_add_button_clicked)
-        self.try_button.connect("clicked", self.on_try_button_clicked)
+        # self.try_button.connect("clicked", self.on_try_button_clicked)
         self.info_button.connect("clicked", self.on_info_button_clicked)
         self.remove_button.connect("clicked", self.on_remove_button_clicked)
+        self.increase_button.connect("clicked", self.on_increase_button_clicked)
+        self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
+        self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
+
+
 
         # Create and populate the fonts list
         self.fonts_list = Gtk.ListStore(str)
@@ -81,14 +102,34 @@ class MainWindow:
         left_scrolled.pack_start(scrolled_window, True, True, 0)
 
         self.window.show_all()
-        self.info_button.set_visible(False)
-        self.remove_button.set_visible(False)
+
+        self.info_button.set_sensitive(False)
+        self.remove_button.set_sensitive(False)
         self.font_description = None
 
         # Set window properties
         self.window.set_title("Pardus Font Manager")
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
+
+        GLib.timeout_add(500, self.loading_finished)
+
+
+    def loading_finished(self):
+        self.spinner_start.stop()
+        self.stack_start.set_visible_child_name("page_list")
+
+
+    def on_size_spin_button_value_changed(self, spin_button):
+        new_font_size = spin_button.get_value_as_int()
+        self.update_sample_text_size(new_font_size)
+
+
+    def update_sample_text_size(self, new_size):
+        if self.font_description is not None:
+            self.font_description.set_size(new_size * Pango.SCALE)
+            self.label.override_font(self.font_description)
+            self.label.set_text("The quick brown fox jumps over the lazy dog.")
 
 
     def on_search_entry_changed(self, search_entry):
@@ -123,8 +164,12 @@ class MainWindow:
         This function handles the selection of a font by the user.
         It gets the selected font from the font selection dialog,
         sets the font description of the label to the selected font,
-        and displays the character map of the font.
+        displays the character map of the font, and shows a spinner
+        while the character map is being displayed.
         """
+        # Start the spinner
+        self.spinner_charmaps.start()
+
         model, treeiter = selection.get_selected()
         if treeiter is not None:
             font_name = model[treeiter][0]
@@ -132,7 +177,7 @@ class MainWindow:
 
             # Show the remove button only for the fonts that have been added by the user
             _, user_added = font_charmaps[font_name]
-            self.remove_button.set_visible(user_added)
+            self.remove_button.set_sensitive(user_added)
 
             self.label.override_font(self.font_description)
             self.label.set_text("The quick brown fox jumps over the lazy dog.")
@@ -141,11 +186,19 @@ class MainWindow:
             font_charmap, user_added = font_charmaps[font_name]
 
             # Gives more info about selected font
-            self.info_button.set_visible(True)
+            self.info_button.set_sensitive(True)
 
+            # Update the UI to show the character map
             font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
+
+            GLib.idle_add(self.display_charmap)
+
+
+    def display_charmap(self):
+        self.spinner_charmaps.stop()
+        self.stack_map.set_visible_child_name("page_charmap")
 
 
     def update_fonts_list(self):
@@ -156,6 +209,28 @@ class MainWindow:
         self.fonts_list.clear()
         for font_name in font_names:
             self.fonts_list.append([font_name])
+
+
+    def update_charmap_size(self, new_size):
+        font_description = self.charmaps_label.get_style_context().get_font(Gtk.StateFlags.NORMAL)
+        font_description.set_size(new_size * Pango.SCALE)
+        self.charmaps_label.override_font(font_description)
+
+
+    def on_increase_button_clicked(self, button):
+        context = self.charmaps_label.get_style_context()
+        current_font_desc = context.get_font(Gtk.StateFlags.NORMAL)
+        current_size = current_font_desc.get_size() // Pango.SCALE
+        new_size = current_size + 1
+        self.update_charmap_size(new_size)
+
+
+    def on_decrease_button_clicked(self, button):
+        context = self.charmaps_label.get_style_context()
+        current_font_desc = context.get_font(Gtk.StateFlags.NORMAL)
+        current_size = current_font_desc.get_size() // Pango.SCALE
+        new_size = max(1, current_size - 1)
+        self.update_charmap_size(new_size)
 
 
     def on_add_button_clicked(self, button):
@@ -220,24 +295,24 @@ class MainWindow:
         dialog.destroy()
 
 
-    def on_try_button_clicked(self, button):
-        if self.font_description is None:
-            dialog = Gtk.MessageDialog(
-                transient_for=self.window,
-                flags=0,
-                message_type=Gtk.MessageType.WARNING,
-                buttons=Gtk.ButtonsType.OK_CANCEL,
-                text="No font selected",
-            )
-            dialog.format_secondary_text(
-                "Please choose a font from the list before trying again."
-            )
-            dialog.run()
-            dialog.destroy()
-        else:
-            text = self.entry.get_text()
-            self.label.override_font(self.font_description)
-            self.label.set_text(text)
+    # def on_try_button_clicked(self, button):
+    #     if self.font_description is None:
+    #         dialog = Gtk.MessageDialog(
+    #             transient_for=self.window,
+    #             flags=0,
+    #             message_type=Gtk.MessageType.WARNING,
+    #             buttons=Gtk.ButtonsType.OK_CANCEL,
+    #             text="No font selected",
+    #         )
+    #         dialog.format_secondary_text(
+    #             "Please choose a font from the list before trying again."
+    #         )
+    #         dialog.run()
+    #         dialog.destroy()
+    #     else:
+    #         text = self.entry.get_text()
+    #         self.label.override_font(self.font_description)
+    #         self.label.set_text(text)
 
 
     def on_info_button_clicked(self, button):
