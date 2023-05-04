@@ -18,7 +18,7 @@ class MainWindow:
 
         # Create the builder and load the Glade file
         self.builder = Gtk.Builder()
-        glade_file = os.path.dirname(os.path.abspath(__file__)) + "/../ui/fm-ui.glade"
+        glade_file = os.path.dirname(os.path.abspath(__file__)) + "/../ui/MainWindow.glade"
 
         self.builder.add_from_file(glade_file)
 
@@ -75,6 +75,7 @@ class MainWindow:
 
         # Connect signals to widget methods
         self.search_entry.connect("changed", self.on_search_entry_changed)
+        self.entry.connect("changed", self.update_sample_text)
         self.add_button.connect("clicked", self.on_add_button_clicked)
         # self.try_button.connect("clicked", self.on_try_button_clicked)
         self.info_button.connect("clicked", self.on_info_button_clicked)
@@ -293,6 +294,13 @@ class MainWindow:
             print(f"An error occurred: {e}")
 
         dialog.destroy()
+
+
+    def update_sample_text(self, widget):
+        if self.font_description is not None:
+            text = self.entry.get_text()
+            self.label.override_font(self.font_description)
+            self.label.set_text(text)
 
 
     # def on_try_button_clicked(self, button):
