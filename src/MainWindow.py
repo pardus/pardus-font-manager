@@ -7,9 +7,8 @@ import subprocess
 import shutil
 from fontTools.ttLib import TTFont
 from font_charmaps import get_fonts_charmaps
-
-
-font_charmaps = get_fonts_charmaps()
+import threading
+from threading import Thread
 
 
 class MainWindow:
@@ -27,13 +26,15 @@ class MainWindow:
 
         # Get window and set properties
         self.window = self.builder.get_object("window")
+        # Comment this line because of HEADER TITLE BAR !!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         self.window.set_border_width(10)
 
         # Get widgets from the Glade file
         top_box = self.builder.get_object("top_box")
         vbox = self.builder.get_object("vbox")
         hbox = self.builder.get_object("hbox")
-        left_scrolled = self.builder.get_object("left_scrolled")
+        self.left_scrolled = self.builder.get_object("left_scrolled")
+        self.left_scrolled_box = self.builder.get_object("left_scrolled_box")
         self.search_entry = self.builder.get_object("search_entry")
         self.entry = self.builder.get_object("entry")
         self.stack_start = self.builder.get_object("stack_start")
@@ -61,11 +62,12 @@ class MainWindow:
         self.decrease_button = self.builder.get_object("decrease_button")
         self.title_box = self.builder.get_object("title_box")
         self.mlozturk = self.builder.get_object("mlozturk")
-        # self.title_header = self.builder.get_object("title_header")
+        self.fonts_view = self.builder.get_object("fonts_view")
+        self.title_header = self.builder.get_object("title_header")
         # self.settings_button = self.builder.get_object("settings_button")
         # self.about_button = self.builder.get_object("about_button")
 
-        # self.window.set_titlebar(self.title_header)
+        self.window.set_titlebar(self.title_header)
 
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
         self.size_spin_button.set_adjustment(adjustment)
@@ -76,44 +78,47 @@ class MainWindow:
         # Connect signals to widget methods
         self.search_entry.connect("changed", self.on_search_entry_changed)
         self.entry.connect("changed", self.update_sample_text)
+        self.entry.connect("activate", self.update_sample_text)
         self.add_button.connect("clicked", self.on_add_button_clicked)
-        # self.try_button.connect("clicked", self.on_try_button_clicked)
         self.info_button.connect("clicked", self.on_info_button_clicked)
         self.remove_button.connect("clicked", self.on_remove_button_clicked)
         self.increase_button.connect("clicked", self.on_increase_button_clicked)
         self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
 
-
-
         # Create and populate the fonts list
         self.fonts_list = Gtk.ListStore(str)
-        self.update_fonts_list()
 
         # Create and set up the TreeView for the fonts list
-        self.fonts_view = Gtk.TreeView(model=self.fonts_list)
         self.fonts_view.set_headers_visible(False)
+        self.fonts_view.set_model(self.fonts_list)
         self.fonts_view.append_column(Gtk.TreeViewColumn("Fonts", Gtk.CellRendererText(), text=0))
         self.fonts_view.get_selection().connect("changed", self.on_font_selected)
 
-        # Add a scrolled window for the fonts list
-        scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.add(self.fonts_view)
-        scrolled_window.set_policy(Gtk.PolicyType.AUTOMATIC, Gtk.PolicyType.AUTOMATIC)
-        left_scrolled.pack_start(scrolled_window, True, True, 0)
-
         self.window.show_all()
+        p1 = threading.Thread(target=self.worker)
+        p1.daemon = True
+        p1.start()
 
         self.info_button.set_sensitive(False)
         self.remove_button.set_sensitive(False)
         self.font_description = None
+        self.info_button.set_visible(False)
 
         # Set window properties
         self.window.set_title("Pardus Font Manager")
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
 
-        GLib.timeout_add(500, self.loading_finished)
+
+    def worker(self):
+        self.font_charmaps = get_fonts_charmaps()
+        self.update_fonts_list()
+        self.set_page()
+
+
+    def set_page(self):
+        self.stack_start.set_visible_child_name("page_list")
 
 
     def loading_finished(self):
@@ -149,7 +154,7 @@ class MainWindow:
 
         # Filter the font list by matching the search string with the font names
         filtered_fonts = [(font_name, charmaps) for font_name,
-                        charmaps in font_charmaps.items() if search_text in font_name.lower()]
+                        charmaps in self.font_charmaps.items() if search_text in font_name.lower()]
 
         # Clear the current list of fonts
         self.fonts_list.clear()
@@ -177,14 +182,14 @@ class MainWindow:
             self.font_description = Pango.FontDescription.from_string(font_name)
 
             # Show the remove button only for the fonts that have been added by the user
-            _, user_added = font_charmaps[font_name]
+            _, user_added = self.font_charmaps[font_name]
             self.remove_button.set_sensitive(user_added)
 
             self.label.override_font(self.font_description)
             self.label.set_text("The quick brown fox jumps over the lazy dog.")
 
             # Get the charmap and user_added flag for the selected font
-            font_charmap, user_added = font_charmaps[font_name]
+            font_charmap, user_added = self.font_charmaps[font_name]
 
             # Gives more info about selected font
             self.info_button.set_sensitive(True)
@@ -204,7 +209,7 @@ class MainWindow:
 
     def update_fonts_list(self):
         # Get a list of font names sorted alphabetically
-        font_names = sorted(list(font_charmaps.keys()))
+        font_names = sorted(list(self.font_charmaps.keys()))
 
         # Populate the list store with the sorted font names
         self.fonts_list.clear()
@@ -261,6 +266,39 @@ class MainWindow:
             dialog.destroy()
             return
 
+        # try:
+        #     filepath = dialog.get_filename()
+
+        #     # Create the .fonts directory if it doesn't exist
+        #     os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
+
+        #     # Copy the font file to ~/.fonts
+        #     shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
+
+        #     # Update the font cache
+        #     subprocess.run(["fc-cache", "-f", "-v"], capture_output=True)
+        #     subprocess.run(["fc-cache", "-f", "-v", "-r"], capture_output=True)
+
+        #     # Read the charmaps for the new font
+        #     font_charmap = []
+        #     with open(filepath, 'rb') as f:
+        #         ttfont = TTFont(f)
+        #         for cmap in ttfont['cmap'].tables:
+        #             if cmap.isUnicode():
+        #                 font_charmap.extend(chr(k) for k in cmap.cmap.keys())
+
+        #     # Add the font and its charmaps to the dictionary
+        #     font_filename = os.path.basename(filepath)
+        #     font_name, _ = os.path.splitext(font_filename)
+        #     self.font_charmaps[font_name] = (font_charmap, True)  # Set user_added to True
+
+
+        #     self.update_fonts_list()  # Change: Update the UI to show the new font in the list
+
+        # except Exception as e:
+        #     print(f"An error occurred: {e}")
+
+        # dialog.destroy()
         try:
             filepath = dialog.get_filename()
 
@@ -270,23 +308,19 @@ class MainWindow:
             # Copy the font file to ~/.fonts
             shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
 
-            # Update the font cache
-            subprocess.run(["fc-cache", "-f", "-v"], capture_output=True)
-            subprocess.run(["fc-cache", "-f", "-v", "-r"], capture_output=True)
+            # Run font cache update and read the charmaps for the new font in parallel
+            update_cache_thread = Thread(target=self.update_font_cache)
+            update_cache_thread.start()
 
-            # Read the charmaps for the new font
-            font_charmap = []
-            with open(filepath, 'rb') as f:
-                ttfont = TTFont(f)
-                for cmap in ttfont['cmap'].tables:
-                    if cmap.isUnicode():
-                        font_charmap.extend(chr(k) for k in cmap.cmap.keys())
+            font_charmap = self.read_charmaps(filepath)
+
+            # Wait for the update cache thread to complete
+            update_cache_thread.join()
 
             # Add the font and its charmaps to the dictionary
             font_filename = os.path.basename(filepath)
             font_name, _ = os.path.splitext(font_filename)
-            font_charmaps[font_name] = (font_charmap, True)  # Set user_added to True
-
+            self.font_charmaps[font_name] = (font_charmap, True)  # Set user_added to True
 
             self.update_fonts_list()  # Change: Update the UI to show the new font in the list
 
@@ -296,31 +330,28 @@ class MainWindow:
         dialog.destroy()
 
 
+    def update_font_cache(self):
+        subprocess.run(["fc-cache", "-f", "-v"], capture_output=True)
+        subprocess.run(["fc-cache", "-f", "-v", "-r"], capture_output=True)
+
+
+    def read_charmaps(self, filepath):
+        font_charmap = []
+        with open(filepath, 'rb') as f:
+            ttfont = TTFont(f)
+            for cmap in ttfont['cmap'].tables:
+                if cmap.isUnicode():
+                    font_charmap.extend(chr(k) for k in cmap.cmap.keys())
+        return font_charmap
+
+
     def update_sample_text(self, widget):
         if self.font_description is not None:
             text = self.entry.get_text()
+            # if text is None:
+            #     text = "The quick brown fox jumps over the lazy dog."
             self.label.override_font(self.font_description)
             self.label.set_text(text)
-
-
-    # def on_try_button_clicked(self, button):
-    #     if self.font_description is None:
-    #         dialog = Gtk.MessageDialog(
-    #             transient_for=self.window,
-    #             flags=0,
-    #             message_type=Gtk.MessageType.WARNING,
-    #             buttons=Gtk.ButtonsType.OK_CANCEL,
-    #             text="No font selected",
-    #         )
-    #         dialog.format_secondary_text(
-    #             "Please choose a font from the list before trying again."
-    #         )
-    #         dialog.run()
-    #         dialog.destroy()
-    #     else:
-    #         text = self.entry.get_text()
-    #         self.label.override_font(self.font_description)
-    #         self.label.set_text(text)
 
 
     def on_info_button_clicked(self, button):
@@ -413,8 +444,8 @@ class MainWindow:
         if iter_:
             font_name = model[iter_][0]
 
-            # Remove the font from the font_charmaps dictionary
-            del font_charmaps[font_name]
+            # Remove the font from the self.font_charmaps dictionary
+            del self.font_charmaps[font_name]
             self.delete_font(font_name)
 
             # Update the fonts list in the TreeView

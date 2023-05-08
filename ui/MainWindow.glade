@@ -164,6 +164,16 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <child>
+              <object class="GtkSpinner" id="spinner_start">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="active">True</property>
+              </object>
+              <packing>
+                <property name="name">spinner_start</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkBox" id="vbox">
                 <property name="visible">True</property>
                 <property name="can-focus">False</property>
@@ -172,7 +182,6 @@
                   <object class="GtkBox" id="header_box">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
-                    <property name="margin-top">30</property>
                     <property name="homogeneous">True</property>
                     <child>
                       <object class="GtkBox" id="left_font_box">
@@ -227,6 +236,7 @@
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">Decrease character sizes</property>
+                            <property name="relief">none</property>
                             <child>
                               <object class="GtkImage">
                                 <property name="visible">True</property>
@@ -248,6 +258,7 @@
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
                             <property name="tooltip-text" translatable="yes">Increase character sizes</property>
+                            <property name="relief">none</property>
                             <child>
                               <object class="GtkImage">
                                 <property name="visible">True</property>
@@ -278,25 +289,58 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkBox" id="hbox">
-                    <property name="width-request">800</property>
-                    <property name="height-request">450</property>
+                  <object class="GtkBox" id="middle_box">
                     <property name="visible">True</property>
                     <property name="can-focus">False</property>
                     <property name="homogeneous">True</property>
                     <child>
-                      <object class="GtkBox" id="left_scrolled">
+                      <object class="GtkBox" id="left_box">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <property name="orientation">vertical</property>
                         <child>
-                          <object class="GtkSearchEntry" id="search_entry">
+                          <object class="GtkBox" id="left_scrolled_box">
                             <property name="visible">True</property>
-                            <property name="can-focus">True</property>
-                            <property name="primary-icon-name">edit-find-symbolic</property>
-                            <property name="primary-icon-activatable">False</property>
-                            <property name="primary-icon-sensitive">False</property>
-                            <property name="placeholder-text" translatable="yes">Search Families</property>
+                            <property name="can-focus">False</property>
+                            <property name="orientation">vertical</property>
+                            <child>
+                              <object class="GtkSearchEntry" id="search_entry">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="primary-icon-name">edit-find-symbolic</property>
+                                <property name="primary-icon-activatable">False</property>
+                                <property name="primary-icon-sensitive">False</property>
+                                <property name="placeholder-text" translatable="yes">Search Families</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkScrolledWindow" id="left_scrolled">
+                                <property name="visible">True</property>
+                                <property name="can-focus">True</property>
+                                <property name="shadow-type">in</property>
+                                <child>
+                                  <object class="GtkTreeView" id="fonts_view">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="vexpand">True</property>
+                                    <child internal-child="selection">
+                                      <object class="GtkTreeSelection"/>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -304,71 +348,166 @@
                             <property name="position">0</property>
                           </packing>
                         </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkScrolledWindow" id="right_scrolled">
-                        <property name="visible">True</property>
-                        <property name="can-focus">True</property>
-                        <property name="shadow-type">in</property>
                         <child>
-                          <object class="GtkViewport">
+                          <object class="GtkBox" id="add_remove_buttons_box">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="spacing">10</property>
+                            <property name="homogeneous">True</property>
                             <child>
-                              <object class="GtkStack" id="stack_map">
+                              <object class="GtkBox" id="add_remove_edit_box">
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
+                                <property name="homogeneous">True</property>
                                 <child>
-                                  <object class="GtkSpinner" id="spinner_charmaps">
+                                  <object class="GtkButton" id="add_button">
+                                    <property name="label">gtk-add</property>
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="halign">center</property>
-                                    <property name="valign">center</property>
-                                    <property name="active">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Add a new font</property>
+                                    <property name="use-stock">True</property>
+                                    <property name="always-show-image">True</property>
                                   </object>
                                   <packing>
-                                    <property name="name">page_spinner_map</property>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">5</property>
+                                    <property name="position">0</property>
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkLabel" id="charmaps_label">
+                                  <object class="GtkButton" id="info_button">
                                     <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="has-tooltip">True</property>
-                                    <property name="margin-left">10</property>
-                                    <property name="margin-right">10</property>
-                                    <property name="margin-start">10</property>
-                                    <property name="margin-end">10</property>
-                                    <property name="margin-top">10</property>
-                                    <property name="margin-bottom">10</property>
-                                    <property name="vexpand">True</property>
-                                    <property name="label" translatable="yes">..</property>
-                                    <property name="justify">fill</property>
-                                    <property name="wrap">True</property>
-                                    <property name="wrap-mode">word-char</property>
-                                    <property name="selectable">True</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Info about selected font</property>
+                                    <property name="always-show-image">True</property>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="icon-name">document-edit-symbolic</property>
+                                      </object>
+                                    </child>
                                   </object>
                                   <packing>
-                                    <property name="name">page_charmap</property>
-                                    <property name="title" translatable="yes">page_charmap</property>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
+                                <child>
+                                  <object class="GtkButton" id="remove_button">
+                                    <property name="label">gtk-remove</property>
+                                    <property name="can-focus">True</property>
+                                    <property name="receives-default">True</property>
+                                    <property name="tooltip-text" translatable="yes">Remove user-added font</property>
+                                    <property name="use-stock">True</property>
+                                    <property name="always-show-image">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="padding">5</property>
+                                    <property name="position">2</property>
+                                  </packing>
+                                </child>
                               </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
                             </child>
                           </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">5</property>
+                            <property name="position">2</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
-                        <property name="pack-type">end</property>
+                        <property name="padding">1</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkBox" id="right_box">
+                        <property name="visible">True</property>
+                        <property name="can-focus">False</property>
+                        <property name="orientation">vertical</property>
+                        <property name="homogeneous">True</property>
+                        <child>
+                          <object class="GtkScrolledWindow" id="right_scrolled">
+                            <property name="visible">True</property>
+                            <property name="can-focus">True</property>
+                            <property name="shadow-type">in</property>
+                            <child>
+                              <object class="GtkViewport">
+                                <property name="visible">True</property>
+                                <property name="can-focus">False</property>
+                                <child>
+                                  <object class="GtkStack" id="stack_map">
+                                    <property name="visible">True</property>
+                                    <property name="can-focus">False</property>
+                                    <child>
+                                      <object class="GtkSpinner" id="spinner_charmaps">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="halign">center</property>
+                                        <property name="valign">center</property>
+                                        <property name="active">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="name">page_spinner_map</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel" id="charmaps_label">
+                                        <property name="visible">True</property>
+                                        <property name="can-focus">False</property>
+                                        <property name="has-tooltip">True</property>
+                                        <property name="margin-left">10</property>
+                                        <property name="margin-right">10</property>
+                                        <property name="margin-start">10</property>
+                                        <property name="margin-end">10</property>
+                                        <property name="margin-top">10</property>
+                                        <property name="margin-bottom">10</property>
+                                        <property name="vexpand">True</property>
+                                        <property name="label" translatable="yes">..</property>
+                                        <property name="justify">fill</property>
+                                        <property name="wrap">True</property>
+                                        <property name="wrap-mode">word-char</property>
+                                        <property name="selectable">True</property>
+                                      </object>
+                                      <packing>
+                                        <property name="name">page_charmap</property>
+                                        <property name="title" translatable="yes">page_charmap</property>
+                                        <property name="position">1</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="padding">1</property>
+                            <property name="pack-type">end</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">True</property>
                         <property name="position">1</property>
                       </packing>
                     </child>
@@ -385,106 +524,9 @@
                     <property name="can-focus">False</property>
                     <property name="orientation">vertical</property>
                     <child>
-                      <object class="GtkBox" id="add_remove_buttons_box">
-                        <property name="visible">True</property>
-                        <property name="can-focus">False</property>
-                        <property name="homogeneous">True</property>
-                        <child>
-                          <object class="GtkBox" id="add_remove_edit_box">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="homogeneous">True</property>
-                            <child>
-                              <object class="GtkButton" id="add_button">
-                                <property name="visible">True</property>
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Add a new font</property>
-                                <property name="always-show-image">True</property>
-                                <child>
-                                  <object class="GtkImage">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="icon-name">document-new-symbolic</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="info_button">
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Info about selected font</property>
-                                <property name="always-show-image">True</property>
-                                <child>
-                                  <object class="GtkImage">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="icon-name">document-edit-symbolic</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">1</property>
-                              </packing>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="remove_button">
-                                <property name="can-focus">True</property>
-                                <property name="receives-default">True</property>
-                                <property name="tooltip-text" translatable="yes">Remove user-added font</property>
-                                <property name="always-show-image">True</property>
-                                <child>
-                                  <object class="GtkImage">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">False</property>
-                                    <property name="icon-name">user-trash-symbolic</property>
-                                  </object>
-                                </child>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">True</property>
-                                <property name="position">2</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="mlozturk">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">True</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkScrolledWindow" id="bottom_scrolled">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
-                        <property name="shadow-type">in</property>
                         <property name="min-content-height">120</property>
                         <child>
                           <object class="GtkViewport">
@@ -550,24 +592,12 @@
                     <property name="expand">False</property>
                     <property name="fill">True</property>
                     <property name="pack-type">end</property>
-                    <property name="position">2</property>
+                    <property name="position">4</property>
                   </packing>
                 </child>
               </object>
               <packing>
                 <property name="name">page_list</property>
-                <property name="title" translatable="yes">page_list</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkSpinner" id="spinner_start">
-                <property name="visible">True</property>
-                <property name="can-focus">False</property>
-                <property name="active">True</property>
-              </object>
-              <packing>
-                <property name="name">spinner_start</property>
-                <property name="title" translatable="yes">spinner_start</property>
                 <property name="position">1</property>
               </packing>
             </child>
@@ -579,6 +609,9 @@
           </packing>
         </child>
       </object>
+    </child>
+    <child type="titlebar">
+      <placeholder/>
     </child>
   </object>
 </interface>
