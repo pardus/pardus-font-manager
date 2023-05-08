@@ -27,7 +27,7 @@ class MainWindow:
         # Get window and set properties
         self.window = self.builder.get_object("window")
         # Comment this line because of HEADER TITLE BAR !!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        self.window.set_border_width(10)
+        # self.window.set_border_width(10)
 
         # Get widgets from the Glade file
         top_box = self.builder.get_object("top_box")
@@ -63,11 +63,11 @@ class MainWindow:
         self.title_box = self.builder.get_object("title_box")
         self.mlozturk = self.builder.get_object("mlozturk")
         self.fonts_view = self.builder.get_object("fonts_view")
-        self.title_header = self.builder.get_object("title_header")
+        # self.title_header = self.builder.get_object("title_header")
         # self.settings_button = self.builder.get_object("settings_button")
         # self.about_button = self.builder.get_object("about_button")
 
-        self.window.set_titlebar(self.title_header)
+        # self.window.set_titlebar(self.title_header)
 
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
         self.size_spin_button.set_adjustment(adjustment)
