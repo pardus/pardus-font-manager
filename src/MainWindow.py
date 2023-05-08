@@ -29,10 +29,13 @@ class MainWindow:
         # Comment this line because of HEADER TITLE BAR !!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         # self.window.set_border_width(10)
 
+        self.font_charmaps = []
+
         # Get widgets from the Glade file
         top_box = self.builder.get_object("top_box")
         vbox = self.builder.get_object("vbox")
         hbox = self.builder.get_object("hbox")
+        self.menu_button = self.builder.get_object("menu_button")
         self.left_scrolled = self.builder.get_object("left_scrolled")
         self.left_scrolled_box = self.builder.get_object("left_scrolled_box")
         self.search_entry = self.builder.get_object("search_entry")
@@ -72,6 +75,7 @@ class MainWindow:
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
         self.size_spin_button.set_adjustment(adjustment)
 
+        self.menu_button.set_sensitive(False)
 
         self.spinner_start.start()
 
@@ -112,13 +116,14 @@ class MainWindow:
 
 
     def worker(self):
-        self.font_charmaps = get_fonts_charmaps()
+        # self.font_charmaps = get_fonts_charmaps()
         self.update_fonts_list()
         self.set_page()
 
 
     def set_page(self):
-        self.stack_start.set_visible_child_name("page_list")
+        GLib.idle_add(self.stack_start.set_visible_child_name, "page_list")
+        GLib.idle_add(self.menu_button.set_sensitive, False)
 
 
     def loading_finished(self):
@@ -208,6 +213,11 @@ class MainWindow:
 
 
     def update_fonts_list(self):
+
+        if not self.font_charmaps:
+            print("setting font_charmaps")
+            self.font_charmaps = get_fonts_charmaps()
+
         # Get a list of font names sorted alphabetically
         font_names = sorted(list(self.font_charmaps.keys()))
 
