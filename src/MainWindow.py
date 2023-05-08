@@ -30,6 +30,7 @@ class MainWindow:
         # self.window.set_border_width(10)
 
         self.font_charmaps = []
+        self.sample_text = "The quick brown fox jumps over the lazy dog."
 
         # Get widgets from the Glade file
         top_box = self.builder.get_object("top_box")
@@ -140,7 +141,7 @@ class MainWindow:
         if self.font_description is not None:
             self.font_description.set_size(new_size * Pango.SCALE)
             self.label.override_font(self.font_description)
-            self.label.set_text("The quick brown fox jumps over the lazy dog.")
+            self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
 
     def on_search_entry_changed(self, search_entry):
@@ -191,7 +192,7 @@ class MainWindow:
             self.remove_button.set_sensitive(user_added)
 
             self.label.override_font(self.font_description)
-            self.label.set_text("The quick brown fox jumps over the lazy dog.")
+            self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
             # Get the charmap and user_added flag for the selected font
             font_charmap, user_added = self.font_charmaps[font_name]
@@ -361,7 +362,7 @@ class MainWindow:
             # if text is None:
             #     text = "The quick brown fox jumps over the lazy dog."
             self.label.override_font(self.font_description)
-            self.label.set_text(text)
+            self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
 
     def on_info_button_clicked(self, button):
@@ -405,7 +406,7 @@ class MainWindow:
 
                 self.font_description.set_size(font_size * Pango.SCALE)
                 self.label.override_font(self.font_description)
-                self.label.set_text("The quick brown fox jumps over the lazy dog.")
+                self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
             dialog.destroy()
 
