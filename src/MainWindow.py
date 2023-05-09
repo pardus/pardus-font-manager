@@ -26,8 +26,7 @@ class MainWindow:
 
         # Get window and set properties
         self.window = self.builder.get_object("window")
-        # Comment this line because of HEADER TITLE BAR !!!!!!!! !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        # self.window.set_border_width(10)
+        self.window.set_border_width(10)
 
         self.font_charmaps = []
         self.sample_text = "The quick brown fox jumps over the lazy dog."
@@ -46,7 +45,6 @@ class MainWindow:
         self.page_charmap = self.builder.get_object("page_charmap")
         self.page_list = self.builder.get_object("page_list")
         self.spinner_start = self.builder.get_object("spinner_start")
-        self.spinner_charmaps = self.builder.get_object("spinner_charmaps")
         self.add_button = self.builder.get_object("add_button")
         self.try_button = self.builder.get_object("try_button")
         self.info_button = self.builder.get_object("info_button")
@@ -99,6 +97,7 @@ class MainWindow:
         self.fonts_view.set_model(self.fonts_list)
         self.fonts_view.append_column(Gtk.TreeViewColumn("Fonts", Gtk.CellRendererText(), text=0))
         self.fonts_view.get_selection().connect("changed", self.on_font_selected)
+        self.fonts_view.connect("key-press-event", self.on_key_press_event)
 
         self.window.show_all()
         p1 = threading.Thread(target=self.worker)
@@ -124,7 +123,7 @@ class MainWindow:
 
     def set_page(self):
         GLib.idle_add(self.stack_start.set_visible_child_name, "page_list")
-        GLib.idle_add(self.menu_button.set_sensitive, False)
+        GLib.idle_add(self.menu_button.set_sensitive, True)
 
 
     def loading_finished(self):
@@ -171,6 +170,50 @@ class MainWindow:
             self.fonts_list.set(iter, 0, font_name)
 
 
+    def get_selected_font_info(self):
+        selection = self.fonts_view.get_selection()
+        model, treeiter = selection.get_selected()
+        if treeiter is not None:
+            font_name = model[treeiter][0]
+            _, user_added = self.font_charmaps[font_name]
+            return font_name, user_added
+        return None, False
+
+
+    # def on_font_selected(self, selection):
+    #     """
+    #     This function handles the selection of a font by the user.
+    #     It gets the selected font from the font selection dialog,
+    #     sets the font description of the label to the selected font,
+    #     displays the character map of the font, and shows a spinner
+    #     while the character map is being displayed.
+    #     """
+    #     model, treeiter = selection.get_selected()
+    #     if treeiter is not None:
+    #         font_name = model[treeiter][0]
+    #         self.font_description = Pango.FontDescription.from_string(font_name)
+
+    #         # Show the remove button only for the fonts that have been added by the user
+    #         _, user_added = self.font_charmaps[font_name]
+    #         self.remove_button.set_sensitive(user_added)
+
+    #         self.label.override_font(self.font_description)
+    #         self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
+
+    #         # Get the charmap and user_added flag for the selected font
+    #         font_charmap, user_added = self.font_charmaps[font_name]
+
+    #         # Gives more info about selected font
+    #         self.info_button.set_sensitive(True)
+
+    #         # Update the UI to show the character map
+    #         font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
+    #         self.charmaps_label.override_font(self.font_description)
+    #         self.charmaps_label.set_text(font_charmap_string)
+
+    #         GLib.idle_add(self.display_charmap)
+
+
     def on_font_selected(self, selection):
         """
         This function handles the selection of a font by the user.
@@ -179,23 +222,18 @@ class MainWindow:
         displays the character map of the font, and shows a spinner
         while the character map is being displayed.
         """
-        # Start the spinner
-        self.spinner_charmaps.start()
-
-        model, treeiter = selection.get_selected()
-        if treeiter is not None:
-            font_name = model[treeiter][0]
+        font_name, user_added = self.get_selected_font_info()
+        if font_name is not None:
             self.font_description = Pango.FontDescription.from_string(font_name)
 
             # Show the remove button only for the fonts that have been added by the user
-            _, user_added = self.font_charmaps[font_name]
             self.remove_button.set_sensitive(user_added)
 
             self.label.override_font(self.font_description)
             self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
             # Get the charmap and user_added flag for the selected font
-            font_charmap, user_added = self.font_charmaps[font_name]
+            font_charmap, _ = self.font_charmaps[font_name]
 
             # Gives more info about selected font
             self.info_button.set_sensitive(True)
@@ -204,13 +242,6 @@ class MainWindow:
             font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
-
-            GLib.idle_add(self.display_charmap)
-
-
-    def display_charmap(self):
-        self.spinner_charmaps.stop()
-        self.stack_map.set_visible_child_name("page_charmap")
 
 
     def update_fonts_list(self):
@@ -411,6 +442,14 @@ class MainWindow:
             dialog.destroy()
 
         dialog.connect("response", on_response)
+
+
+    def on_key_press_event(self, widget, event):
+        keyname = Gdk.keyval_name(event.keyval)
+        if keyname == "Delete":
+            _, user_added = self.get_selected_font_info()
+            if user_added:
+                self.on_remove_button_clicked(None)
 
 
     def delete_font_file(self, font_name):
