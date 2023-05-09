@@ -413,11 +413,13 @@
                           <object class="GtkBox" id="left_scrolled_box">
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
+                            <property name="margin-right">5</property>
                             <property name="orientation">vertical</property>
                             <child>
                               <object class="GtkSearchEntry" id="search_entry">
                                 <property name="visible">True</property>
                                 <property name="can-focus">True</property>
+                                <property name="shadow-type">etched-in</property>
                                 <property name="primary-icon-name">edit-find-symbolic</property>
                                 <property name="primary-icon-activatable">False</property>
                                 <property name="primary-icon-sensitive">False</property>
@@ -426,6 +428,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
+                                <property name="padding">1</property>
                                 <property name="position">0</property>
                               </packing>
                             </child>
@@ -483,7 +486,6 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
-                                    <property name="padding">5</property>
                                     <property name="position">0</property>
                                   </packing>
                                 </child>
@@ -505,6 +507,7 @@
                                   <packing>
                                     <property name="expand">False</property>
                                     <property name="fill">True</property>
+                                    <property name="padding">5</property>
                                     <property name="position">1</property>
                                   </packing>
                                 </child>
@@ -551,6 +554,7 @@
                       <object class="GtkBox" id="right_box">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
+                        <property name="margin-bottom">5</property>
                         <property name="orientation">vertical</property>
                         <property name="homogeneous">True</property>
                         <child>
@@ -566,18 +570,6 @@
                                   <object class="GtkStack" id="stack_map">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
-                                    <child>
-                                      <object class="GtkSpinner" id="spinner_charmaps">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="halign">center</property>
-                                        <property name="valign">center</property>
-                                        <property name="active">True</property>
-                                      </object>
-                                      <packing>
-                                        <property name="name">page_spinner_map</property>
-                                      </packing>
-                                    </child>
                                     <child>
                                       <object class="GtkLabel" id="charmaps_label">
                                         <property name="visible">True</property>
@@ -599,7 +591,6 @@
                                       <packing>
                                         <property name="name">page_charmap</property>
                                         <property name="title" translatable="yes">page_charmap</property>
-                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -638,6 +629,7 @@
                       <object class="GtkScrolledWindow" id="bottom_scrolled">
                         <property name="visible">True</property>
                         <property name="can-focus">True</property>
+                        <property name="shadow-type">etched-in</property>
                         <property name="min-content-height">120</property>
                         <child>
                           <object class="GtkViewport">
@@ -688,6 +680,7 @@
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
+                            <property name="padding">5</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -695,6 +688,7 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
+                        <property name="padding">5</property>
                         <property name="position">2</property>
                       </packing>
                     </child>
@@ -709,6 +703,53 @@
               </object>
               <packing>
                 <property name="name">page_list</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox" id="ulakbim_signature">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="margin-left">34</property>
+                <property name="margin-right">34</property>
+                <property name="margin-start">34</property>
+                <property name="margin-end">34</property>
+                <property name="margin-top">21</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkLabel" id="ulakbim_signature_label">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="opacity">0.50196078431372548</property>
+                <property name="margin-top">5</property>
+                <property name="margin-bottom">5</property>
+                <property name="label">©TÜBİTAK ULAKBİM | 2023</property>
+                <attributes>
+                  <attribute name="size" value="10000"/>
+                </attributes>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="pack-type">end</property>
                 <property name="position">1</property>
               </packing>
             </child>
