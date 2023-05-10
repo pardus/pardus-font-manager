@@ -14,48 +14,52 @@ from threading import Thread
 class MainWindow:
 
     def __init__(self, app):
-
-        # Create the builder and load the Glade file
+        # Glade file handling and builder setup
         self.builder = Gtk.Builder()
         glade_file = os.path.dirname(os.path.abspath(__file__)) + "/../ui/MainWindow.glade"
-
         self.builder.add_from_file(glade_file)
-
-        # Connect signals from the Glade file to the methods in this class
         self.builder.connect_signals(self)
 
-        # Get window and set properties
+        # Window setup
         self.window = self.builder.get_object("window")
         self.window.set_border_width(10)
 
+        # Font charmap setup and sample text
         self.font_charmaps = []
         self.sample_text = "The quick brown fox jumps over the lazy dog."
 
-        # Get widgets from the Glade file
+        # Widget extraction from Glade file
+        # Top-level widgets
         top_box = self.builder.get_object("top_box")
         vbox = self.builder.get_object("vbox")
         hbox = self.builder.get_object("hbox")
+
+        # Buttons and dialog
         self.menu_button = self.builder.get_object("menu_button")
-        self.left_scrolled = self.builder.get_object("left_scrolled")
-        self.left_scrolled_box = self.builder.get_object("left_scrolled_box")
-        self.search_entry = self.builder.get_object("search_entry")
-        self.entry = self.builder.get_object("entry")
-        self.stack_start = self.builder.get_object("stack_start")
-        self.stack_map = self.builder.get_object("stack_map")
-        self.page_charmap = self.builder.get_object("page_charmap")
-        self.page_list = self.builder.get_object("page_list")
-        self.spinner_start = self.builder.get_object("spinner_start")
         self.add_button = self.builder.get_object("add_button")
         self.try_button = self.builder.get_object("try_button")
         self.info_button = self.builder.get_object("info_button")
+        self.ok_button = self.builder.get_object("ok_button")
+        self.cancel_button = self.builder.get_object("cancel_button")
+        self.info_dialog = self.builder.get_object("info_dialog")
+
+        # Label and entry widgets
+        self.search_entry = self.builder.get_object("search_entry")
+        self.entry = self.builder.get_object("entry")
         self.charmaps_label = self.builder.get_object("charmaps_label")
         self.label = self.builder.get_object("label_entry")
         self.font_name_label = self.builder.get_object("font_name_label")
         self.font_size_label = self.builder.get_object("font_size_label")
         self.font_color_label = self.builder.get_object("font_color_label")
-        self.ok_button = self.builder.get_object("ok_button")
-        self.cancel_button = self.builder.get_object("cancel_button")
-        self.info_dialog = self.builder.get_object("info_dialog")
+
+        # Additional widgets
+        self.left_scrolled = self.builder.get_object("left_scrolled")
+        self.left_scrolled_box = self.builder.get_object("left_scrolled_box")
+        self.stack_start = self.builder.get_object("stack_start")
+        self.stack_map = self.builder.get_object("stack_map")
+        self.page_charmap = self.builder.get_object("page_charmap")
+        self.page_list = self.builder.get_object("page_list")
+        self.spinner_start = self.builder.get_object("spinner_start")
         self.color_button = self.builder.get_object("color_button")
         self.spin_button = self.builder.get_object("spin_button")
         self.size_spin_button = self.builder.get_object("size_spin_button")
@@ -65,20 +69,15 @@ class MainWindow:
         self.title_box = self.builder.get_object("title_box")
         self.mlozturk = self.builder.get_object("mlozturk")
         self.fonts_view = self.builder.get_object("fonts_view")
-        # self.title_header = self.builder.get_object("title_header")
-        # self.settings_button = self.builder.get_object("settings_button")
-        # self.about_button = self.builder.get_object("about_button")
 
-        # self.window.set_titlebar(self.title_header)
-
+        # Adjustment setup for size_spin_button
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
         self.size_spin_button.set_adjustment(adjustment)
 
-        self.menu_button.set_sensitive(False)
-
+        # Start spinner
         self.spinner_start.start()
 
-        # Connect signals to widget methods
+        # Signal connection for widgets
         self.search_entry.connect("changed", self.on_search_entry_changed)
         self.entry.connect("changed", self.update_sample_text)
         self.entry.connect("activate", self.update_sample_text)
@@ -87,29 +86,36 @@ class MainWindow:
         self.remove_button.connect("clicked", self.on_remove_button_clicked)
         self.increase_button.connect("clicked", self.on_increase_button_clicked)
         self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
+
+        # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
 
-        # Create and populate the fonts list
+        # Fonts list and TreeView setup
         self.fonts_list = Gtk.ListStore(str)
-
-        # Create and set up the TreeView for the fonts list
         self.fonts_view.set_headers_visible(False)
         self.fonts_view.set_model(self.fonts_list)
         self.fonts_view.append_column(Gtk.TreeViewColumn("Fonts", Gtk.CellRendererText(), text=0))
         self.fonts_view.get_selection().connect("changed", self.on_font_selected)
         self.fonts_view.connect("key-press-event", self.on_key_press_event)
 
+        # Window display
         self.window.show_all()
+
+        # Threading setup for worker function
         p1 = threading.Thread(target=self.worker)
         p1.daemon = True
         p1.start()
 
+        # Button sensitivity setup
+        self.menu_button.set_sensitive(False)
         self.info_button.set_sensitive(False)
-        self.remove_button.set_sensitive(False)
-        self.font_description = None
         self.info_button.set_visible(False)
+        self.remove_button.set_sensitive(False)
 
-        # Set window properties
+        # Font description initialization
+        self.font_description = None
+
+        # Window properties setup
         self.window.set_title("Pardus Font Manager")
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
@@ -239,7 +245,7 @@ class MainWindow:
             self.info_button.set_sensitive(True)
 
             # Update the UI to show the character map
-            font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
+            font_charmap_string = '   '.join(font_charmap)
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
 
@@ -401,9 +407,6 @@ class MainWindow:
         This function is called when the info button is clicked.
         It creates a new dialog with a font size spin button.
         """
-        # self.info_dialog.set_title("Font Info")
-        # self.info_dialog.run()
-        # self.info_dialog.hide()
 
         dialog = Gtk.Dialog(title="Font Info", parent=self.window, flags=0)
         dialog.set_default_size(300, 300)

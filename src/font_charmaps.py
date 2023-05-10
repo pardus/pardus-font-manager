@@ -37,7 +37,8 @@ def get_font_charmaps(font_file_path):
         with TTFont(font_file_path) as font:
             charmap = font.getBestCmap()
             font_name = font['name'].getName(1, 3, 1, 1033).toUnicode()
-            char_list = [chr(code) for code in charmap.keys()]
+            # Check if each character is printable
+            char_list = [chr(code) for code in charmap.keys() if chr(code).isprintable()]
             return {font_name: char_list}
     except Exception as e:
         print(f'Error: failed to load font file "{font_file_path}": {e}')
