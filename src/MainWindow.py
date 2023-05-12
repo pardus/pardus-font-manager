@@ -55,6 +55,7 @@ class MainWindow:
         # Additional widgets
         self.left_scrolled = self.builder.get_object("left_scrolled")
         self.left_scrolled_box = self.builder.get_object("left_scrolled_box")
+        self.right_scrolled = self.builder.get_object("right_scrolled")
         self.stack_start = self.builder.get_object("stack_start")
         self.stack_map = self.builder.get_object("stack_map")
         self.page_charmap = self.builder.get_object("page_charmap")
@@ -69,6 +70,11 @@ class MainWindow:
         self.title_box = self.builder.get_object("title_box")
         self.mlozturk = self.builder.get_object("mlozturk")
         self.fonts_view = self.builder.get_object("fonts_view")
+        self.menu_popover = self.builder.get_object("menu_popover")
+        self.menu_about = self.builder.get_object("menu_about")
+
+        self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
+        self.dialog_font_manager.set_program_name(("Pardus Font Manager"))
 
         # Adjustment setup for size_spin_button
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
@@ -86,6 +92,7 @@ class MainWindow:
         self.remove_button.connect("clicked", self.on_remove_button_clicked)
         self.increase_button.connect("clicked", self.on_increase_button_clicked)
         self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
+        self.menu_about.connect("clicked", self.on_menu_about_clicked)
 
         # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
@@ -114,6 +121,7 @@ class MainWindow:
 
         # Font description initialization
         self.font_description = None
+        self.CHARMAP_CHUNK_SIZE = 10000
 
         # Window properties setup
         self.window.set_title("Pardus Font Manager")
@@ -147,6 +155,12 @@ class MainWindow:
             self.font_description.set_size(new_size * Pango.SCALE)
             self.label.override_font(self.font_description)
             self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
+
+
+    def on_menu_about_clicked(self, button):
+        self.menu_popover.popdown()
+        self.dialog_font_manager.run()
+        self.dialog_font_manager.hide()
 
 
     def on_search_entry_changed(self, search_entry):
