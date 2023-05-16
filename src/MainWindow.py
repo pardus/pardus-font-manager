@@ -259,7 +259,7 @@ class MainWindow:
             self.info_button.set_sensitive(True)
 
             # Update the UI to show the character map
-            font_charmap_string = '   '.join(font_charmap)
+            font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
 
