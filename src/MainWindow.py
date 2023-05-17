@@ -119,6 +119,7 @@ class MainWindow:
         self.info_button.set_visible(False)
         self.remove_button.set_sensitive(False)
 
+
         # Font description initialization
         self.font_description = None
         self.CHARMAP_CHUNK_SIZE = 10000
@@ -401,9 +402,8 @@ class MainWindow:
         font_charmap = []
         with open(filepath, 'rb') as f:
             ttfont = TTFont(f)
-            for cmap in ttfont['cmap'].tables:
-                if cmap.isUnicode():
-                    font_charmap.extend(chr(k) for k in cmap.cmap.keys())
+            cmap = ttfont.getBestCmap()
+            font_charmap = [chr(code) for code in cmap.keys()]
         return font_charmap
 
 
