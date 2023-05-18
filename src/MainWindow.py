@@ -42,6 +42,7 @@ class MainWindow:
         self.ok_button = self.builder.get_object("ok_button")
         self.cancel_button = self.builder.get_object("cancel_button")
         self.info_dialog = self.builder.get_object("info_dialog")
+        self.more_button = self.builder.get_object("more_button")
 
         # Label and entry widgets
         self.search_entry = self.builder.get_object("search_entry")
@@ -93,6 +94,7 @@ class MainWindow:
         self.increase_button.connect("clicked", self.on_increase_button_clicked)
         self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
         self.menu_about.connect("clicked", self.on_menu_about_clicked)
+        self.more_button.connect("clicked", self.on_more_button_clicked)
 
         # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
@@ -113,16 +115,18 @@ class MainWindow:
         p1.daemon = True
         p1.start()
 
-        # Button sensitivity setup
+        # Button sensitivity and visibility setup
         self.menu_button.set_sensitive(False)
         self.info_button.set_sensitive(False)
         self.info_button.set_visible(False)
         self.remove_button.set_sensitive(False)
+        self.more_button.set_visible(False)
 
 
         # Font description initialization
         self.font_description = None
-        self.CHARMAP_CHUNK_SIZE = 10000
+        self.char_display_limit = 5000
+        self.c_count = False
 
         # Window properties setup
         self.window.set_title("Pardus Font Manager")
@@ -179,8 +183,8 @@ class MainWindow:
             return
 
         # Filter the font list by matching the search string with the font names
-        filtered_fonts = [(font_name, charmaps) for font_name,
-                        charmaps in self.font_charmaps.items() if search_text in font_name.lower()]
+        filtered_fonts = [(font_name, charmaps) for font_name, (charmaps, _, _) in self.font_charmaps.items() if search_text in font_name.lower()]
+
 
         # Clear the current list of fonts
         self.fonts_list.clear()
@@ -192,13 +196,28 @@ class MainWindow:
 
 
     def get_selected_font_info(self):
+        """
+        Get the font name and user_added status of the selected font.
+
+        Returns:
+            The font name as a string and user_added status as a boolean.
+        """
         selection = self.fonts_view.get_selection()
         model, treeiter = selection.get_selected()
         if treeiter is not None:
             font_name = model[treeiter][0]
-            _, user_added = self.font_charmaps[font_name]
-            return font_name, user_added
-        return None, False
+            # Get the charmap, charmap count, and user_added flag for the selected font
+            _, charmap_count, user_added = self.font_charmaps[font_name]
+            if charmap_count > 10000:
+                print(f"The character map of the font '{font_name}' contains more than 10,000 characters.")
+                self.more_button.set_visible(True)
+                self.c_count = True
+            else:
+                self.more_button.set_visible(False)
+                self.c_count = False
+
+            return font_name, user_added, self.c_count
+        return None, None, False
 
 
     # def on_font_selected(self, selection):
@@ -243,7 +262,9 @@ class MainWindow:
         displays the character map of the font, and shows a spinner
         while the character map is being displayed.
         """
-        font_name, user_added = self.get_selected_font_info()
+        font_name, user_added, self.c_count = self.get_selected_font_info()
+        # Reset the display limit
+        self.char_display_limit = 5000
         if font_name is not None:
             self.font_description = Pango.FontDescription.from_string(font_name)
 
@@ -253,16 +274,43 @@ class MainWindow:
             self.label.override_font(self.font_description)
             self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
-            # Get the charmap and user_added flag for the selected font
-            font_charmap, _ = self.font_charmaps[font_name]
+            # Get the charmap, char_map_count and user_added flag for the selected font
+            font_charmap, _, _ = self.font_charmaps[font_name]
 
             # Gives more info about selected font
             self.info_button.set_sensitive(True)
 
             # Update the UI to show the character map
+            # If the character count is more than 10,000, show only the first 10,000 characters
+            if self.c_count:
+                font_charmap = font_charmap[:self.char_display_limit]
+
             font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
+
+
+    def on_more_button_clicked(self, button):
+        """
+        This function handles the clicking of the "more" button by the user.
+        It increases the character display limit by 10,000 and updates the character map of the currently selected font.
+        """
+        # Increase the display limit
+        self.char_display_limit += 5000
+
+        # Get the currently selected font name
+        font_name, _, _ = self.get_selected_font_info()
+
+        # Get the charmap for the selected font
+        font_charmap, _, _ = self.font_charmaps[font_name]
+
+        # Trim the charmap to the current display limit
+        font_charmap = font_charmap[:self.char_display_limit]
+
+        # Update the UI to show the character map
+        font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
+        self.charmaps_label.override_font(self.font_description)
+        self.charmaps_label.set_text(font_charmap_string)
 
 
     def update_fonts_list(self):
@@ -383,7 +431,7 @@ class MainWindow:
             # Add the font and its charmaps to the dictionary
             font_filename = os.path.basename(filepath)
             font_name, _ = os.path.splitext(font_filename)
-            self.font_charmaps[font_name] = (font_charmap, True)  # Set user_added to True
+            self.font_charmaps[font_name] = (font_charmap, len(font_charmap), True)
 
             self.update_fonts_list()  # Change: Update the UI to show the new font in the list
 

@@ -38,7 +38,8 @@ def get_font_charmaps(font_file_path):
             charmap = font.getBestCmap()
             font_name = font['name'].getName(1, 3, 1, 1033).toUnicode()
             char_list = [chr(code) for code in charmap.keys()]
-            return {font_name: char_list}
+            charmap_count = len(char_list)  # Get the charmap count
+            return {font_name: (char_list, charmap_count)}  # Return charmap and its count
     except Exception as e:
         print(f'Error: failed to load font file "{font_file_path}": {e}')
         return {}
@@ -57,14 +58,12 @@ def get_fonts_charmaps():
     font_charmaps = {}
     font_paths = get_font_paths()
     for font_path in font_paths:
-        # Generate an iterator of font file names in the given font directory path,
-        # filtered to include only files with '.ttf' or '.otf' extensions.
         font_files = (f for f in os.listdir(font_path) if any(f.endswith(extension) for extension in ('.ttf', '.otf')))
         for filename in font_files:
             font_file_path = os.path.join(font_path, filename)
             charmaps = get_font_charmaps(font_file_path)
             user_added = font_file_path.startswith('/home')
-            charmaps.update({font_name: (char_list, user_added)
-                              for font_name, char_list in charmaps.items()})
+            charmaps.update({font_name: (char_list, charmap_count, user_added)
+                              for font_name, (char_list, charmap_count) in charmaps.items()})
             font_charmaps.update(charmaps)
     return font_charmaps
