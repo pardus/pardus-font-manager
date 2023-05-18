@@ -35,14 +35,18 @@ def get_font_charmaps(font_file_path):
     """
     try:
         with TTFont(font_file_path) as font:
-            charmap = font.getBestCmap()
             font_name = font['name'].getName(1, 3, 1, 1033).toUnicode()
-            char_list = [chr(code) for code in charmap.keys()]
+            font_charmap = set()
+            for table in font['cmap'].tables:
+                for code in table.cmap.keys():
+                    font_charmap.add(chr(code))
+            char_list = list(font_charmap)
             charmap_count = len(char_list)  # Get the charmap count
             return {font_name: (char_list, charmap_count)}  # Return charmap and its count
     except Exception as e:
         print(f'Error: failed to load font file "{font_file_path}": {e}')
         return {}
+
 
 
 def get_fonts_charmaps():
