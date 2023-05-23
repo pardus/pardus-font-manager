@@ -209,7 +209,7 @@ class MainWindow:
             # Get the charmap, charmap count, and user_added flag for the selected font
             _, charmap_count, user_added = self.font_charmaps[font_name]
             if charmap_count > self.char_display_limit:
-                print(f"The character map of the font '{font_name}' contains more than 10,000 characters.")
+                print(f"The character map of the font '{font_name}' contains more than {self.char_display_limit} characters.")
                 self.more_button.set_visible(True)
                 self.c_count = True
             else:
@@ -285,7 +285,8 @@ class MainWindow:
             if self.c_count:
                 font_charmap = font_charmap[:self.char_display_limit]
 
-            font_charmap_string = '   '.join([char for char in font_charmap])
+            # font_charmap_string = '   '.join([char for char in font_charmap])
+            font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
 
@@ -308,7 +309,7 @@ class MainWindow:
         font_charmap = font_charmap[:self.char_display_limit]
 
         # Update the UI to show the character map
-        font_charmap_string = '   '.join([char for char in font_charmap])
+        font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
         self.charmaps_label.override_font(self.font_description)
         self.charmaps_label.set_text(font_charmap_string)
 
@@ -447,13 +448,12 @@ class MainWindow:
 
 
     def read_charmaps(self, filepath):
-        font_charmap = set()
+        font_charmap = []
         with open(filepath, 'rb') as f:
             ttfont = TTFont(f)
-            for table in ttfont['cmap'].tables:
-                for code in table.cmap.keys():
-                    font_charmap.add(chr(code))
-        return list(font_charmap)
+            cmap = ttfont.getBestCmap()
+            font_charmap = [chr(code) for code in cmap.keys()]
+        return font_charmap
 
 
     def update_sample_text(self, widget):
