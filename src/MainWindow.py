@@ -125,7 +125,7 @@ class MainWindow:
 
         # Font description initialization
         self.font_description = None
-        self.char_display_limit = 5000
+        self.char_display_limit = 2000
         self.c_count = False
 
         # Window properties setup
@@ -222,6 +222,25 @@ class MainWindow:
         return None, None, False
 
 
+    def get_remaining_elements(self, lst):
+        """
+        This function takes a list of strings as input and returns a new list
+        containing all the elements from the input list starting from the first
+        element that doesn't start with any whitespace or carriage return characters ('\r', ' '),
+        and skipping any elements that start with the same character(s)
+        as the first non-whitespace element.
+        """
+        first_element = [e for e in lst[0] if e not in ('\r', ' ')]
+        remaining_elements = []
+        for i in range(1, len(lst)):
+            if lst[i][0] in first_element:
+                continue
+            else:
+                remaining_elements = lst[i:]
+                break
+        return remaining_elements
+
+
     def on_font_selected(self, selection):
         """
         This function handles the selection of a font by the user.
@@ -232,7 +251,7 @@ class MainWindow:
         """
         font_name, user_added, self.c_count = self.get_selected_font_info()
         # Reset the display limit
-        self.char_display_limit = 5000
+        self.char_display_limit = 2000
         if font_name is not None:
             self.font_description = Pango.FontDescription.from_string(font_name)
 
@@ -253,8 +272,17 @@ class MainWindow:
             if self.c_count:
                 font_charmap = font_charmap[:self.char_display_limit]
 
-            # font_charmap_string = '   '.join([char for char in font_charmap])
-            font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
+
+
+            # This section was added due to the problem of listing charmaps of fonts that
+            # contain spaces or similar characters in charmaps in charmaps
+            font_charmap_without_gap = self.get_remaining_elements(font_charmap)
+            font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
+
+            # # # font_charmap_string = '   '.join([char for char in font_charmap])
+            # # font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
+            # font_charmap_string = '   '.join([char for char in font_charmap if not char.isspace()])
+
             self.charmaps_label.override_font(self.font_description)
             self.charmaps_label.set_text(font_charmap_string)
 
@@ -265,7 +293,7 @@ class MainWindow:
         It increases the character display limit by 10,000 and updates the character map of the currently selected font.
         """
         # Increase the display limit
-        self.char_display_limit += 5000
+        self.char_display_limit += 2000
 
         # Get the currently selected font name
         font_name, _, _ = self.get_selected_font_info()
@@ -276,8 +304,11 @@ class MainWindow:
         # Trim the charmap to the current display limit
         font_charmap = font_charmap[:self.char_display_limit]
 
+        font_charmap_without_gap = self.get_remaining_elements(font_charmap)
+        font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
+
         # Update the UI to show the character map
-        font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
+        # font_charmap_string = '   '.join([char for char in font_charmap])
         self.charmaps_label.override_font(self.font_description)
         self.charmaps_label.set_text(font_charmap_string)
 
