@@ -1,30 +1,27 @@
 import os
 import subprocess
-from fontTools.ttLib import TTFont
+import re
 
 
 def get_font_paths():
     """
-    Try to get the font paths using `fc-list`, and return them as a set.
+    Try to get the font file paths using `fc-list`, and return them as a set.
     If `fc-list` fails, use a default set of font paths.
 
     Returns:
-        A set of font paths.
+        A set of file paths.
     """
     try:
-        # Get font file paths from `fc-list` command output and convert to set
         font_output = subprocess.check_output(['fc-list', ':', '-f', '%{file}\n'])
-        font_paths = set(os.path.dirname(line.strip().decode('utf-8')) for line in font_output.split(b'\n') if line.strip())
+        font_files = {line.strip().decode('utf-8') for line in font_output.split(b'\n') if line.strip()}
     except subprocess.CalledProcessError:
-        # If `fc-list` fails, use default font paths
-        font_paths = ['/usr/share/fonts', '/usr/local/share/fonts', os.path.expanduser('~/.fonts')]
-
-    return font_paths
+        font_files = set()
+    return font_files
 
 
 def get_font_charmaps(font_file_path):
     """
-    Load a font file using `TTFont`, extract its name and character maps, and return them as a dictionary.
+    Extract font's character maps using `fc-query`, and return them as a dictionary.
     If loading the font file fails, return an empty dictionary.
 
     Args:
@@ -34,12 +31,25 @@ def get_font_charmaps(font_file_path):
         A dictionary containing the font name as the key and a list of characters as the value.
     """
     try:
-        with TTFont(font_file_path) as font:
-            charmap = font.getBestCmap()
-            font_name = font['name'].getName(1, 3, 1, 1033).toUnicode()
-            char_list = [chr(code) for code in charmap.keys()]
-            charmap_count = len(char_list)  # Get the charmap count
-            return {font_name: (char_list, charmap_count)}  # Return charmap and its count
+        result = subprocess.run(['fc-query', '--format=%{family[0]}: %{charset}\n', font_file_path],
+                                stdout=subprocess.PIPE, text=True)
+        output = result.stdout.split(':', 1)
+        if len(output) < 2:
+            raise Exception('Failed to extract font name and charmap')
+        font_name = output[0].strip()
+        charmap_raw = output[1]
+
+        charmap = []
+        for range_str in re.findall(r'([0-9a-fA-F]+)-?([0-9a-fA-F]+)?', charmap_raw):
+            start, end = range_str
+            start = int(start, 16)
+            end = int(end, 16) if end else start
+            for i in range(start, min(end, 0x110000) + 1):
+                charmap.append(chr(i))
+
+        charmap_count = len(charmap)
+        return {font_name: (charmap, charmap_count)}
+
     except Exception as e:
         print(f'Error: failed to load font file "{font_file_path}": {e}')
         return {}
@@ -58,10 +68,8 @@ def get_fonts_charmaps():
     """
     font_charmaps = {}
     font_paths = get_font_paths()
-    for font_path in font_paths:
-        font_files = (f for f in os.listdir(font_path) if any(f.endswith(extension) for extension in ('.ttf', '.otf')))
-        for filename in font_files:
-            font_file_path = os.path.join(font_path, filename)
+    for font_file_path in font_paths:
+        if os.path.isfile(font_file_path) and font_file_path.endswith(('.ttf', '.otf')):
             charmaps = get_font_charmaps(font_file_path)
             user_added = font_file_path.startswith('/home')
             charmaps.update({font_name: (char_list, charmap_count, user_added)

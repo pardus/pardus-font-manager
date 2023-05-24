@@ -5,7 +5,7 @@ gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Pango, Gdk, GLib
 import subprocess
 import shutil
-from fontTools.ttLib import TTFont
+import re
 from font_charmaps import get_fonts_charmaps
 import threading
 from threading import Thread
@@ -208,8 +208,10 @@ class MainWindow:
             font_name = model[treeiter][0]
             # Get the charmap, charmap count, and user_added flag for the selected font
             _, charmap_count, user_added = self.font_charmaps[font_name]
+            # print(f"CHARMAP for '{font_name}' -------------")
+            # print(self.font_charmaps[font_name])
             if charmap_count > self.char_display_limit:
-                print(f"The character map of the font '{font_name}' contains more than {self.char_display_limit} characters.")
+                print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
                 self.more_button.set_visible(True)
                 self.c_count = True
             else:
@@ -218,40 +220,6 @@ class MainWindow:
 
             return font_name, user_added, self.c_count
         return None, None, False
-
-
-    # def on_font_selected(self, selection):
-    #     """
-    #     This function handles the selection of a font by the user.
-    #     It gets the selected font from the font selection dialog,
-    #     sets the font description of the label to the selected font,
-    #     displays the character map of the font, and shows a spinner
-    #     while the character map is being displayed.
-    #     """
-    #     model, treeiter = selection.get_selected()
-    #     if treeiter is not None:
-    #         font_name = model[treeiter][0]
-    #         self.font_description = Pango.FontDescription.from_string(font_name)
-
-    #         # Show the remove button only for the fonts that have been added by the user
-    #         _, user_added = self.font_charmaps[font_name]
-    #         self.remove_button.set_sensitive(user_added)
-
-    #         self.label.override_font(self.font_description)
-    #         self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
-
-    #         # Get the charmap and user_added flag for the selected font
-    #         font_charmap, user_added = self.font_charmaps[font_name]
-
-    #         # Gives more info about selected font
-    #         self.info_button.set_sensitive(True)
-
-    #         # Update the UI to show the character map
-    #         font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
-    #         self.charmaps_label.override_font(self.font_description)
-    #         self.charmaps_label.set_text(font_charmap_string)
-
-    #         GLib.idle_add(self.display_charmap)
 
 
     def on_font_selected(self, selection):
@@ -280,8 +248,8 @@ class MainWindow:
             # Gives more info about selected font
             self.info_button.set_sensitive(True)
 
-            # Update the UI to show the character map
-            # If the character count is more than 10,000, show only the first 10,000 characters
+            # If the character count is more than char_display_limit,
+            # show only the first char_display_limit characters
             if self.c_count:
                 font_charmap = font_charmap[:self.char_display_limit]
 
@@ -378,39 +346,6 @@ class MainWindow:
             dialog.destroy()
             return
 
-        # try:
-        #     filepath = dialog.get_filename()
-
-        #     # Create the .fonts directory if it doesn't exist
-        #     os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
-
-        #     # Copy the font file to ~/.fonts
-        #     shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
-
-        #     # Update the font cache
-        #     subprocess.run(["fc-cache", "-f", "-v"], capture_output=True)
-        #     subprocess.run(["fc-cache", "-f", "-v", "-r"], capture_output=True)
-
-        #     # Read the charmaps for the new font
-        #     font_charmap = []
-        #     with open(filepath, 'rb') as f:
-        #         ttfont = TTFont(f)
-        #         for cmap in ttfont['cmap'].tables:
-        #             if cmap.isUnicode():
-        #                 font_charmap.extend(chr(k) for k in cmap.cmap.keys())
-
-        #     # Add the font and its charmaps to the dictionary
-        #     font_filename = os.path.basename(filepath)
-        #     font_name, _ = os.path.splitext(font_filename)
-        #     self.font_charmaps[font_name] = (font_charmap, True)  # Set user_added to True
-
-
-        #     self.update_fonts_list()  # Change: Update the UI to show the new font in the list
-
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-
-        # dialog.destroy()
         try:
             filepath = dialog.get_filename()
 
@@ -433,8 +368,8 @@ class MainWindow:
             font_filename = os.path.basename(filepath)
             font_name, _ = os.path.splitext(font_filename)
             self.font_charmaps[font_name] = (font_charmap, len(font_charmap), True)
-
-            self.update_fonts_list()  # Change: Update the UI to show the new font in the list
+            # Update the UI to show the new font in the list
+            self.update_fonts_list()
 
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -448,11 +383,22 @@ class MainWindow:
 
 
     def read_charmaps(self, filepath):
-        font_charmap = []
-        with open(filepath, 'rb') as f:
-            ttfont = TTFont(f)
-            cmap = ttfont.getBestCmap()
-            font_charmap = [chr(code) for code in cmap.keys()]
+
+        def get_charmap(font_path):
+            result = subprocess.run(['fc-query', '--format=%{charset}\n', font_path], stdout=subprocess.PIPE, text=True)
+            charmap_raw = result.stdout
+
+            charmap = []
+            for range_str in re.findall(r'([0-9a-fA-F]+)-?([0-9a-fA-F]+)?', charmap_raw):
+                start, end = range_str
+                start = int(start, 16)
+                end = int(end, 16) if end else start
+                for i in range(start, min(end, 0x110000) + 1):
+                    charmap.append(chr(i))
+
+            return charmap
+
+        font_charmap = get_charmap(filepath)
         return font_charmap
 
 
