@@ -43,6 +43,7 @@ class MainWindow:
         self.cancel_button = self.builder.get_object("cancel_button")
         self.info_dialog = self.builder.get_object("info_dialog")
         self.more_button = self.builder.get_object("more_button")
+        self.bottomerrorbutton = self.builder.get_object("bottomerrorbutton")
 
         # Label and entry widgets
         self.search_entry = self.builder.get_object("search_entry")
@@ -52,6 +53,7 @@ class MainWindow:
         self.font_name_label = self.builder.get_object("font_name_label")
         self.font_size_label = self.builder.get_object("font_size_label")
         self.font_color_label = self.builder.get_object("font_color_label")
+        self.bottom_error_label = self.builder.get_object("bottom_error_label")
 
         # Additional widgets
         self.left_scrolled = self.builder.get_object("left_scrolled")
@@ -73,6 +75,9 @@ class MainWindow:
         self.fonts_view = self.builder.get_object("fonts_view")
         self.menu_popover = self.builder.get_object("menu_popover")
         self.menu_about = self.builder.get_object("menu_about")
+        self.bottom_revealer = self.builder.get_object("bottom_revealer")
+        self.bottom_stack = self.builder.get_object("bottom_stack")
+        self.bottom_progressbar = self.builder.get_object("bottom_progressbar")
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
         self.dialog_font_manager.set_program_name(("Pardus Font Manager"))
@@ -95,6 +100,7 @@ class MainWindow:
         self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
         self.menu_about.connect("clicked", self.on_menu_about_clicked)
         self.more_button.connect("clicked", self.on_more_button_clicked)
+        self.bottomerrorbutton.connect("clicked", self.on_bottomerrorbutton_clicked)
 
         # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
@@ -121,6 +127,9 @@ class MainWindow:
         self.info_button.set_visible(False)
         self.remove_button.set_sensitive(False)
         self.more_button.set_visible(False)
+        self.bottomerrorbutton.set_visible(False)
+
+        self.errormessage = ""
 
 
         # Font description initialization
@@ -138,6 +147,8 @@ class MainWindow:
         # self.font_charmaps = get_fonts_charmaps()
         self.update_fonts_list()
         self.set_page()
+        # self.bottomrevealer.set_transition_type(Gtk.StackTransitionType.SLIDE_UP)
+        # self.bottomrevealer.set_transition_duration(200)
 
 
     def set_page(self):
@@ -153,6 +164,10 @@ class MainWindow:
     def on_size_spin_button_value_changed(self, spin_button):
         new_font_size = spin_button.get_value_as_int()
         self.update_sample_text_size(new_font_size)
+
+
+    def on_bottomerrorbutton_clicked(self, button):
+        self.bottom_revealer.set_reveal_child(False)
 
 
     def update_sample_text_size(self, new_size):
@@ -211,12 +226,18 @@ class MainWindow:
             # print(f"CHARMAP for '{font_name}' -------------")
             # print(self.font_charmaps[font_name])
             if charmap_count > self.char_display_limit:
-                print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
+                # print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
+                self.errormessage = (f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters, click the button for the rest of the characters.")
                 self.more_button.set_visible(True)
                 self.c_count = True
+                self.bottom_revealer.set_reveal_child(True)
+                self.bottom_stack.set_visible_child_name("error")
+                self.bottom_error_label.set_markup("<span color='green'>{}</span>".format(self.errormessage))
             else:
                 self.more_button.set_visible(False)
                 self.c_count = False
+                self.bottom_revealer.set_reveal_child(False)
+
 
             return font_name, user_added, self.c_count
         return None, None, False
@@ -230,7 +251,7 @@ class MainWindow:
         and skipping any elements that start with the same character(s)
         as the first non-whitespace element.
         """
-        first_element = [e for e in lst[0] if e not in ('\r', ' ')]
+        first_element = [e for e in lst[0] if e not in ('\r', ' ', '\\u')]
         remaining_elements = []
         for i in range(1, len(lst)):
             if lst[i][0] in first_element:
@@ -305,7 +326,7 @@ class MainWindow:
         font_charmap = font_charmap[:self.char_display_limit]
 
         font_charmap_without_gap = self.get_remaining_elements(font_charmap)
-        font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
+        font_charmap_string = '    '.join([char for char in font_charmap_without_gap if char != ' '])
 
         # Update the UI to show the character map
         # font_charmap_string = '   '.join([char for char in font_charmap])
@@ -380,6 +401,20 @@ class MainWindow:
         try:
             filepath = dialog.get_filename()
 
+            font_filename = os.path.basename(filepath)
+            font_name, _ = os.path.splitext(font_filename)
+
+            # Check if the font is already in the font_charmaps dictionary
+            if font_name in self.font_charmaps:
+                # Font is already installed, show warning message in revealer
+                self.errormessage = (f"The font '{font_name}' is already installed!")
+                self.bottom_revealer.set_reveal_child(True)
+                self.bottom_stack.set_visible_child_name("error")
+                self.bottom_error_label.set_markup("<span color='red'>{}</span>".format(self.errormessage))
+
+                dialog.destroy()
+                return
+
             # Create the .fonts directory if it doesn't exist
             os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
 
@@ -396,8 +431,6 @@ class MainWindow:
             update_cache_thread.join()
 
             # Add the font and its charmaps to the dictionary
-            font_filename = os.path.basename(filepath)
-            font_name, _ = os.path.splitext(font_filename)
             self.font_charmaps[font_name] = (font_charmap, len(font_charmap), True)
             # Update the UI to show the new font in the list
             self.update_fonts_list()
@@ -509,6 +542,10 @@ class MainWindow:
         except subprocess.CalledProcessError:
             # Error occurred while executing fc-list command
             print("Error: Failed to list fonts.")
+            self.errormessage = (f"Error: Failed to list fonts.")
+            self.bottom_revealer.set_reveal_child(True)
+            self.bottomstack.set_visible_child_name("error")
+            self.bottom_error_label.set_markup("<span color='red'>{}</span>".format(self.errormessage))
         return None
 
 
