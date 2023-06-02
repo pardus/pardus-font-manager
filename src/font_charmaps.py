@@ -71,7 +71,7 @@ def get_fonts_charmaps():
     for font_file_path in font_paths:
         if os.path.isfile(font_file_path) and font_file_path.endswith(('.ttf', '.otf')):
             charmaps = get_font_charmaps(font_file_path)
-            user_added = font_file_path.startswith('/home')
+            user_added = font_file_path.startswith(os.path.expanduser("~"))
             charmaps.update({font_name: (char_list, charmap_count, user_added)
                               for font_name, (char_list, charmap_count) in charmaps.items()})
             font_charmaps.update(charmaps)

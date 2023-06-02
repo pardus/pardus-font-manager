@@ -7,7 +7,7 @@ import subprocess
 import shutil
 import re
 import time
-from font_charmaps import get_fonts_charmaps
+import font_charmaps
 import threading
 from threading import Thread
 
@@ -344,7 +344,7 @@ class MainWindow:
 
         if not self.font_charmaps:
             print("setting font_charmaps")
-            self.font_charmaps = get_fonts_charmaps()
+            self.font_charmaps = font_charmaps.get_fonts_charmaps()
 
         # Get a list of font names sorted alphabetically
         font_names = sorted(list(self.font_charmaps.keys()))
@@ -434,6 +434,15 @@ class MainWindow:
                 shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
                 time.sleep(0.5)
                 GLib.idle_add(self.start_progress_bar, 70)  # Update progress stage
+
+                # Get charmaps of the new font
+                new_font_charmaps = font_charmaps.get_font_charmaps(filepath)
+
+                # Update self.font_charmaps
+                for font_name, (char_list, charmap_count) in new_font_charmaps.items():
+                    user_added = filepath.startswith(os.path.expanduser("~"))
+                    self.font_charmaps[font_name] = (char_list, charmap_count, user_added)
+
 
                 # Run font cache update and read the charmaps for the new font in parallel
                 update_cache_thread = Thread(target=self.update_font_cache)
@@ -587,6 +596,7 @@ class MainWindow:
 
     def delete_font(self, font_name):
         font_file = self.delete_font_file(font_name)
+        print(f"font_file: {font_file}") # Debug
         if font_file:
             # Extract the folder path from the font file path
             font_folder = os.path.dirname(font_file)
@@ -597,6 +607,7 @@ class MainWindow:
             self.bottom_stack.set_visible_child_name("error")
             # self.bottom_info_label.set_text(f"Deleted font file: {font_file}")
             self.info_message = (f"Deleted font file: {font_file}")
+            print(self.info_message)
             self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
             self.bottom_revealer.set_reveal_child(True)
             # Close the revealer after 5 seconds
