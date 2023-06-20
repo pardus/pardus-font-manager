@@ -26,8 +26,13 @@ class MainWindow:
         self.window.set_border_width(10)
 
         # Font charmap setup and sample text
-        self.font_charmaps = []
+        self.font_charmaps = {}
+        self.font_names = []
         self.sample_text = "The quick brown fox jumps over the lazy dog."
+
+        # This variable represents whether an operation (add, remove, search)
+        # is currently ongoing in the application.
+        self.operation_in_progress = False
 
         # Widget extraction from Glade file
         # Top-level widgets
@@ -191,24 +196,30 @@ class MainWindow:
         filters the font list based on the search text, clears the current list of fonts,
         and populates the list with the filtered fonts.
         """
-        search_text = search_entry.get_text().lower()
-
-        # If the search box is empty, show all fonts
-        if not search_text:
-            self.update_fonts_list()
+        if self.operation_in_progress:
             return
 
-        # Filter the font list by matching the search string with the font names
-        filtered_fonts = [(font_name, charmaps) for font_name, (charmaps, _, _) in self.font_charmaps.items() if search_text in font_name.lower()]
+        self.operation_in_progress = True
 
+        search_text = search_entry.get_text().lower()
 
-        # Clear the current list of fonts
-        self.fonts_list.clear()
+        try:
+            # If the search box is empty, show all fonts
+            if not search_text:
+                self.update_fonts_list()
+                return
 
-        # Populate the list with the filtered fonts
-        for font_name, charmaps in filtered_fonts:
-            iter = self.fonts_list.append([font_name])
-            self.fonts_list.set(iter, 0, font_name)
+            # Filter the font list by matching the search string with the font names
+            filtered_fonts = [font_name for font_name in self.font_names if search_text in font_name.lower()]
+
+            # Clear the current list of fonts
+            self.fonts_list.clear()
+
+            # Populate the list with the filtered fonts, also sort the fonts alphabetically before adding them to the list
+            for font_name in sorted(filtered_fonts):
+                self.fonts_list.append([font_name])
+        finally:
+            self.operation_in_progress = False
 
 
     def get_selected_font_info(self):
@@ -222,15 +233,16 @@ class MainWindow:
         model, treeiter = selection.get_selected()
         if treeiter is not None:
             font_name = model[treeiter][0]
-            if font_name in self.font_charmaps:
-                # Get the charmap, charmap count, and user_added flag for the selected font
+            # print(font_name)
+            if font_name in self.font_names:
+                # Get the charmap, charmap count, and user_added flag for the
+                # selected font
+                self.font_charmaps = font_charmaps.get_selected_font_charmaps(font_name)
                 _, charmap_count, user_added = self.font_charmaps[font_name]
             else:
-                # print(f"Font {font_name} not found in font_charmaps")
+                print(f"Font {font_name} not found in font_charmaps")
                 return None, None, None
 
-            # print(f"CHARMAP for '{font_name}' -------------")
-            # print(self.font_charmaps[font_name])
             if charmap_count > self.char_display_limit:
                 # print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
                 self.info_message = (f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters, click the button for the rest of the characters.")
@@ -276,6 +288,9 @@ class MainWindow:
         displays the character map of the font, and shows a spinner
         while the character map is being displayed.
         """
+        if self.operation_in_progress:
+            return
+
         font_name, user_added, self.c_count = self.get_selected_font_info()
         # Reset the display limit
         self.char_display_limit = 2000
@@ -319,6 +334,8 @@ class MainWindow:
         This function handles the clicking of the "more" button by the user.
         It increases the character display limit by 10,000 and updates the character map of the currently selected font.
         """
+        self.operation_in_progress = True
+
         # Increase the display limit
         self.char_display_limit += 2000
 
@@ -338,21 +355,22 @@ class MainWindow:
         # font_charmap_string = '   '.join([char for char in font_charmap])
         self.charmaps_label.override_font(self.font_description)
         self.charmaps_label.set_text(font_charmap_string)
+        self.operation_in_progress = False
 
 
     def update_fonts_list(self):
-
-        if not self.font_charmaps:
-            print("setting font_charmaps")
-            self.font_charmaps = font_charmaps.get_fonts_charmaps()
+        self.operation_in_progress = True
+        self.font_names = font_charmaps.get_font_names()
 
         # Get a list of font names sorted alphabetically
-        font_names = sorted(list(self.font_charmaps.keys()))
+        self.font_names = sorted(set(self.font_names))
 
         # Populate the list store with the sorted font names
         self.fonts_list.clear()
-        for font_name in font_names:
+        for font_name in self.font_names:
             self.fonts_list.append([font_name])
+
+        self.operation_in_progress = False
 
 
     def update_charmap_size(self, new_size):
@@ -385,6 +403,7 @@ class MainWindow:
         Then it adds the font and its charmaps to a dictionary and
         updates font list in the UI.
         """
+        self.operation_in_progress = True
         dialog = Gtk.FileChooserDialog(
             "Please choose a font file", self.window, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
@@ -416,7 +435,7 @@ class MainWindow:
                     font_name = font_name.split('-')[0]
 
                 # Check if the font is already in the font_charmaps dictionary
-                if font_name in self.font_charmaps:
+                if font_name in self.font_names:
                     # Font is already installed, show warning message in revealer
                     self.info_message = (f"The font *{font_name}* is already installed!")
                     GLib.idle_add(self.show_error, self.info_message)
@@ -462,6 +481,9 @@ class MainWindow:
                 GLib.idle_add(self.show_error, f"An error occurred: {e}")
             else:
                 GLib.idle_add(self.finish_adding_font, font_name)
+            finally:
+                self.operation_in_progress = False
+
 
         threading.Thread(target=load_font).start()
 
@@ -478,11 +500,16 @@ class MainWindow:
         self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(message))
 
 
-    def finish_adding_font(self, font_name):
+    def finish_adding_font(self, font_name, error=None):
         self.update_fonts_list()
-        self.bottom_stack.set_visible_child_name("error")
-        self.info_message = (f"The font *{font_name}* has been added successfully.")
-        self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
+        if error is None:
+            self.bottom_stack.set_visible_child_name("error")
+            self.info_message = f"The font *{font_name}* has been added successfully."
+            self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
+        else:
+            self.bottom_stack.set_visible_child_name("error")
+            self.info_message = f"An error occurred while adding the font *{font_name}*: {error}"
+            self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(self.info_message))
         self.bottom_revealer.set_reveal_child(True)
 
 
@@ -570,13 +597,39 @@ class MainWindow:
         if keyname == "Delete":
             _, user_added, _ = self.get_selected_font_info()
             if user_added:
-                self.on_remove_button_clicked(None)
+                if self.operation_in_progress:
+                    return
+
+                self.operation_in_progress = True
+                # Get the selected font from the TreeView
+                selection = self.fonts_view.get_selection()
+                model, iter_ = selection.get_selected()
+                if iter_:
+                    font_name = model[iter_][0]
+
+                    def delete_font_and_update():
+                        try:
+                            # Remove the font from the self.font_charmaps dictionary
+                            del self.font_charmaps[font_name]
+                            self.delete_font(font_name)
+
+                            # Update the fonts list in the TreeView
+                            GLib.idle_add(self.update_fonts_list)
+
+                        finally:
+                            self.operation_in_progress = False
+
+                    threading.Thread(target=delete_font_and_update).start()
+
 
 
     def delete_font_file(self, font_name):
+        GLib.idle_add(self.start_progress_bar, 0)  # Start progress bar
         try:
             # Execute fc-list command to list fonts with the given name
             output = subprocess.check_output(["fc-list", font_name, "-f", "%{file}\n"], universal_newlines=True)
+            time.sleep(0.5)
+            GLib.idle_add(self.start_progress_bar, 20)  # Update progress stage
             # Split the output by newline to get a list of font file paths
             font_files = output.strip().split("\n")
             if font_files:
@@ -588,35 +641,42 @@ class MainWindow:
             # Error occurred while executing fc-list command
             print("Error: Failed to list fonts.")
             self.info_message = (f"Error: Failed to list fonts.")
-            self.bottom_revealer.set_reveal_child(True)
-            self.bottomstack.set_visible_child_name("error")
-            self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(self.info_message))
+            GLib.idle_add(self.show_error, self.info_message)
         return None
 
 
     def delete_font(self, font_name):
         font_file = self.delete_font_file(font_name)
-        print(f"font_file: {font_file}") # Debug
+        print(f"font_file: {font_file}")
         if font_file:
             # Extract the folder path from the font file path
             font_folder = os.path.dirname(font_file)
             # Delete the font file
             os.remove(font_file)
-            # print(f"Deleted font file: {font_file}")
+            GLib.idle_add(self.start_progress_bar, 60)  # Update progress stage
 
-            self.bottom_stack.set_visible_child_name("error")
-            # self.bottom_info_label.set_text(f"Deleted font file: {font_file}")
             self.info_message = (f"Deleted font file: {font_file}")
-            print(self.info_message)
-            self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
-            self.bottom_revealer.set_reveal_child(True)
-            # Close the revealer after 5 seconds
-            GLib.timeout_add_seconds(5, lambda x: self.bottom_revealer.set_reveal_child(False), None)
 
             # Delete the parent directory if it is empty
             if not os.listdir(font_folder):
                 os.rmdir(font_folder)
                 print(f"Deleted empty folder: {font_folder}")
+
+        GLib.idle_add(self.start_progress_bar, 100)  # Update progress stage
+
+        # Display message a second after reaching 100%
+        GLib.timeout_add_seconds(1, self.show_info,
+                                 f"The font *{font_name}*\
+                                 has been deleted successfully.")
+
+
+    def show_info(self, message):
+        print(message)
+        self.bottom_revealer.set_reveal_child(True)
+        self.bottom_stack.set_visible_child_name("error")
+        self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(message))
+        # Hide the message after 4 seconds
+        GLib.timeout_add_seconds(4, lambda: self.bottom_revealer.set_reveal_child(False))
 
 
     def on_remove_button_clicked(self, button):
@@ -624,15 +684,26 @@ class MainWindow:
         It removes the selected font from the user_fonts dictionary,
         updates the fonts list, and saves the updated user_fonts dictionary.
         """
+        if self.operation_in_progress:
+            return
+
+        self.operation_in_progress = True
         # Get the selected font from the TreeView
         selection = self.fonts_view.get_selection()
         model, iter_ = selection.get_selected()
         if iter_:
             font_name = model[iter_][0]
 
-            # Remove the font from the self.font_charmaps dictionary
-            del self.font_charmaps[font_name]
-            self.delete_font(font_name)
+            def delete_font_and_update():
+                try:
+                    # Remove the font from the self.font_charmaps dictionary
+                    del self.font_charmaps[font_name]
+                    self.delete_font(font_name)
 
-            # Update the fonts list in the TreeView
-            self.update_fonts_list()
+                    # Update the fonts list in the TreeView
+                    GLib.idle_add(self.update_fonts_list)
+
+                finally:
+                    self.operation_in_progress = False
+
+            threading.Thread(target=delete_font_and_update).start()
