@@ -640,30 +640,62 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Pu
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <child>
-                                  <object class="GtkStack" id="stack_map">
+                                  <object class="GtkBox">
                                     <property name="visible">True</property>
                                     <property name="can-focus">False</property>
+                                    <property name="orientation">vertical</property>
                                     <child>
-                                      <object class="GtkLabel" id="charmaps_label">
+                                      <object class="GtkStack" id="stack_map">
                                         <property name="visible">True</property>
                                         <property name="can-focus">False</property>
-                                        <property name="has-tooltip">True</property>
-                                        <property name="margin-left">10</property>
-                                        <property name="margin-right">10</property>
-                                        <property name="margin-start">10</property>
-                                        <property name="margin-end">10</property>
-                                        <property name="margin-top">10</property>
-                                        <property name="margin-bottom">10</property>
-                                        <property name="vexpand">True</property>
-                                        <property name="label" translatable="yes">..</property>
-                                        <property name="justify">fill</property>
-                                        <property name="wrap">True</property>
-                                        <property name="wrap-mode">word-char</property>
-                                        <property name="selectable">True</property>
+                                        <child>
+                                          <object class="GtkLabel" id="charmaps_label">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="has-tooltip">True</property>
+                                            <property name="margin-left">10</property>
+                                            <property name="margin-right">10</property>
+                                            <property name="margin-start">10</property>
+                                            <property name="margin-end">10</property>
+                                            <property name="margin-top">10</property>
+                                            <property name="margin-bottom">10</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="label" translatable="yes">..</property>
+                                            <property name="justify">fill</property>
+                                            <property name="wrap">True</property>
+                                            <property name="wrap-mode">word-char</property>
+                                            <property name="selectable">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="name">page_charmap</property>
+                                            <property name="title" translatable="yes">page_charmap</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
-                                        <property name="name">page_charmap</property>
-                                        <property name="title" translatable="yes">page_charmap</property>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="more_button">
+                                        <property name="can-focus">True</property>
+                                        <property name="receives-default">True</property>
+                                        <property name="tooltip-text" translatable="yes">Click the button for the rest of the characters</property>
+                                        <property name="relief">none</property>
+                                        <child>
+                                          <object class="GtkImage">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="icon-name">go-down-symbolic</property>
+                                          </object>
+                                        </child>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">True</property>
+                                        <property name="position">1</property>
                                       </packing>
                                     </child>
                                   </object>
@@ -676,25 +708,6 @@ See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Pu
                             <property name="fill">True</property>
                             <property name="padding">1</property>
                             <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="more_button">
-                            <property name="can-focus">True</property>
-                            <property name="receives-default">True</property>
-                            <child>
-                              <object class="GtkImage">
-                                <property name="visible">True</property>
-                                <property name="can-focus">False</property>
-                                <property name="icon-name">go-down-symbolic</property>
-                              </object>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="pack-type">end</property>
-                            <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
