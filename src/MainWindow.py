@@ -87,6 +87,7 @@ class MainWindow:
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
         self.dialog_font_manager.set_program_name(("Pardus Font Manager"))
+        self.dialog_font_manager.set_transient_for(self.window)
 
         # Adjustment setup for size_spin_button
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
@@ -592,6 +593,27 @@ class MainWindow:
         dialog.connect("response", on_response)
 
 
+    def confirm_delete(self):
+        dialog = Gtk.MessageDialog(
+            transient_for=self.window,
+            flags=0,
+            message_type=Gtk.MessageType.QUESTION,
+            buttons=Gtk.ButtonsType.YES_NO,
+            text="Delete Font?",
+        )
+        dialog.format_secondary_text(
+            "Are you sure you want to delete this font? This action cannot be undone."
+        )
+        response = dialog.run()
+        dialog.destroy()  # Destroy the dialog regardless of the response
+
+        if response == Gtk.ResponseType.YES:
+            # Proceed with deletion
+            return True
+
+        return False
+
+
     def on_key_press_event(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval)
         if keyname == "Delete":
@@ -599,14 +621,15 @@ class MainWindow:
             if user_added:
                 if self.operation_in_progress:
                     return
-
                 self.operation_in_progress = True
                 # Get the selected font from the TreeView
                 selection = self.fonts_view.get_selection()
                 model, iter_ = selection.get_selected()
                 if iter_:
                     font_name = model[iter_][0]
-
+                    if not self.confirm_delete():
+                        self.operation_in_progress = False  # reset operation_in_progress here
+                        return
                     def delete_font_and_update():
                         try:
                             # Remove the font from the self.font_charmaps dictionary
@@ -666,8 +689,7 @@ class MainWindow:
 
         # Display message a second after reaching 100%
         GLib.timeout_add_seconds(1, self.show_info,
-                                 f"The font *{font_name}*\
-                                 has been deleted successfully.")
+                                 f"The font *{font_name}* has been deleted successfully.")
 
 
     def show_info(self, message):
@@ -693,7 +715,9 @@ class MainWindow:
         model, iter_ = selection.get_selected()
         if iter_:
             font_name = model[iter_][0]
-
+            if not self.confirm_delete():
+                self.operation_in_progress = False  # reset operation_in_progress here
+                return
             def delete_font_and_update():
                 try:
                     # Remove the font from the self.font_charmaps dictionary
