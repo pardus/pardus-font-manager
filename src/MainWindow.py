@@ -64,6 +64,7 @@ class MainWindow:
         # Additional widgets
         self.left_scrolled = self.builder.get_object("left_scrolled")
         self.left_scrolled_box = self.builder.get_object("left_scrolled_box")
+        self.right_font_box = self.builder.get_object("right_font_box")
         self.right_scrolled = self.builder.get_object("right_scrolled")
         self.stack_start = self.builder.get_object("stack_start")
         self.stack_map = self.builder.get_object("stack_map")
@@ -84,6 +85,8 @@ class MainWindow:
         self.bottom_revealer = self.builder.get_object("bottom_revealer")
         self.bottom_stack = self.builder.get_object("bottom_stack")
         self.bottom_progressbar = self.builder.get_object("bottom_progressbar")
+        self.bottom_entry = self.builder.get_object("bottom_entry")
+        self.bottom_scrolled = self.builder.get_object("bottom_scrolled")
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
         self.dialog_font_manager.set_program_name(("Pardus Font Manager"))
@@ -415,8 +418,9 @@ class MainWindow:
         updates font list in the UI.
         """
         # Widgets to disable
-        widgets = [ self.add_button, self.remove_button]
-        self.make_widgets_insensitive(widgets)
+        widgets = [self.add_button, self.remove_button, self.left_scrolled,
+                   self.search_entry, self.entry, self.right_font_box, self.right_scrolled,
+                   self.bottom_scrolled, self.bottom_entry, self.menu_button]
 
         self.operation_in_progress = True
         dialog = Gtk.FileChooserDialog(
@@ -437,6 +441,8 @@ class MainWindow:
         if response != Gtk.ResponseType.OK:
             dialog.destroy()
             return
+
+        self.make_widgets_insensitive(widgets)
 
         filepath = dialog.get_filename()
         dialog.destroy()
@@ -725,6 +731,12 @@ class MainWindow:
             return
 
         self.operation_in_progress = True
+
+        # Widgets to disable
+        widgets = [self.add_button, self.remove_button, self.left_scrolled,
+                   self.search_entry, self.entry, self.right_font_box, self.right_scrolled,
+                   self.bottom_scrolled, self.bottom_entry, self.menu_button]
+
         # Get the selected font from the TreeView
         selection = self.fonts_view.get_selection()
         print("selection = ", selection)
@@ -735,6 +747,9 @@ class MainWindow:
             if not self.confirm_delete():
                 self.operation_in_progress = False  # reset operation_in_progress here
                 return
+
+            self.make_widgets_insensitive(widgets)
+
             def delete_font_and_update():
                 try:
                     # Remove the font from the self.font_charmaps dictionary
@@ -746,5 +761,6 @@ class MainWindow:
 
                 finally:
                     self.operation_in_progress = False
+                    GLib.idle_add(self.make_widgets_sensitive, widgets)
 
             threading.Thread(target=delete_font_and_update).start()
