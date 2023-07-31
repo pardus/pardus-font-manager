@@ -403,7 +403,7 @@ class MainWindow:
 
     def make_widgets_sensitive(self, widgets):
         for widget in widgets:
-            widget.set_sensitive(False)
+            widget.set_sensitive(True)
 
 
     def on_add_button_clicked(self, button):
