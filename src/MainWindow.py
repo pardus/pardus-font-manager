@@ -246,12 +246,12 @@ class MainWindow:
 
             if charmap_count > self.char_display_limit:
                 # print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
-                self.info_message = (f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters, click the button for the rest of the characters.")
+                # self.info_message = (f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters, click the button for the rest of the characters.")
                 self.more_button.set_visible(True)
                 self.c_count = True
-                self.bottom_revealer.set_reveal_child(True)
-                self.bottom_stack.set_visible_child_name("error")
-                self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
+                # self.bottom_revealer.set_reveal_child(True)
+                # self.bottom_stack.set_visible_child_name("error")
+                # self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
             else:
                 self.more_button.set_visible(False)
                 self.c_count = False
@@ -396,6 +396,16 @@ class MainWindow:
         self.update_charmap_size(new_size)
 
 
+    def make_widgets_insensitive(self, widgets):
+        for widget in widgets:
+            widget.set_sensitive(False)
+
+
+    def make_widgets_sensitive(self, widgets):
+        for widget in widgets:
+            widget.set_sensitive(False)
+
+
     def on_add_button_clicked(self, button):
         """
         This function allows the user to select a font file,
@@ -404,6 +414,10 @@ class MainWindow:
         Then it adds the font and its charmaps to a dictionary and
         updates font list in the UI.
         """
+        # Widgets to disable
+        widgets = [ self.add_button, self.remove_button]
+        self.make_widgets_insensitive(widgets)
+
         self.operation_in_progress = True
         dialog = Gtk.FileChooserDialog(
             "Please choose a font file", self.window, Gtk.FileChooserAction.OPEN,
@@ -484,6 +498,7 @@ class MainWindow:
                 GLib.idle_add(self.finish_adding_font, font_name)
             finally:
                 self.operation_in_progress = False
+                GLib.idle_add(self.make_widgets_sensitive, widgets)
 
 
         threading.Thread(target=load_font).start()
@@ -712,7 +727,9 @@ class MainWindow:
         self.operation_in_progress = True
         # Get the selected font from the TreeView
         selection = self.fonts_view.get_selection()
+        print("selection = ", selection)
         model, iter_ = selection.get_selected()
+        print("model, iter = ", model, iter_)
         if iter_:
             font_name = model[iter_][0]
             if not self.confirm_delete():
