@@ -440,6 +440,8 @@ class MainWindow:
         response = dialog.run()
         if response != Gtk.ResponseType.OK:
             dialog.destroy()
+            self.operation_in_progress = False
+            GLib.idle_add(self.make_widgets_sensitive, widgets)
             return
 
         self.make_widgets_insensitive(widgets)
