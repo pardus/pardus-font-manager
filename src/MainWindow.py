@@ -637,6 +637,17 @@ class MainWindow:
         return False
 
 
+    def select_font_at_path(self, path):
+        """
+        Ensures that the selection stays at the index following the font selected for deletion.
+
+        Args:
+        path (Gtk.TreePath): The path of the font in TreeView.
+        """
+        self.fonts_view.get_selection().select_path(path)
+        self.fonts_view.scroll_to_cell(path, None, True, 0.5, 0.5)
+
+
     def on_key_press_event(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval)
         if keyname == "Delete":
@@ -649,6 +660,7 @@ class MainWindow:
                 selection = self.fonts_view.get_selection()
                 model, iter_ = selection.get_selected()
                 if iter_:
+                    path = model.get_path(iter_)  # save path before deletion
                     font_name = model[iter_][0]
                     if not self.confirm_delete():
                         self.operation_in_progress = False  # reset operation_in_progress here
@@ -661,6 +673,7 @@ class MainWindow:
 
                             # Update the fonts list in the TreeView
                             GLib.idle_add(self.update_fonts_list)
+                            GLib.idle_add(self.select_font_at_path, path)  # re-select font after list update
 
                         finally:
                             self.operation_in_progress = False
@@ -745,6 +758,7 @@ class MainWindow:
         model, iter_ = selection.get_selected()
         print("model, iter = ", model, iter_)
         if iter_:
+            path = model.get_path(iter_)
             font_name = model[iter_][0]
             if not self.confirm_delete():
                 self.operation_in_progress = False  # reset operation_in_progress here
@@ -760,6 +774,7 @@ class MainWindow:
 
                     # Update the fonts list in the TreeView
                     GLib.idle_add(self.update_fonts_list)
+                    GLib.idle_add(self.select_font_at_path, path)  # re-select font after list update
 
                 finally:
                     self.operation_in_progress = False
