@@ -489,7 +489,6 @@ class MainWindow:
                 # Run font cache update and read the charmaps for the new font in parallel
                 update_cache_thread = Thread(target=self.update_font_cache)
                 update_cache_thread.start()
-                update_cache_thread.join()
                 time.sleep(0.5)
                 GLib.idle_add(self.start_progress_bar, 90)  # Update progress stage
 
