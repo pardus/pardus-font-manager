@@ -359,10 +359,12 @@ class MainWindow:
         self.char_display_limit += 2000
 
         # Get the currently selected font name
-        font_name, _, _ = self.get_selected_font_info()
+        font_name, style, _, _ = self.get_selected_font_info()
+        style = style.rstrip(")")
+        font_key = (font_name, style)
 
         # Get the charmap for the selected font
-        font_charmap, _, _ = self.font_charmaps[font_name]
+        font_charmap, _, _ = self.font_charmaps[font_key]
 
         # Trim the charmap to the current display limit
         font_charmap = font_charmap[:self.char_display_limit]
