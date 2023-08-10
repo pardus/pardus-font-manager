@@ -22,15 +22,18 @@ def get_font_paths():
 
 def get_font_names():
     """
-    Retrieve the list of all font names installed on the system.
+    Retrieve the list of all font names installed on the system, including style, and path.
 
     Returns:
-        list: A list of string where each string represents a font name.
+        list: A list of tuples where each tuple represents a font name, style, and path.
     """
-    fonts = subprocess.run(['fc-list', '--format=%{family[0]}\n'],
+    fonts = subprocess.run(['fc-list', '--format=%{family[0]}:%{style[0]}:%{file}\n'],
                             stdout=subprocess.PIPE, text=True)
     fonts = fonts.stdout.split('\n')
-    return [font for font in fonts if font]
+    return [(font.split(':')[0],
+             font.split(':')[1],
+             font.split(':')[2])
+             for font in fonts if len(font.split(':')) == 3]
 
 
 def get_font_charmaps(font_file_path):
@@ -96,43 +99,45 @@ def get_fonts_charmaps():
     return font_charmaps
 
 
-def get_font_file_path(font_name):
+def get_font_file_path(font_name, style):
     """
-    Retrieve the file path of the specified font name.
+    Retrieve the file path of the specified font name and style.
 
     Args:
-        font_name (str): The name of the font to retrieve the file path for.
+        font_name (str): The name of the font.
+        style (str): The style of the font.
 
     Returns:
-        str: The file path of the font, or None if an error occurred.
+        str: The file path of the font, or None if not found.
     """
-    try:
-        result = subprocess.run(['fc-match', '--format=%{file}', font_name],
-                                 capture_output=True, text=True)
-        font_file_path = result.stdout.strip()
-        return font_file_path
-    except Exception as e:
-        print(f"Error: Failed to get font file path for '{font_name}': {str(e)}")
-        return None
+    all_fonts = get_font_names()
+    for name, found_style, path in all_fonts:
+        if name == font_name and found_style == style:
+            return path
+    print(f"Error: Failed to get font file path for '{font_name}' with style '{style}'")
+    return None
 
 
-def get_selected_font_charmaps(font_name):
+def get_selected_font_charmaps(font_name, style):
     """
     Get the character map for the specified font name.
 
     Args:
         font_name (str): The name of the font to get the character map for.
+        style (str): The style of the font.
 
     Returns:
         dict: A dictionary containing character map information for the
         specified font, or an empty dictionary if the font was not found.
     """
-    font_file_path = get_font_file_path(font_name)
+    font_file_path = get_font_file_path(font_name, style)
+
     if font_file_path:
         font_charmaps = get_font_charmaps(font_file_path)
         user_added = font_file_path.startswith(os.path.expanduser("~"))
+        result = {} # Create a new dict
         for font_name, (char_list, charmap_count) in font_charmaps.items():
-            font_charmaps[font_name] = (char_list, charmap_count, user_added)
-        return {font_name: font_charmaps[font_name]}
+            result[(font_name, style)] = (char_list, charmap_count, user_added)
+        return result
     else:
         return {}

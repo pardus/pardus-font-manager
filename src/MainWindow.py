@@ -116,7 +116,7 @@ class MainWindow:
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
 
         # Fonts list and TreeView setup
-        self.fonts_list = Gtk.ListStore(str)
+        self.fonts_list = Gtk.ListStore(str, str) # Font name & font path
         self.fonts_view.set_headers_visible(False)
         self.fonts_view.set_model(self.fonts_list)
         self.fonts_view.append_column(Gtk.TreeViewColumn("Fonts", Gtk.CellRendererText(), text=0))
@@ -213,15 +213,18 @@ class MainWindow:
                 self.update_fonts_list()
                 return
 
-            # Filter the font list by matching the search string with the font names
-            filtered_fonts = [font_name for font_name in self.font_names if search_text in font_name.lower()]
-
+            # Filter the font list by matching the search string with the font names and styles
+            filtered_fonts = [font_name for font_name in self.font_names
+                              if search_text in font_name[0].lower() or search_text in font_name[1].lower()]
             # Clear the current list of fonts
             self.fonts_list.clear()
 
-            # Populate the list with the filtered fonts, also sort the fonts alphabetically before adding them to the list
-            for font_name in sorted(filtered_fonts):
-                self.fonts_list.append([font_name])
+            # Populate the list with the filtered fonts,
+            #  also sort the fonts alphabetically before adding them to the list
+            for font_name, style, path in sorted(filtered_fonts):
+                formatted_font_name = f"{font_name} ({style})"
+                self.fonts_list.append([formatted_font_name, path])
+
         finally:
             self.operation_in_progress = False
 
@@ -236,15 +239,24 @@ class MainWindow:
         selection = self.fonts_view.get_selection()
         model, treeiter = selection.get_selected()
         if treeiter is not None:
-            font_name = model[treeiter][0]
-            # print(font_name)
-            if font_name in self.font_names:
+            display_name, path = model[treeiter]
+            name, style = display_name[:-1].split(' (')
+            formatted_font_name = (name, style, path)
+            # print("Font name = ", display_name)
+            # print("part 1 = ", name)
+            # print("part 2 =", style)
+            # print("formatted name = ", formatted_font_name)
+            # print("path = ", path)
+
+
+            if formatted_font_name in self.font_names:
                 # Get the charmap, charmap count, and user_added flag for the
                 # selected font
-                self.font_charmaps = font_charmaps.get_selected_font_charmaps(font_name)
-                _, charmap_count, user_added = self.font_charmaps[font_name]
+                self.font_charmaps = font_charmaps.get_selected_font_charmaps(name, style)
+
+                _, charmap_count, user_added = self.font_charmaps[name, style]
             else:
-                print(f"Font {font_name} not found in font_charmaps")
+                print(f"Font {name} not found in font_charmaps")
                 return None, None, None
 
             if charmap_count > self.char_display_limit:
@@ -261,7 +273,7 @@ class MainWindow:
                 self.bottom_revealer.set_reveal_child(False)
 
 
-            return font_name, user_added, self.c_count
+            return name, style, user_added, self.c_count
         return None, None, False
 
 
@@ -295,11 +307,13 @@ class MainWindow:
         if self.operation_in_progress:
             return
 
-        font_name, user_added, self.c_count = self.get_selected_font_info()
+        font_name, style, user_added, self.c_count = self.get_selected_font_info()
+
         # Reset the display limit
         self.char_display_limit = 2000
         if font_name is not None:
-            self.font_description = Pango.FontDescription.from_string(font_name)
+            font_description_str = f"{font_name} {style}"
+            self.font_description = Pango.FontDescription.from_string(font_description_str)
 
             # Show the remove button only for the fonts that have been added by the user
             self.remove_button.set_sensitive(user_added)
@@ -308,7 +322,8 @@ class MainWindow:
             self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
 
             # Get the charmap, char_map_count and user_added flag for the selected font
-            font_charmap, _, _ = self.font_charmaps[font_name]
+            font_charmap, _, _ = self.font_charmaps[(font_name, style)]
+
 
             # Gives more info about selected font
             self.info_button.set_sensitive(True)
@@ -372,7 +387,9 @@ class MainWindow:
         # Populate the list store with the sorted font names
         self.fonts_list.clear()
         for font_name in self.font_names:
-            self.fonts_list.append([font_name])
+            name, style, path = font_name
+            display_name = f"{name} ({style})"
+            self.fonts_list.append([display_name, path])
 
         self.operation_in_progress = False
 
