@@ -1,0 +1,10 @@
+{
+    "editor.wordWrap": "on",
+    "genieai.openai.model": "gpt-4",
+    "rewrap.autoWrap.enabled": true,
+    "rewrap.autoWrap.notification": "icon",
+    "javascript.inlayHints.functionLikeReturnTypes.enabled": false,
+    "prettier.bracketSpacing": false,
+    "rewrap.wrappingColumn": 80,
+    "rewrap.reformat": true
+}

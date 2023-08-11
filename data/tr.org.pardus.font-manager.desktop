@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Pardus Font Manager
+Name[tr]=Pardus Font Yöneticisi 
+Comment=Simple Font Manager
+Comment[tr]=Basit Font Yöneticisi
+Exec=pardus-font-manager
+Icon=pardus-font-manager
+Terminal=false
+Type=Application
+Categories=GTK;Utility;X-Pardus-Apps;
+StartupNotify=true
+

@@ -16,7 +16,7 @@
     <property name="license" translatable="yes">This program comes with absolutely no warranty.
 See the &lt;a href="https://www.gnu.org/licenses/gpl-3.0.html"&gt;GNU General Public License, version 3 or later&lt;/a&gt; for details.</property>
     <property name="authors">Emel Öztürk</property>
-    <property name="logo-icon-name">pardus-about</property>
+    <property name="logo-icon-name">pardus-font-manager</property>
     <property name="wrap-license">True</property>
     <property name="license-type">gpl-3-0</property>
     <child internal-child="vbox">

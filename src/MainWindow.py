@@ -11,6 +11,11 @@ import font_charmaps
 import threading
 from threading import Thread
 
+import locale
+from locale import gettext as _
+locale.bindtextdomain('pardus-font-manager', '/usr/share/locale')
+locale.textdomain('pardus-font-manager')
+
 
 class MainWindow:
 
@@ -89,8 +94,16 @@ class MainWindow:
         self.bottom_scrolled = self.builder.get_object("bottom_scrolled")
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
-        self.dialog_font_manager.set_program_name(("Pardus Font Manager"))
+        self.dialog_font_manager.set_program_name(_("Pardus Font Manager"))
         self.dialog_font_manager.set_transient_for(self.window)
+
+        # Set version
+        # If not getted from __version__ file then accept version in MainWindow.glade file
+        try:
+            version = open(os.path.dirname(os.path.abspath(__file__)) + "/__version__").readline()
+            self.dialog_font_manager.set_version(version)
+        except:
+            pass
 
         # Adjustment setup for size_spin_button
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
@@ -148,7 +161,7 @@ class MainWindow:
         self.c_count = False
 
         # Window properties setup
-        self.window.set_title("Pardus Font Manager")
+        self.window.set_title(_("Pardus Font Manager"))
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
 
@@ -442,17 +455,17 @@ class MainWindow:
                    self.bottom_scrolled, self.bottom_entry, self.menu_button]
 
         self.operation_in_progress = True
-        dialog = Gtk.FileChooserDialog(
-            "Please choose a font file", self.window, Gtk.FileChooserAction.OPEN,
+        dialog = Gtk.FileChooserDialog(_(
+            "Please choose a font file"), self.window, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
 
         filter_ttf = Gtk.FileFilter()
-        filter_ttf.set_name("TTF files")
+        filter_ttf.set_name(_("TTF files"))
         filter_ttf.add_mime_type("application/x-font-ttf")
         dialog.add_filter(filter_ttf)
 
         filter_otf = Gtk.FileFilter()
-        filter_otf.set_name("OTF files")
+        filter_otf.set_name(_("OTF files"))
         filter_otf.add_mime_type("application/x-font-otf")
         dialog.add_filter(filter_otf)
 
@@ -478,8 +491,9 @@ class MainWindow:
 
                 # Check if the font is already in the font_charmaps dictionary
                 if font_name in self.font_names:
-                    # Font is already installed, show warning message in revealer
-                    self.info_message = (f"The font *{font_name}* is already installed!")
+                    # Font is already installed, show warning message in
+                    # revealer
+                    self.info_message = "{} {} {}".format(_("The font"), font_name, _("is already installed!"))
                     GLib.idle_add(self.show_error, self.info_message)
                     return
 
@@ -546,11 +560,12 @@ class MainWindow:
         self.update_fonts_list()
         if error is None:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = f"The font *{font_name}* has been added successfully."
+            self.info_message = "{} {} {}".format(_("The font"), font_name, _("has been added successfully"))
+
             self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
         else:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = f"An error occurred while adding the font *{font_name}*: {error}"
+            self.info_message = "{} {} : {}".format(_("An error occurred while adding the font"), font_name, error)
             self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(self.info_message))
         self.bottom_revealer.set_reveal_child(True)
 
@@ -600,7 +615,7 @@ class MainWindow:
         dialog.set_modal(True)
 
         # Create the spin button for font size
-        font_size_label = Gtk.Label("Font Size:")
+        font_size_label = Gtk.Label(_("Font Size:"))
         font_size_spin_button = Gtk.SpinButton.new_with_range(8, 96, 2)
         font_size_spin_button.set_value(int(self.font_description.get_size() / Pango.SCALE))
 
@@ -610,10 +625,10 @@ class MainWindow:
         dialog_box.add(font_size_spin_button)
 
         # Add an "OK" button to the dialog box
-        ok_button = dialog.add_button("OK", Gtk.ResponseType.OK)
+        ok_button = dialog.add_button(_("OK"), Gtk.ResponseType.OK)
 
         # Add a "Cancel" button to the dialog box
-        cancel_button = dialog.add_button("Cancel", Gtk.ResponseType.CANCEL)
+        cancel_button = dialog.add_button(_("Cancel"), Gtk.ResponseType.CANCEL)
 
         # Show the dialog
         dialog.show_all()
@@ -640,10 +655,10 @@ class MainWindow:
             flags=0,
             message_type=Gtk.MessageType.QUESTION,
             buttons=Gtk.ButtonsType.YES_NO,
-            text="Delete Font?",
+            text=_("Delete Font?"),
         )
         dialog.format_secondary_text(
-            "Are you sure you want to delete this font? This action cannot be undone."
+            _("Are you sure you want to delete this font? This action cannot be undone.")
         )
         response = dialog.run()
         dialog.destroy()  # Destroy the dialog regardless of the response
@@ -692,7 +707,7 @@ class MainWindow:
             GLib.idle_add(self.start_progress_bar, 50)
 
             font_name = os.path.basename(font_file)
-            self.info_message = (f"Deleted font file: {font_file}")
+            self.info_message = "{}: {}".format(_("Deleted font file:"), font_file)
 
             # Delete the parent directory if it is empty
             if not os.listdir(font_folder):
@@ -708,7 +723,7 @@ class MainWindow:
         GLib.idle_add(self.start_progress_bar, 100)
         time.sleep(0.1)
         GLib.timeout_add_seconds(1, self.show_info,
-                                f"The font *{font_name}* has been deleted successfully.")
+                                "{} {} {}".format(_("The font"), font_name, _("has been deleted successfully.")))
 
 
     def delete_selected_font(self):
