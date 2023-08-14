@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-11 17:26+0300\n"
+"POT-Creation-Date: 2023-08-14 16:24+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,104 +18,138 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: ui/MainWindow.glade:7
-msgid "About Pardus About Application"
+msgid "About Pardus Font Manager"
 msgstr ""
 
 #: ui/MainWindow.glade:13
-msgid "Get info about your Pardus system."
+msgid "Simple font manager."
 msgstr ""
 
 #: ui/MainWindow.glade:15
 msgid "Website"
 msgstr ""
 
-#: ui/MainWindow.glade:16
-msgid ""
-"This program comes with absolutely no warranty.\n"
-"See the <a href=\"https://www.gnu.org/licenses/gpl-3.0.html\">GNU General "
-"Public License, version 3 or later</a> for details."
-msgstr ""
-
-#: ui/MainWindow.glade:67 ui/MainWindow.glade:865
+#: ui/MainWindow.glade:64 ui/MainWindow.glade:862 src/MainWindow.py:641
 msgid "OK"
 msgstr ""
 
-#: ui/MainWindow.glade:80
+#: ui/MainWindow.glade:77 src/MainWindow.py:644
 msgid "Cancel"
 msgstr ""
 
-#: ui/MainWindow.glade:107
+#: ui/MainWindow.glade:104
 msgid "Dark Theme :"
 msgstr ""
 
-#: ui/MainWindow.glade:147
+#: ui/MainWindow.glade:144
 msgid "Change Color :"
 msgstr ""
 
-#: ui/MainWindow.glade:188
+#: ui/MainWindow.glade:185
 msgid "Text Colors :"
 msgstr ""
 
-#: ui/MainWindow.glade:262
+#: ui/MainWindow.glade:259
 msgid "Settings"
 msgstr ""
 
-#: ui/MainWindow.glade:317
+#: ui/MainWindow.glade:314
 msgid "About"
 msgstr ""
 
-#: ui/MainWindow.glade:379
+#: ui/MainWindow.glade:376
 msgid "System Fonts"
 msgstr ""
 
-#: ui/MainWindow.glade:406
+#: ui/MainWindow.glade:403
 msgid "Char Maps"
 msgstr ""
 
-#: ui/MainWindow.glade:423
+#: ui/MainWindow.glade:420
 msgid "Increase character sizes"
 msgstr ""
 
-#: ui/MainWindow.glade:445
+#: ui/MainWindow.glade:442
 msgid "Decrease character sizes"
 msgstr ""
 
-#: ui/MainWindow.glade:500
+#: ui/MainWindow.glade:497
 msgid "Search Families"
 msgstr ""
 
-#: ui/MainWindow.glade:556
+#: ui/MainWindow.glade:553
 msgid "Add a new font"
 msgstr ""
 
-#: ui/MainWindow.glade:571
+#: ui/MainWindow.glade:568
 msgid "Info about selected font"
 msgstr ""
 
-#: ui/MainWindow.glade:593
+#: ui/MainWindow.glade:590
 msgid "Remove user-added font"
 msgstr ""
 
-#: ui/MainWindow.glade:663 ui/MainWindow.glade:747
-msgid ".."
-msgstr ""
-
-#: ui/MainWindow.glade:671
-msgid "page_charmap"
-msgstr ""
-
-#: ui/MainWindow.glade:685
+#: ui/MainWindow.glade:682
 msgid "Click the button for the rest of the characters"
 msgstr ""
 
-#: ui/MainWindow.glade:746
+#: ui/MainWindow.glade:743
 msgid "A sentence containing the letters of the alphabet"
 msgstr ""
 
-#: ui/MainWindow.glade:771
+#: ui/MainWindow.glade:768
 msgid "type something .."
 msgstr ""
 
-#: ui/MainWindow.glade:974
+#: ui/MainWindow.glade:971 src/MainWindow.py:98 src/MainWindow.py:166
 msgid "Pardus Font Manager"
+msgstr ""
+
+#: src/MainWindow.py:461
+msgid "Please choose a font file"
+msgstr ""
+
+#: src/MainWindow.py:465
+msgid "TTF files"
+msgstr ""
+
+#: src/MainWindow.py:470
+msgid "OTF files"
+msgstr ""
+
+#: src/MainWindow.py:509 src/MainWindow.py:576 src/MainWindow.py:739
+msgid "The font"
+msgstr ""
+
+#: src/MainWindow.py:509
+msgid "is already installed!"
+msgstr ""
+
+#: src/MainWindow.py:576
+msgid "has been added successfully"
+msgstr ""
+
+#: src/MainWindow.py:581
+msgid "An error occurred while adding the font"
+msgstr ""
+
+#: src/MainWindow.py:631
+msgid "Font Size:"
+msgstr ""
+
+#: src/MainWindow.py:671
+msgid "Delete Font?"
+msgstr ""
+
+#: src/MainWindow.py:674
+msgid ""
+"Are you sure you want to delete this font? This action cannot be undone."
+msgstr ""
+
+#: src/MainWindow.py:723
+msgid "Deleted font file:"
+msgstr ""
+
+#: src/MainWindow.py:739
+msgid "has been deleted successfully"
 msgstr ""

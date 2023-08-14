@@ -1,7 +1,7 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: pardus-night-light
-Upstream-Contact: Fatih Altun <fatih.altun@pardus.org.tr>
-Source: https://github.com/pardus/pardus-night-light
+Upstream-Name: pardus-font-manager
+Upstream-Contact: Emel Öztürk <emel.ozturk@pardus.org.tr>
+Source: https://github.com/pardus/pardus-font-manager
 
 
 Files: *

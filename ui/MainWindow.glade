@@ -657,7 +657,7 @@
                                             <property name="margin-top">10</property>
                                             <property name="margin-bottom">10</property>
                                             <property name="vexpand">True</property>
-                                            <property name="label" translatable="yes">..</property>
+                                            <property name="label">..</property>
                                             <property name="justify">fill</property>
                                             <property name="wrap">True</property>
                                             <property name="wrap-mode">word-char</property>
@@ -665,7 +665,7 @@
                                           </object>
                                           <packing>
                                             <property name="name">page_charmap</property>
-                                            <property name="title" translatable="yes">page_charmap</property>
+                                            <property name="title">page_charmap</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -741,7 +741,7 @@
                                 <property name="visible">True</property>
                                 <property name="can-focus">False</property>
                                 <property name="tooltip-text" translatable="yes">A sentence containing the letters of the alphabet</property>
-                                <property name="label" translatable="yes">..</property>
+                                <property name="label">..</property>
                                 <property name="justify">fill</property>
                                 <property name="wrap">True</property>
                                 <property name="wrap-mode">word-char</property>

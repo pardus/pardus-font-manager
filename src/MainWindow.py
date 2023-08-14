@@ -87,6 +87,7 @@ class MainWindow:
         self.fonts_view = self.builder.get_object("fonts_view")
         self.menu_popover = self.builder.get_object("menu_popover")
         self.menu_about = self.builder.get_object("menu_about")
+        self.menu_settings = self.builder.get_object("menu_settings")
         self.bottom_revealer = self.builder.get_object("bottom_revealer")
         self.bottom_stack = self.builder.get_object("bottom_stack")
         self.bottom_progressbar = self.builder.get_object("bottom_progressbar")
@@ -154,6 +155,7 @@ class MainWindow:
 
         self.info_message = ""
 
+        self.menu_settings.hide()
 
         # Font description initialization
         self.font_description = None
@@ -734,7 +736,7 @@ class MainWindow:
         GLib.idle_add(self.start_progress_bar, 100)
         time.sleep(0.1)
         GLib.timeout_add_seconds(1, self.show_info,
-                                "{} {} {}".format(_("The font"), font_name, _("has been deleted successfully.")))
+                                "{} {} {}".format(_("The font"), font_name, _("has been deleted successfully")))
 
 
     def delete_selected_font(self):
