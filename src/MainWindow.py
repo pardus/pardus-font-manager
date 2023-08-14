@@ -20,6 +20,7 @@ locale.textdomain('pardus-font-manager')
 class MainWindow:
 
     def __init__(self, app):
+        self.application = app
         # Glade file handling and builder setup
         self.builder = Gtk.Builder()
         glade_file = os.path.dirname(os.path.abspath(__file__)) + "/../ui/MainWindow.glade"
@@ -166,7 +167,11 @@ class MainWindow:
         self.window.set_title(_("Pardus Font Manager"))
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
+        self.controlArgs()
 
+    def controlArgs(self):
+        if "details" in self.application.args.keys():
+            print("in details")
 
     def worker(self):
         # self.font_charmaps = get_fonts_charmaps()
