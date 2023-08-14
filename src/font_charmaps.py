@@ -141,3 +141,34 @@ def get_selected_font_charmaps(font_name, style):
         return result
     else:
         return {}
+
+
+def get_font_name_from_file(font_file_path):
+    """
+    Given a font file path, return the font's family and style.
+
+    Args:
+        font_file_path (str): The path to the font file.
+
+    Returns:
+        tuple: Font family, style. Returns (None, None) if not found.
+    """
+    try:
+        command = ['fc-query', '--format=%{family[0]}:%{style[0]}\n', font_file_path]
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+
+        # Check if the command was successful
+        if result.returncode != 0:
+            raise Exception(f"Error executing fc-query: {result.stderr.strip()}")
+
+        # Split the returned string into family and style
+        parts = result.stdout.strip().split(':')
+        if len(parts) != 2:
+            raise Exception('Unexpected output format from fc-query')
+
+        font_family, font_style = parts
+        return (font_family, font_style)
+
+    except Exception as e:
+        print(f'Error: failed to get font details from "{font_file_path}": {e}')
+        return (None, None)

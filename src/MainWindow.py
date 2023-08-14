@@ -483,17 +483,28 @@ class MainWindow:
 
         def load_font():
             try:
-                font_filename = os.path.basename(filepath)
-                font_name, _ = os.path.splitext(font_filename)
-                # Check if '-' is in the font name and split accordingly
-                if '-' in font_name:
-                    font_name = font_name.split('-')[0]
+                font_family, font_style = font_charmaps.get_font_name_from_file(filepath)
 
-                # Check if the font is already in the font_charmaps dictionary
-                if font_name in self.font_names:
-                    # Font is already installed, show warning message in
-                    # revealer
-                    self.info_message = "{} {} {}".format(_("The font"), font_name, _("is already installed!"))
+                # Combine family and style for a unique font name
+                fname = f"{font_family} {font_style}"
+
+                print("font name = ", fname)
+
+                if not font_family or not font_style:
+                    self.show_error("Unable to extract font name from the selected file.")
+                    return
+
+
+                # Check if the font is already installed
+                font_already_exists = False
+                for font_tuple in self.font_names:
+                    existing_font_name = f"{font_tuple[0]} {font_tuple[1]}"
+                    if fname == existing_font_name:
+                        font_already_exists = True
+                        break
+
+                if font_already_exists:
+                    self.info_message = "{} {} {}".format(_("The font"), fname, _("is already installed!"))
                     GLib.idle_add(self.show_error, self.info_message)
                     return
 
@@ -535,7 +546,7 @@ class MainWindow:
             except Exception as e:
                 GLib.idle_add(self.show_error, f"An error occurred: {e}")
             else:
-                GLib.idle_add(self.finish_adding_font, font_name)
+                GLib.idle_add(self.finish_adding_font, fname)
             finally:
                 self.operation_in_progress = False
                 GLib.idle_add(self.make_widgets_sensitive, widgets)
@@ -556,16 +567,16 @@ class MainWindow:
         self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(message))
 
 
-    def finish_adding_font(self, font_name, error=None):
+    def finish_adding_font(self, fname, error=None):
         self.update_fonts_list()
         if error is None:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = "{} {} {}".format(_("The font"), font_name, _("has been added successfully"))
+            self.info_message = "{} {} {}".format(_("The font"), fname, _("has been added successfully"))
 
             self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
         else:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = "{} {} : {}".format(_("An error occurred while adding the font"), font_name, error)
+            self.info_message = "{} {} : {}".format(_("An error occurred while adding the font"), fname, error)
             self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(self.info_message))
         self.bottom_revealer.set_reveal_child(True)
 
