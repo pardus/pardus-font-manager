@@ -94,6 +94,7 @@ class MainWindow:
         self.bottom_progressbar = self.builder.get_object("bottom_progressbar")
         self.bottom_entry = self.builder.get_object("bottom_entry")
         self.bottom_scrolled = self.builder.get_object("bottom_scrolled")
+        self.popover_seperator = self.builder.get_object("popover_seperator")
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
         self.dialog_font_manager.set_program_name(_("Pardus Font Manager"))
@@ -157,6 +158,7 @@ class MainWindow:
         self.info_message = ""
 
         self.menu_settings.hide()
+        self.popover_seperator.hide()
 
         # Font description initialization
         self.font_description = None
@@ -235,7 +237,7 @@ class MainWindow:
 
             # Filter the font list by matching the search string with the font names and styles
             filtered_fonts = [font_name for font_name in self.font_names
-                              if search_text in font_name[0].lower() or search_text in font_name[1].lower()]
+                            if search_text in font_name[0].lower() or search_text in font_name[1].lower()]
             # Clear the current list of fonts
             self.fonts_list.clear()
 
@@ -513,6 +515,7 @@ class MainWindow:
 
                 if font_already_exists:
                     self.info_message = "{} {} {}".format(_("The font"), fname, _("is already installed!"))
+                    widgets.remove(self.remove_button)
                     GLib.idle_add(self.show_error, self.info_message)
                     return
 
@@ -587,6 +590,9 @@ class MainWindow:
             self.info_message = "{} {} : {}".format(_("An error occurred while adding the font"), fname, error)
             self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(self.info_message))
         self.bottom_revealer.set_reveal_child(True)
+
+        # After adding the font, apply the search filter.
+        self.on_search_entry_changed(self.search_entry)
 
 
     def update_font_cache(self):
@@ -774,6 +780,9 @@ class MainWindow:
                 GLib.idle_add(self.select_font_at_path, model.get_path(iter_))
             finally:
                 self.operation_in_progress = False
+                # After deleting the font, apply the search filter.
+                GLib.idle_add(self.on_search_entry_changed, self.search_entry)
+
 
         threading.Thread(target=delete_font_and_update).start()
 
