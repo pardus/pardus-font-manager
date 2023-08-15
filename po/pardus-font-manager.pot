@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-14 16:24+0300\n"
+"POT-Creation-Date: 2023-08-15 14:26+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,11 +29,11 @@ msgstr ""
 msgid "Website"
 msgstr ""
 
-#: ui/MainWindow.glade:64 ui/MainWindow.glade:862 src/MainWindow.py:641
+#: ui/MainWindow.glade:64 ui/MainWindow.glade:862 src/MainWindow.py:653
 msgid "OK"
 msgstr ""
 
-#: ui/MainWindow.glade:77 src/MainWindow.py:644
+#: ui/MainWindow.glade:77 src/MainWindow.py:656
 msgid "Cancel"
 msgstr ""
 
@@ -101,55 +101,59 @@ msgstr ""
 msgid "type something .."
 msgstr ""
 
-#: ui/MainWindow.glade:971 src/MainWindow.py:98 src/MainWindow.py:166
+#: ui/MainWindow.glade:971 src/MainWindow.py:100 src/MainWindow.py:169
 msgid "Pardus Font Manager"
 msgstr ""
 
-#: src/MainWindow.py:461
+#: src/MainWindow.py:37
+msgid "The quick brown fox jumps over the lazy dog."
+msgstr ""
+
+#: src/MainWindow.py:468
 msgid "Please choose a font file"
 msgstr ""
 
-#: src/MainWindow.py:465
+#: src/MainWindow.py:472
 msgid "TTF files"
 msgstr ""
 
-#: src/MainWindow.py:470
+#: src/MainWindow.py:477
 msgid "OTF files"
 msgstr ""
 
-#: src/MainWindow.py:509 src/MainWindow.py:576 src/MainWindow.py:739
+#: src/MainWindow.py:517 src/MainWindow.py:585 src/MainWindow.py:751
 msgid "The font"
 msgstr ""
 
-#: src/MainWindow.py:509
+#: src/MainWindow.py:517
 msgid "is already installed!"
 msgstr ""
 
-#: src/MainWindow.py:576
+#: src/MainWindow.py:585
 msgid "has been added successfully"
 msgstr ""
 
-#: src/MainWindow.py:581
+#: src/MainWindow.py:590
 msgid "An error occurred while adding the font"
 msgstr ""
 
-#: src/MainWindow.py:631
+#: src/MainWindow.py:643
 msgid "Font Size:"
 msgstr ""
 
-#: src/MainWindow.py:671
+#: src/MainWindow.py:683
 msgid "Delete Font?"
 msgstr ""
 
-#: src/MainWindow.py:674
+#: src/MainWindow.py:686
 msgid ""
 "Are you sure you want to delete this font? This action cannot be undone."
 msgstr ""
 
-#: src/MainWindow.py:723
+#: src/MainWindow.py:735
 msgid "Deleted font file:"
 msgstr ""
 
-#: src/MainWindow.py:739
+#: src/MainWindow.py:751
 msgid "has been deleted successfully"
 msgstr ""

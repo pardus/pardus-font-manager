@@ -34,7 +34,7 @@ class MainWindow:
         # Font charmap setup and sample text
         self.font_charmaps = {}
         self.font_names = []
-        self.sample_text = "The quick brown fox jumps over the lazy dog."
+        self.sample_text = _("The quick brown fox jumps over the lazy dog.")
 
         # This variable represents whether an operation (add, remove, search)
         # is currently ongoing in the application.
@@ -279,7 +279,7 @@ class MainWindow:
                 _, charmap_count, user_added = self.font_charmaps[name, style]
             else:
                 print(f"Font {name} not found in font_charmaps")
-                return None, None, None
+                return None, None, False, None
 
             if charmap_count > self.char_display_limit:
                 # print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
