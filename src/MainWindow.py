@@ -140,6 +140,7 @@ class MainWindow:
         self.menu_about.connect("clicked", self.on_menu_about_clicked)
         self.more_button.connect("clicked", self.on_more_button_clicked)
         self.bottom_info_button.connect("clicked", self.on_bottom_info_button_clicked)
+        self.install_button_view.connect("clicked", self.install_button_view_clicked)
 
         # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
@@ -188,10 +189,19 @@ class MainWindow:
     def controlArgs(self):
         if "details" in self.application.args.keys():
             # Check if ./fonts has our font in it, if it has font with style,
-            # then it must be installed already, so we need to Remove the font.
-            self.install_button_view.set_label(_("Install"))
+            # then it must be installed already, so we can uninstall the font.
 
             font_file_path = self.application.args["details"].strip()
+            font_already_exists = self.check_if_font_exists(font_file_path)
+            if font_already_exists:
+                self.install_button_view.set_label(_("Uninstall"))
+                self.install_button_view.action = False
+            else:
+                self.install_button_view.set_label(_("Install"))
+                self.install_button_view.action = True
+
+
+            print("already installed = ", font_already_exists)
             user_added = font_file_path.startswith(os.path.expanduser("~"))
             charmap_view = font_charmaps.get_font_charmaps(font_file_path)
 
@@ -219,6 +229,26 @@ class MainWindow:
             else:
                 print(f"File not found: {font_file_path}")
             self.target_page = "page_view"
+
+
+    def check_if_font_exists(self, font_file_path):
+        font_family, font_style = font_charmaps.get_font_name_from_file(font_file_path)
+        font_name = f"{font_family} {font_style}"
+        self.font_names = font_charmaps.get_font_names()
+        for font_tuple in self.font_names:
+            existing_font_name = f"{font_tuple[0]} {font_tuple[1]}"
+            if font_name == existing_font_name:
+                return True
+        return False
+
+
+    def install_button_view_clicked(self, button):
+
+        if self.install_button_view.action:
+            print("install  ....")
+        else:
+            print("uninstall ....")
+        print(self.install_button_view.get_label())
 
 
     def worker(self):
