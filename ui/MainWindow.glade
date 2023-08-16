@@ -920,7 +920,19 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <child>
-                          <placeholder/>
+                          <object class="GtkLabel" id="fname_label_view">
+                            <property name="visible">True</property>
+                            <property name="can-focus">False</property>
+                            <property name="label" translatable="yes">Font Name</property>
+                            <attributes>
+                              <attribute name="weight" value="ultrabold"/>
+                            </attributes>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
                         </child>
                       </object>
                       <packing>

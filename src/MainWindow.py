@@ -36,6 +36,9 @@ class MainWindow:
         self.font_names = []
         self.sample_text = _("The quick brown fox jumps over the lazy dog.")
 
+        # Set default page (widget: vbox, name: page_list)
+        self.target_page = "page_list"
+
         # This variable represents whether an operation (add, remove, search)
         # is currently ongoing in the application.
         self.operation_in_progress = False
@@ -46,8 +49,11 @@ class MainWindow:
         vbox = self.builder.get_object("vbox")
         hbox = self.builder.get_object("hbox")
 
+        self.vbox_view = self.builder.get_object("vbox_view")
+
         # Buttons and dialog
         self.menu_button = self.builder.get_object("menu_button")
+        self.menu_button_view = self.builder.get_object("menu_button_view")
         self.add_button = self.builder.get_object("add_button")
         self.try_button = self.builder.get_object("try_button")
         self.info_button = self.builder.get_object("info_button")
@@ -55,14 +61,21 @@ class MainWindow:
         self.cancel_button = self.builder.get_object("cancel_button")
         self.info_dialog = self.builder.get_object("info_dialog")
         self.more_button = self.builder.get_object("more_button")
+        self.more_button_view = self.builder.get_object("more_button_view")
         self.bottom_info_button = self.builder.get_object("bottom_info_button")
+        self.bottom_info_button_view = self.builder.get_object("bottom_info_button_view")
+        self.install_button_view = self.builder.get_object("install_button_view")
 
         # Label and entry widgets
         self.search_entry = self.builder.get_object("search_entry")
         self.entry = self.builder.get_object("entry")
+        self.entry_view = self.builder.get_object("entry_view")
         self.charmaps_label = self.builder.get_object("charmaps_label")
+        self.charmaps_label_view = self.builder.get_object("charmaps_label_view")
         self.label = self.builder.get_object("label_entry")
         self.font_name_label = self.builder.get_object("font_name_label")
+        self.font_name_label_view = self.builder.get_object("font_name_label_view")
+        self.charmaps_label_view = self.builder.get_object("charmaps_label_view")
         self.font_size_label = self.builder.get_object("font_size_label")
         self.font_color_label = self.builder.get_object("font_color_label")
         self.bottom_info_label = self.builder.get_object("bottom_info_label")
@@ -171,9 +184,42 @@ class MainWindow:
         self.window.set_application(app)
         self.controlArgs()
 
+
     def controlArgs(self):
         if "details" in self.application.args.keys():
-            print("in details")
+            # Check if ./fonts has our font in it, if it has font with style,
+            # then it must be installed already, so we need to Remove the font.
+            self.install_button_view.set_label(_("Install"))
+
+            font_file_path = self.application.args["details"].strip()
+            user_added = font_file_path.startswith(os.path.expanduser("~"))
+            charmap_view = font_charmaps.get_font_charmaps(font_file_path)
+
+            if charmap_view:
+                print(charmap_view)
+                # Take fist key and key's value
+                font_name, (char_list, char_count) = list(charmap_view.items())[0]
+
+                # Change char list to str
+                char_str = ',  '.join(char_list)
+
+                # Set str to label for font charmap.
+                label_text = "{} ({} {}):\n\n{}".format(font_name, char_count, _("characters"), char_str)
+                self.charmaps_label_view.set_text(label_text)
+
+            if os.path.isfile(font_file_path):
+                font_family, font_style = font_charmaps.get_font_name_from_file(font_file_path)
+                if font_family and font_style:
+                    # Combine family and style for a unique font name
+                    font_name = f"{font_family} {font_style}"
+                    self.font_name_label_view.set_text(font_name)
+                    print("Font name = ", font_name)
+                else:
+                    print("Font metadata could not be retrieved!")
+            else:
+                print(f"File not found: {font_file_path}")
+            self.target_page = "page_view"
+
 
     def worker(self):
         # self.font_charmaps = get_fonts_charmaps()
@@ -184,7 +230,7 @@ class MainWindow:
 
 
     def set_page(self):
-        GLib.idle_add(self.stack_start.set_visible_child_name, "page_list")
+        GLib.idle_add(self.stack_start.set_visible_child_name, self.target_page)
         GLib.idle_add(self.menu_button.set_sensitive, True)
 
 
@@ -498,7 +544,7 @@ class MainWindow:
                 # Combine family and style for a unique font name
                 fname = f"{font_family} {font_style}"
 
-                print("font name = ", fname)
+                # print("font name = ", fname)
 
                 if not font_family or not font_style:
                     self.show_error("Unable to extract font name from the selected file.")
