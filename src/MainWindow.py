@@ -137,6 +137,8 @@ class MainWindow:
         self.search_entry.connect("changed", self.on_search_entry_changed)
         self.entry.connect("changed", self.update_sample_text)
         self.entry.connect("activate", self.update_sample_text)
+        self.entry_view.connect("changed", self.update_sample_view_text)
+        self.entry_view.connect("activate", self.update_sample_view_text)
         self.add_button.connect("clicked", self.on_add_button_clicked)
         self.info_button.connect("clicked", self.on_info_button_clicked)
         self.remove_button.connect("clicked", self.on_remove_button_clicked)
@@ -757,7 +759,17 @@ class MainWindow:
             # if text is None:
             #     text = "The quick brown fox jumps over the lazy dog."
             self.label.override_font(self.font_description)
-            self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
+            self.label.set_text(self.entry.get_text()
+                                if self.entry.get_text().strip() != ""
+                                else self.sample_text)
+
+
+    def update_sample_view_text(self, widget):
+        if self.font_description is not None:
+            self.label_entry_view.override_font(self.font_description)
+            self.label_entry_view.set_text(self.entry_view.get_text()
+                                           if self.entry_view.get_text().strip() != ""
+                                           else self.sample_text)
 
 
     def on_info_button_clicked(self, button):
