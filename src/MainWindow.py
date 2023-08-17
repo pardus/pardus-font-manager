@@ -210,22 +210,8 @@ class MainWindow:
                 self.install_button_view.set_label(_("Install"))
                 self.install_button_view.action = True
 
-
-            print("already installed = ", font_already_exists)
             user_added = font_file_path.startswith(os.path.expanduser("~"))
             charmap_view = font_charmaps.get_font_charmaps(font_file_path)
-
-            if charmap_view:
-                print(charmap_view)
-                # Take fist key and key's value
-                font_name, (char_list, char_count) = list(charmap_view.items())[0]
-
-                # Change char list to str
-                char_str = ',  '.join(char_list)
-
-                # Set str to label for font charmap.
-                label_text = "{} ({} {}):\n\n{}".format(font_name, char_count, _("characters"), char_str)
-                self.charmaps_label_view.set_text(label_text)
 
             if os.path.isfile(font_file_path):
                 font_family, font_style = font_charmaps.get_font_name_from_file(font_file_path)
@@ -244,6 +230,20 @@ class MainWindow:
                     print("Font metadata could not be retrieved!")
             else:
                 print(f"File not found: {font_file_path}")
+
+            if charmap_view:
+                self.more_button_view.set_visible(False)
+
+                # Take fist key and key's value
+                font_name, (char_list, char_count) = list(charmap_view.items())[0]
+
+                # Change char list to str
+                char_str = '  '.join(char_list)
+
+                # Set str to label for font charmap
+                self.charmaps_label_view.override_font(self.font_description)
+                self.charmaps_label_view.set_text(char_str)
+
             self.target_page = "page_view"
 
 
@@ -465,7 +465,6 @@ class MainWindow:
             # show only the first char_display_limit characters
             if self.c_count:
                 font_charmap = font_charmap[:self.char_display_limit]
-
 
 
             # This section was added due to the problem of listing charmaps of fonts that
