@@ -73,6 +73,7 @@ class MainWindow:
         self.charmaps_label = self.builder.get_object("charmaps_label")
         self.charmaps_label_view = self.builder.get_object("charmaps_label_view")
         self.label = self.builder.get_object("label_entry")
+        self.label_entry_view = self.builder.get_object("label_entry_view")
         self.font_name_label = self.builder.get_object("font_name_label")
         self.font_name_label_view = self.builder.get_object("font_name_label_view")
         self.charmaps_label_view = self.builder.get_object("charmaps_label_view")
@@ -93,9 +94,12 @@ class MainWindow:
         self.color_button = self.builder.get_object("color_button")
         self.spin_button = self.builder.get_object("spin_button")
         self.size_spin_button = self.builder.get_object("size_spin_button")
+        self.size_spin_button_view = self.builder.get_object("size_spin_button_view")
         self.remove_button = self.builder.get_object("remove_button")
         self.increase_button = self.builder.get_object("increase_button")
+        self.increase_button_view = self.builder.get_object("increase_button_view")
         self.decrease_button = self.builder.get_object("decrease_button")
+        self.decrease_button_view = self.builder.get_object("decrease_button_view")
         self.title_box = self.builder.get_object("title_box")
         self.mlozturk = self.builder.get_object("mlozturk")
         self.fonts_view = self.builder.get_object("fonts_view")
@@ -124,6 +128,7 @@ class MainWindow:
         # Adjustment setup for size_spin_button
         adjustment = Gtk.Adjustment.new(12, 1, 96, 1, 10, 0)
         self.size_spin_button.set_adjustment(adjustment)
+        self.size_spin_button_view.set_adjustment(adjustment)
 
         # Start spinner
         self.spinner_start.start()
@@ -136,7 +141,9 @@ class MainWindow:
         self.info_button.connect("clicked", self.on_info_button_clicked)
         self.remove_button.connect("clicked", self.on_remove_button_clicked)
         self.increase_button.connect("clicked", self.on_increase_button_clicked)
+        self.increase_button_view.connect("clicked", self.on_increase_button_view_clicked)
         self.decrease_button.connect("clicked", self.on_decrease_button_clicked)
+        self.decrease_button_view.connect("clicked", self.on_decrease_button_view_clicked)
         self.menu_about.connect("clicked", self.on_menu_about_clicked)
         self.more_button.connect("clicked", self.on_more_button_clicked)
         self.bottom_info_button.connect("clicked", self.on_bottom_info_button_clicked)
@@ -144,6 +151,7 @@ class MainWindow:
 
         # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
+        self.size_spin_button_view.connect("value-changed", self.on_size_spin_button_view_value_changed)
 
         # Fonts list and TreeView setup
         self.fonts_list = Gtk.ListStore(str, str) # Font name & font path
@@ -223,7 +231,13 @@ class MainWindow:
                     # Combine family and style for a unique font name
                     font_name = f"{font_family} {font_style}"
                     self.font_name_label_view.set_text(font_name)
-                    print("Font name = ", font_name)
+
+                    # Get font description for sample text
+                    self.font_description = Pango.FontDescription.from_string(font_name)
+                    self.label_entry_view.override_font(self.font_description)
+                    self.label_entry_view.set_text(self.entry_view.get_text()
+                                                   if self.entry_view.get_text().strip() != ""
+                                                   else self.sample_text)
                 else:
                     print("Font metadata could not be retrieved!")
             else:
@@ -274,6 +288,11 @@ class MainWindow:
         self.update_sample_text_size(new_font_size)
 
 
+    def on_size_spin_button_view_value_changed(self, spin_button):
+        new_font_size = spin_button.get_value_as_int()
+        self.update_view_sample_text_size(new_font_size)
+
+
     def on_bottom_info_button_clicked(self, button):
         self.bottom_revealer.set_reveal_child(False)
 
@@ -282,7 +301,18 @@ class MainWindow:
         if self.font_description is not None:
             self.font_description.set_size(new_size * Pango.SCALE)
             self.label.override_font(self.font_description)
-            self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
+            self.label.set_text(self.entry.get_text()
+                                if self.entry.get_text().strip() != ""
+                                else self.sample_text)
+
+
+    def update_view_sample_text_size(self, new_size):
+        if self.font_description is not None:
+            self.font_description.set_size(new_size * Pango.SCALE)
+            self.label_entry_view.override_font(self.font_description)
+            self.label_entry_view.set_text(self.entry_view.get_text()
+                                           if self.entry_view.get_text().strip() != ""
+                                           else self.sample_text)
 
 
     def on_menu_about_clicked(self, button):
@@ -358,8 +388,11 @@ class MainWindow:
                 return None, None, False, None
 
             if charmap_count > self.char_display_limit:
-                # print(f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters than what is shown.")
-                # self.info_message = (f"'{font_name}' includes {charmap_count - self.char_display_limit} more characters, click the button for the rest of the characters.")
+                # print(f"'{font_name}' includes {charmap_count -
+                # self.char_display_limit}  more characters than what is
+                # shown.")
+                # self.info_message = (f"'{font_name}' includes {charmap_count - self.char_display_limit}
+                # more characters, click the button for the rest of the characters.")
                 self.more_button.set_visible(True)
                 self.c_count = True
                 # self.bottom_revealer.set_reveal_child(True)
@@ -500,6 +533,12 @@ class MainWindow:
         self.charmaps_label.override_font(font_description)
 
 
+    def update_charmap_size_view(self, new_size):
+        font_description = self.charmaps_label_view.get_style_context().get_font(Gtk.StateFlags.NORMAL)
+        font_description.set_size(new_size * Pango.SCALE)
+        self.charmaps_label_view.override_font(font_description)
+
+
     def on_increase_button_clicked(self, button):
         context = self.charmaps_label.get_style_context()
         current_font_desc = context.get_font(Gtk.StateFlags.NORMAL)
@@ -508,12 +547,28 @@ class MainWindow:
         self.update_charmap_size(new_size)
 
 
+    def on_increase_button_view_clicked(self, button):
+        context = self.charmaps_label_view.get_style_context()
+        current_font_desc = context.get_font(Gtk.StateFlags.NORMAL)
+        current_size = current_font_desc.get_size() // Pango.SCALE
+        new_size = current_size + 1
+        self.update_charmap_size_view(new_size)
+
+
     def on_decrease_button_clicked(self, button):
         context = self.charmaps_label.get_style_context()
         current_font_desc = context.get_font(Gtk.StateFlags.NORMAL)
         current_size = current_font_desc.get_size() // Pango.SCALE
         new_size = max(1, current_size - 1)
         self.update_charmap_size(new_size)
+
+
+    def on_decrease_button_view_clicked(self, button):
+        context = self.charmaps_label_view.get_style_context()
+        current_font_desc = context.get_font(Gtk.StateFlags.NORMAL)
+        current_size = current_font_desc.get_size() // Pango.SCALE
+        new_size = max(1, current_size - 1)
+        self.update_charmap_size_view(new_size)
 
 
     def make_widgets_insensitive(self, widgets):
