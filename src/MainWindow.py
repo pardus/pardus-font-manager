@@ -197,55 +197,7 @@ class MainWindow:
 
 
     def controlArgs(self):
-        if "details" in self.application.args.keys():
-            # Check if ./fonts has our font in it, if it has font with style,
-            # then it must be installed already, so we can uninstall the font.
-
-            font_file_path = self.application.args["details"].strip()
-            font_already_exists = self.check_if_font_exists(font_file_path)
-            if font_already_exists:
-                self.install_button_view.set_label(_("Uninstall"))
-                self.install_button_view.action = False
-            else:
-                self.install_button_view.set_label(_("Install"))
-                self.install_button_view.action = True
-
-            user_added = font_file_path.startswith(os.path.expanduser("~"))
-            charmap_view = font_charmaps.get_font_charmaps(font_file_path)
-
-            if os.path.isfile(font_file_path):
-                font_family, font_style = font_charmaps.get_font_name_from_file(font_file_path)
-                if font_family and font_style:
-                    # Combine family and style for a unique font name
-                    font_name = f"{font_family} {font_style}"
-                    self.font_name_label_view.set_text(font_name)
-
-                    # Get font description for sample text
-                    self.font_description = Pango.FontDescription.from_string(font_name)
-                    self.label_entry_view.override_font(self.font_description)
-                    self.label_entry_view.set_text(self.entry_view.get_text()
-                                                   if self.entry_view.get_text().strip() != ""
-                                                   else self.sample_text)
-                else:
-                    print("Font metadata could not be retrieved!")
-            else:
-                print(f"File not found: {font_file_path}")
-
-            if charmap_view:
-                self.more_button_view.set_visible(False)
-
-                # Take fist key and key's value
-                font_name, (char_list, char_count) = list(charmap_view.items())[0]
-
-                # Change char list to str
-                char_str = '  '.join(char_list)
-
-                # Set str to label for font charmap
-                self.charmaps_label_view.override_font(self.font_description)
-                self.charmaps_label_view.set_text(char_str)
-
-            self.target_page = "page_view"
-
+        pass
 
     def check_if_font_exists(self, font_file_path):
         font_family, font_style = font_charmaps.get_font_name_from_file(font_file_path)
@@ -917,6 +869,7 @@ class MainWindow:
             try:
                 del self.font_charmaps[(name, style)]
                 self.delete_font(font_path)
+                self.update_font_cache()
 
                 GLib.idle_add(self.update_fonts_list)
                 GLib.idle_add(self.select_font_at_path, model.get_path(iter_))
