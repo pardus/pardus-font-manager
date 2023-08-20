@@ -1,5 +1,86 @@
 pardus-font-manager (0.1.0) unstable; urgency=medium
 
-  * Initial Commit
+  [ Emel Öztürk ]
+  * Initial commit
+  * Add gitignore file
+  * work-in-progress: Add ui and main files
+  * Improve code organization and maintainability
+  * Update ui file
+  * Add font charmaps for listed fonts
+  * Add spinners for ui
+  * Add search widget for listed fonts
+  * Add buttons, search entry widget
+  * Add font selection functionality to gtk entry widget
+  * Clean font charmap strings to fix issue with some fonts not
+  * Fix error handling in try-catch block to address issues with exception
+  * Add ui changes
+  * Add info button to change font properties
+  * Implement alphabetical sorting functionality for the list view
+  * Update UI
+  * Enable users to add new fonts.
+  * Fix typo
+  * Update UI
+  * Refactor code structure and optimize font file processing for faster execution
+  * Del user-added fonts
+  * Add font removal, user-added flag handling, and related bug fixes
+  * Update UI with font management buttons and improved layout
+  * Implement font add/remove/edit functionality and user/system font distinction
+  * Add real-time text preview with selected font
+  * Update UI file name and functionality for font size adjustment
+  * Improve UI with Glade updates and optimize font addition performance
+  * Refine UI by removing unnecessary widgets, add ULAKBIM signature
+  * Add font removal feature, remove unused code
+  * Improve code readability, add printable chs check for font charmaps
+  * Add content showcasing app details to about - menu button
+  * Fix charmap related issue
+  * Optimize read_charmaps function for better efficiency
+  * Add more button for efficient handling of large charmaps
+  * Display all printable characters in the font
+  * Roll back recent changes
+  * Test potential alternatives to the TTfont library
+  * Display all characters in charmaps
+  * Add revealer for application notifications and error handling
+  * Add progressbar for font loading and progress status
+  * Fix font metadata refresh issue for newly added fonts with suffixes
+  * Load font charmaps on-demand for improved startup performance
+  * Optimize function calls to enhance on-demand font charmap loading during add,
+  * Add widgets for settings
+  * Add button inside cmap section
+  * Improve ui by centering about dialog and add confirmation for delete
+  * Add functions to enable/disable gui widgets
+  * Fix insensitive widget bug
+  * Add widget sensitivity during font add/delete ops
+  * Fix font addition cancellation state
+  * Enable post deletion selection retention
+  * Enhance font loading process
+  * Take font names with styles and use font descriptions based on
+  * Edit more button functionality with font names with styles
+  * Change delete functions for font names with styles
+  * Make error msgs selectable
+  * Add folders for deb pack
+  * Del .vscode
+  * Change method for retrieving font name from file metadata
+  * Add translations for deb pack
+  * Insensitive remove button while adding a new font
+  * Hide seperator, trigger search entry func after add/del ops
+  * Add translation for the text, fix ret bugs on selected func.
+  * Add widgets for --details
+  * Show font metadata in details page
+  * Change button names for usage
+  * Add inc/dec funcs for charmap and sample text
+  * Add signals&funcs for sample text
+  * Apply font description for charmaps
+  * Revert controlargs func
 
- -- Emel Öztürk <emel.ozturk@pardus.org.tr>  Mon, 07 Feb 2022 18:00:32 +0300
+  [ Fatih Altun ]
+  * Update .gitignore
+  * Add headerbar and popover menu
+  * Update init worker thread
+  * Fix sample text controls
+  * Move app icon to data folder
+  * Update about dialog labels
+  * Update app icon
+  * Add base of details arg
+  * Update about label and icons
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Mon, 21 Aug 2023 00:19:02 +0300
