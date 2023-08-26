@@ -1,8 +1,8 @@
 [Desktop Entry]
 Name=Pardus Font Manager
-Name[tr]=Pardus Font Yöneticisi 
+Name[tr]=Pardus Yazı Tipi Yöneticisi 
 Comment=Simple Font Manager
-Comment[tr]=Basit Font Yöneticisi
+Comment[tr]=Basit Yazı Tipi Yöneticisi
 Exec=pardus-font-manager
 Icon=pardus-font-manager
 Terminal=false
