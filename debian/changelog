@@ -1,3 +1,13 @@
+pardus-font-manager (0.1.1) unstable; urgency=medium
+
+  [ Sabri Ünal ]
+  * Update Turkish Translation
+
+  [ Hugo Carvalho ]
+  * Add Portuguese translation
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Mon, 28 Aug 2023 19:58:48 +0300
+
 pardus-font-manager (0.1.0) unstable; urgency=medium
 
   [ Emel Öztürk ]
