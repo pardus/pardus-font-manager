@@ -21,11 +21,11 @@ msgstr ""
 
 #: ui/MainWindow.glade:7
 msgid "About Pardus Font Manager"
-msgstr "Pardus Font Yöneticisi Hakkında"
+msgstr "Pardus Yazı Tipi Yöneticisi Hakkında"
 
 #: ui/MainWindow.glade:13
 msgid "Simple font manager."
-msgstr "Basit font yöneticisi"
+msgstr "Basit yazı tipi yöneticisi"
 
 #: ui/MainWindow.glade:15
 msgid "Website"
@@ -49,7 +49,7 @@ msgstr "Renk Değiştir:"
 
 #: ui/MainWindow.glade:185
 msgid "Text Colors :"
-msgstr "Yazı Renkleri:"
+msgstr "Metin Renkleri:"
 
 #: ui/MainWindow.glade:259
 msgid "Settings"
@@ -61,7 +61,7 @@ msgstr "Hakkında"
 
 #: ui/MainWindow.glade:376
 msgid "System Fonts"
-msgstr "Sistem Fontları"
+msgstr "Sistem Yazı Tipleri"
 
 #: ui/MainWindow.glade:403
 msgid "Char Maps"
@@ -69,27 +69,27 @@ msgstr "Karakter Haritaları"
 
 #: ui/MainWindow.glade:420
 msgid "Increase character sizes"
-msgstr "Karakter boyutlarını büyüt"
+msgstr "Karakter boyutlarını artır"
 
 #: ui/MainWindow.glade:442
 msgid "Decrease character sizes"
-msgstr "Karakter boyutlarını küçült"
+msgstr "Karakter boyutlarını azalt"
 
 #: ui/MainWindow.glade:497
 msgid "Search Families"
-msgstr "Font Ailelerini Ara"
+msgstr "Yazı Tipi Ailelerini Ara"
 
 #: ui/MainWindow.glade:553
 msgid "Add a new font"
-msgstr "Yeni bir font ekle"
+msgstr "Yeni bir yazı tipi ekle"
 
 #: ui/MainWindow.glade:568
 msgid "Info about selected font"
-msgstr "Seçilen font hakkında bilgi"
+msgstr "Seçilen yazı tipi hakkında bilgi"
 
 #: ui/MainWindow.glade:590
 msgid "Remove user-added font"
-msgstr "Kullanıcının eklediği fontu sil"
+msgstr "Kullanıcının eklediği yazı tipini sil"
 
 #: ui/MainWindow.glade:682
 msgid "Click the button for the rest of the characters"
@@ -105,7 +105,7 @@ msgstr "bir şeyler yaz .."
 
 #: ui/MainWindow.glade:971 src/MainWindow.py:100 src/MainWindow.py:169
 msgid "Pardus Font Manager"
-msgstr "Pardus Font Yöneticisi"
+msgstr "Pardus Yazı Tipi Yöneticisi"
 
 #: src/MainWindow.py:37
 msgid "The quick brown fox jumps over the lazy dog."
@@ -113,7 +113,7 @@ msgstr "Pijamalı hasta, yağız şoföre çabucak güvendi."
 
 #: src/MainWindow.py:468
 msgid "Please choose a font file"
-msgstr "Lütfen bir font dosyası seçin"
+msgstr "Lütfen bir yazı tipi dosyası seçin"
 
 #: src/MainWindow.py:472
 msgid "TTF files"
@@ -125,7 +125,7 @@ msgstr "OTF dosyaları"
 
 #: src/MainWindow.py:517 src/MainWindow.py:585 src/MainWindow.py:751
 msgid "The font"
-msgstr "Font, "
+msgstr "Yazı Tipi, "
 
 #: src/MainWindow.py:517
 msgid "is already installed!"
@@ -137,24 +137,24 @@ msgstr "başarıyla eklendi"
 
 #: src/MainWindow.py:590
 msgid "An error occurred while adding the font"
-msgstr "Font yüklenirken bir hata oluştu"
+msgstr "Yazı tipi yüklenirken bir hata oluştu"
 
 #: src/MainWindow.py:643
 msgid "Font Size:"
-msgstr "Font Boyutu:"
+msgstr "Yazı Tipi Boyutu:"
 
 #: src/MainWindow.py:683
 msgid "Delete Font?"
-msgstr "Fontu Sil?"
+msgstr "Yazı Tipi Silinsin Mi?"
 
 #: src/MainWindow.py:686
 msgid ""
 "Are you sure you want to delete this font? This action cannot be undone."
-msgstr "Bu fontu silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+msgstr "Bu yazı tipini silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
 
 #: src/MainWindow.py:735
 msgid "Deleted font file:"
-msgstr "Font dosyası silindi:"
+msgstr "Yazı tipi dosyası silindi:"
 
 #: src/MainWindow.py:751
 msgid "has been deleted successfully"
