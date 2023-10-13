@@ -472,12 +472,21 @@ class MainWindow:
         self.operation_in_progress = True
         self.font_names = font_charmaps.get_font_names()
 
-        # Get a list of font names sorted alphabetically
-        self.font_names = sorted(set(self.font_names))
+        # Get a list of unique font names sorted alphabetically
+        seen = set()
+        unique_font_names = []
+        for font_name in self.font_names:
+            name, style, path = font_name
+            if (name, style) not in seen:
+                seen.add((name, style))
+                unique_font_names.append(font_name)
+
+        # Sort the unique font names
+        unique_font_names.sort(key=lambda x: x[0])
 
         # Populate the list store with the sorted font names
         self.fonts_list.clear()
-        for font_name in self.font_names:
+        for font_name in unique_font_names:
             name, style, path = font_name
             display_name = f"{name} ({style})"
             self.fonts_list.append([display_name, path])
