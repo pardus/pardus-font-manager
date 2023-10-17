@@ -18,7 +18,7 @@ def create_mo_files():
     return mo
 
 def compile_c_code():
-    compile_cmd = "gcc font_adder.c -o libfontadder.so -shared -lfontconfig"
+    compile_cmd = "gcc src/font_adder.c -o libfontadder.so -shared -lfontconfig"
     if subprocess.call(compile_cmd, shell=True) != 0:
         raise RuntimeError("C code compilation failed!")
     return [("/usr/share/pardus/pardus-font-manager/src", ["libfontadder.so"])]
