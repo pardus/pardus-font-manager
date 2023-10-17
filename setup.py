@@ -17,6 +17,11 @@ def create_mo_files():
                        ["po/" + po.split(".po")[0] + "/LC_MESSAGES/pardus-font-manager.mo"]))
     return mo
 
+def compile_c_code():
+    compile_cmd = "gcc font_adder.c -o libfontadder.so -shared -lfontconfig"
+    if subprocess.call(compile_cmd, shell=True) != 0:
+        raise RuntimeError("C code compilation failed!")
+    return [("src/libfontadder.so", ["libfontadder.so"])]
 
 changelog = "debian/changelog"
 if os.path.exists(changelog):
@@ -43,7 +48,7 @@ data_files = [
       "src/__version__"]),
     ("/usr/share/icons/hicolor/scalable/apps/",
      ["data/pardus-font-manager.svg"])
-] + create_mo_files()
+] + create_mo_files() + compile_c_code()
 
 setup(
     name="pardus-font-manager",
