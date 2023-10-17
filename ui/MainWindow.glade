@@ -753,7 +753,6 @@
                           </object>
                         </child>
                       </object>
-            self.font_description.set_size(new_size * Pan
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">True</property>
