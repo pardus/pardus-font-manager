@@ -120,7 +120,7 @@ class MainWindow:
         self.dialog_font_manager.set_program_name(_("Pardus Font Manager"))
         self.dialog_font_manager.set_transient_for(self.window)
 
-        self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
+        self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
 
         # Set version
         # If not getted from __version__ file then accept version in MainWindow.glade file
