@@ -155,3 +155,11 @@ cython_debug/
 *.glade~
 
 .vscode/
+
+# Ignore files generated during .deb packaging
+pardus-font-manager_*.dsc
+pardus-font-manager_*.tar.xz
+pardus-font-manager_*.deb
+pardus-font-manager_*.build
+pardus-font-manager_*.buildinfo
+pardus-font-manager_*.changes
