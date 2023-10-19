@@ -303,14 +303,21 @@ class MainWindow:
             # Filter the font list by matching the search string with the font names and styles
             filtered_fonts = [font_name for font_name in self.font_names
                             if search_text in font_name[0].lower() or search_text in font_name[1].lower()]
+
             # Clear the current list of fonts
             self.fonts_list.clear()
 
+            added_fonts = set()
+
             # Populate the list with the filtered fonts,
-            #  also sort the fonts alphabetically before adding them to the list
+            # also sort the fonts alphabetically before adding them to the list
             for font_name, style, path in sorted(filtered_fonts):
                 formatted_font_name = f"{font_name} ({style})"
-                self.fonts_list.append([formatted_font_name, path])
+
+                # Check if this font name has already been added
+                if formatted_font_name not in added_fonts:
+                    self.fonts_list.append([formatted_font_name, path])
+                    added_fonts.add(formatted_font_name)
 
         finally:
             self.operation_in_progress = False
