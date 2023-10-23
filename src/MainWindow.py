@@ -216,9 +216,10 @@ class MainWindow:
 
 
     def install_button_view_clicked(self, button):
-
+        # Find a better common button name for the func
         if self.install_button_view.action:
             print("install  ....")
+            self.on_add_button_clicked(self.install_button_view)
         else:
             print("uninstall ....")
         print(self.install_button_view.get_label())
@@ -569,9 +570,14 @@ class MainWindow:
                    self.bottom_scrolled, self.bottom_entry, self.menu_button]
 
         self.operation_in_progress = True
+
+        self.added_fonts_from_dialog = []
+
         dialog = Gtk.FileChooserDialog(_(
             "Please choose a font file"), self.window, Gtk.FileChooserAction.OPEN,
             (Gtk.STOCK_CANCEL, Gtk.ResponseType.CANCEL, Gtk.STOCK_OPEN, Gtk.ResponseType.OK))
+
+        dialog.set_select_multiple(True)
 
         filter_ttf = Gtk.FileFilter()
         filter_ttf.set_name(_("TTF files"))
@@ -593,79 +599,84 @@ class MainWindow:
 
         self.make_widgets_insensitive(widgets)
 
-        filepath = dialog.get_filename()
-        result = self.libfontadder.fontmain(filepath.encode('utf-8'))
-
+        filepaths = dialog.get_filenames()
         dialog.destroy()
 
-        def load_font():
-            try:
-                font_family, font_style = font_charmaps.get_font_name_from_file(filepath)
 
-                # Combine family and style for a unique font name
-                fname = f"{font_family} {font_style}"
+        for filepath in filepaths:
+            print("filepath ===", filepath)
+            result = self.libfontadder.fontmain(filepath.encode('utf-8'))
 
-                if not font_family or not font_style:
-                    self.show_error("Unable to extract font name from the selected file.")
-                    return
+            def load_font(filepath):
+                try:
+                    font_family, font_style = font_charmaps.get_font_name_from_file(filepath)
 
-                # Check if the font is already installed
-                font_already_exists = False
-                for font_tuple in self.font_names:
-                    existing_font_name = f"{font_tuple[0]} {font_tuple[1]}"
-                    if fname == existing_font_name:
-                        font_already_exists = True
-                        break
+                    # Combine family and style for a unique font name
+                    fname = f"{font_family} {font_style}"
 
-                if font_already_exists:
-                    self.info_message = "{} {} {}".format(_("The font"), fname, _("is already installed!"))
-                    widgets.remove(self.remove_button)
-                    GLib.idle_add(self.show_error, self.info_message)
-                    return
+                    if not font_family or not font_style:
+                        self.show_error("Unable to extract font name from the selected file.")
+                        return
 
-                # Start pulsing the progress bar
-                GLib.idle_add(self.start_progress_bar, 0)  # Pass progress stage
+                    # Check if the font is already installed
+                    font_already_exists = False
+                    for font_tuple in self.font_names:
+                        existing_font_name = f"{font_tuple[0]} {font_tuple[1]}"
+                        if fname == existing_font_name:
+                            font_already_exists = True
+                            break
 
-                # Create the .fonts directory if it doesn't exist
-                os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
-                time.sleep(0.5)
-                GLib.idle_add(self.start_progress_bar, 40)  # Update progress stage
+                    if font_already_exists:
+                        self.info_message = "{} {} {}".format(_("The font"), fname, _("is already installed!"))
+                        widgets.remove(self.remove_button)
+                        GLib.idle_add(self.show_error, self.info_message)
+                        return
 
-                # Copy the font file to ~/.fonts
-                shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
-                time.sleep(0.5)
-                GLib.idle_add(self.start_progress_bar, 70)  # Update progress stage
+                    # Start pulsing the progress bar
+                    GLib.idle_add(self.start_progress_bar, 0)
 
-                # Get charmaps of the new font
-                new_font_charmaps = font_charmaps.get_font_charmaps(filepath)
+                    # Create the .fonts directory if it doesn't exist
+                    os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
+                    time.sleep(0.5)
+                    GLib.idle_add(self.start_progress_bar, 40)
 
-                # Update self.font_charmaps
-                for font_name, (char_list, charmap_count) in new_font_charmaps.items():
-                    user_added = filepath.startswith(os.path.expanduser("~"))
-                    self.font_charmaps[font_name] = (char_list, charmap_count, user_added)
+                    # Copy the font file to ~/.fonts
+                    shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
+                    time.sleep(0.5)
+                    GLib.idle_add(self.start_progress_bar, 70)
 
-                # Run font cache update and read the charmaps for the new font in parallel
-                update_cache_thread = Thread(target=self.update_font_cache)
-                update_cache_thread.start()
-                time.sleep(0.5)
-                GLib.idle_add(self.start_progress_bar, 90)  # Update progress stage
+                    # Get charmaps of the new font
+                    new_font_charmaps = font_charmaps.get_font_charmaps(filepath)
 
-                font_charmap = self.read_charmaps(filepath)
-                time.sleep(0.5)
-                GLib.idle_add(self.start_progress_bar, 100)  # Update progress stage
+                    # Update self.font_charmaps
+                    for font_name, (char_list, charmap_count) in new_font_charmaps.items():
+                        user_added = filepath.startswith(os.path.expanduser("~"))
+                        self.font_charmaps[font_name] = (char_list, charmap_count, user_added)
 
-                # Add the font and its charmaps to the dictionary
-                self.font_charmaps[font_name] = (font_charmap, len(font_charmap), True)
+                    # Run font cache update and read the charmaps for the new font in parallel
+                    update_cache_thread = Thread(target=self.update_font_cache)
+                    update_cache_thread.start()
+                    time.sleep(0.5)
+                    GLib.idle_add(self.start_progress_bar, 90)
 
-            except Exception as e:
-                GLib.idle_add(self.show_error, f"An error occurred: {e}")
-            else:
-                GLib.idle_add(self.finish_adding_font, fname)
-            finally:
-                self.operation_in_progress = False
-                GLib.idle_add(self.make_widgets_sensitive, widgets)
+                    font_charmap = self.read_charmaps(filepath)
+                    time.sleep(0.5)
+                    GLib.idle_add(self.start_progress_bar, 100)
 
-        threading.Thread(target=load_font).start()
+                    self.added_fonts_from_dialog.append(fname)
+
+                    # Add the font and its charmaps to the dictionary
+                    self.font_charmaps[font_name] = (font_charmap, len(font_charmap), True)
+
+                except Exception as e:
+                    GLib.idle_add(self.show_error, f"An error occurred: {e}")
+                else:
+                    GLib.idle_add(self.finish_adding_font, self.added_fonts_from_dialog)
+                finally:
+                    self.operation_in_progress = False
+                    GLib.idle_add(self.make_widgets_sensitive, widgets)
+
+            threading.Thread(target=load_font, args=(filepath,)).start()
 
 
     def start_progress_bar(self, progress):
@@ -682,14 +693,17 @@ class MainWindow:
 
     def finish_adding_font(self, fname, error=None):
         self.update_fonts_list()
+
+        font_names_str = ", ".join(self.added_fonts_from_dialog)
+
         if error is None:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = "{} {} {}".format(_("The font"), fname, _("has been added successfully"))
+            self.info_message = "{} {} {}".format(_("The following fonts have been added successfully:"), font_names_str, "")
 
             self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
         else:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = "{} {} : {}".format(_("An error occurred while adding the font"), fname, error)
+            self.info_message = "{} {} : {}".format(_("An error occurred while adding the fonts"), font_names_str, error)
             self.bottom_info_label.set_markup("<span color='red'>{}</span>".format(self.info_message))
         self.bottom_revealer.set_reveal_child(True)
 
