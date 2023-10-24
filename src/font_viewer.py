@@ -29,13 +29,19 @@ class SimpleApp(Gtk.Window):
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(vbox)
 
-        self.label1 = Gtk.Label(label="Font Name")
-        self.label2 = Gtk.Label(label=font_path if font_path else "No font path provided.")
-        self.label3 = Gtk.Label(label="SAMPLE TEXT")
+        self.font_name_label = Gtk.Label(label="Font Name")
+        self.font_charmaps_label = Gtk.Label(label=font_path if font_path else "No font path provided.")
+        self.font_charmaps_label.set_line_wrap(True)
+        self.sample_label = Gtk.Label(label="SAMPLE TEXT")
 
-        vbox.pack_start(self.label1, True, True, 0)
-        vbox.pack_start(self.label2, True, True, 0)
-        vbox.pack_start(self.label3, True, True, 0)
+        # Create a ScrolledWindow to contain the font_charmaps_label
+        scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled_window.add(self.font_charmaps_label)
+
+        vbox.pack_start(self.font_name_label, True, True, 0)
+        vbox.pack_start(scrolled_window, True, True, 0)
+        vbox.pack_start(self.sample_label, True, True, 0)
 
         self.font_path = font_path
 
@@ -43,7 +49,7 @@ class SimpleApp(Gtk.Window):
         font_name = f"{font_family} {font_style}"
 
         print("font name = ", font_name)
-        self.label1.set_text(font_name)
+        self.font_name_label.set_text(font_name)
 
         os.makedirs(os.path.expanduser("/tmp/.fonts"), exist_ok=True)
         shutil.copy2(font_path, os.path.expanduser("/tmp/.fonts"))
@@ -65,8 +71,23 @@ class SimpleApp(Gtk.Window):
                 font_name = f"{font_family} {font_style}"
 
                 self.font_description = Pango.FontDescription.from_string(font_name)
-                self.label3.queue_draw()
-                self.label3.override_font(self.font_description)
+                self.sample_label.queue_draw()
+                self.sample_label.override_font(self.font_description)
+                self.font_name_label.override_font(self.font_description)
+
+                charmap_view = font_charmaps.get_font_charmaps(copied_font_path)
+
+                if charmap_view:
+                    # Take first key and key's value
+                    font_name, (char_list, char_count) = list(charmap_view.items())[0]
+
+                    # Convert char list to string format
+                    char_str = '  '.join(char_list)
+
+                    # Set the string to label for font charmap
+                    self.font_charmaps_label.override_font(self.font_description)
+                    self.font_charmaps_label.set_text(char_str)
+
             else:
                 print("Font metadata could not be retrieved!")
         else:
