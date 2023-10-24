@@ -22,9 +22,9 @@ class SimpleApp(Gtk.Window):
 
         self.set_default_size(600, 500)
         self.connect("destroy", Gtk.main_quit)
+        self.connect("destroy", self.cleanup)
 
         self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
-
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(vbox)
@@ -37,6 +37,7 @@ class SimpleApp(Gtk.Window):
         vbox.pack_start(self.label2, True, True, 0)
         vbox.pack_start(self.label3, True, True, 0)
 
+        self.font_path = font_path
 
         font_family, font_style = font_charmaps.get_font_name_from_file(font_path)
         font_name = f"{font_family} {font_style}"
@@ -53,11 +54,10 @@ class SimpleApp(Gtk.Window):
         else:
             print(f"Failed to copy font to {copied_font_path}.")
 
+        result = self.libfontadder.fontmain(copied_font_path.encode('utf-8'))
         result = subprocess.run(["fc-cache", "-fv", "/tmp/.fonts/"], capture_output=True, text=True)
         print(result.stdout)
 
-        result = self.libfontadder.fontmain(copied_font_path.encode('utf-8'))
-        result = subprocess.run(["fc-cache", "-fv", "/tmp/.fonts/"], capture_output=True)
 
         if os.path.isfile(copied_font_path):
             font_family, font_style = font_charmaps.get_font_name_from_file(copied_font_path)
@@ -71,6 +71,19 @@ class SimpleApp(Gtk.Window):
                 print("Font metadata could not be retrieved!")
         else:
             print(f"File not found: {copied_font_path}")
+
+
+    def cleanup(self, widget):
+        try:
+            # Removing the font from /tmp/.fonts directory
+            copied_font_path = os.path.join(os.path.expanduser("/tmp/.fonts"), os.path.basename(self.font_path))
+            if os.path.exists(copied_font_path):
+                os.remove(copied_font_path)
+                print(f"Font {copied_font_path} was successfully removed.")
+            else:
+                print(f"Font {copied_font_path} not found for removal.")
+        except Exception as e:
+            print(f"Error while cleaning up: {e}")
 
 
 if __name__ == "__main__":
