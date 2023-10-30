@@ -167,6 +167,7 @@ class MainWindow:
         self.fonts_view.append_column(Gtk.TreeViewColumn("Fonts", Gtk.CellRendererText(), text=0))
         self.fonts_view.get_selection().connect("changed", self.on_font_selected)
         self.fonts_view.connect("key-press-event", self.on_key_press_event)
+        self.fonts_view.connect("row-activated", self.on_row_activated)
 
         # Window display
         self.window.show_all()
@@ -193,6 +194,8 @@ class MainWindow:
         self.font_description = None
         self.char_display_limit = 2000
         self.c_count = False
+        self.multiple_select_active = False
+        self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 
         # Window properties setup
         self.window.set_title(_("Pardus Font Manager"))
@@ -332,45 +335,64 @@ class MainWindow:
             The font name as a string and user_added status as a boolean.
         """
         selection = self.fonts_view.get_selection()
-        model, treeiter = selection.get_selected()
-        if treeiter is not None:
-            display_name, path = model[treeiter]
-            name, style = display_name[:-1].split(' (')
-            formatted_font_name = (name, style, path)
-            # print("Font name = ", display_name)
-            # print("part 1 = ", name)
-            # print("part 2 =", style)
-            # print("formatted name = ", formatted_font_name)
+        model = self.fonts_view.get_model()
 
-            if formatted_font_name in self.font_names:
-                # Get the charmap, charmap count, and user_added flag for the
-                # selected font
-                self.font_charmaps = font_charmaps.get_selected_font_charmaps(name, style)
+        if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
+            paths = selection.get_selected_rows()[1]
+            if paths:
+                # Last selected font info
+                treeiter = model.get_iter(paths[-1])
+                display_name, path = model[treeiter]
+                name, style = display_name[:-1].split(' (')
+                formatted_font_name = (name, style, path)
 
-                _, charmap_count, user_added = self.font_charmaps[name, style]
-            else:
-                print(f"Font {name} not found in font_charmaps")
-                return None, None, False, None
+                if formatted_font_name in self.font_names:
+                    # Get the charmap, charmap count, and user_added flag for the
+                    # selected font
+                    self.font_charmaps = font_charmaps.get_selected_font_charmaps(name, style)
+                    _, charmap_count, user_added = self.font_charmaps[name, style]
+                else:
+                    print(f"Font {name} not found in font_charmaps")
+                    return None, None, False, None
 
-            if charmap_count > self.char_display_limit:
-                # print(f"'{font_name}' includes {charmap_count -
-                # self.char_display_limit}  more characters than what is
-                # shown.")
-                # self.info_message = (f"'{font_name}' includes {charmap_count - self.char_display_limit}
-                # more characters, click the button for the rest of the characters.")
-                self.more_button.set_visible(True)
-                self.c_count = True
-                # self.bottom_revealer.set_reveal_child(True)
-                # self.bottom_stack.set_visible_child_name("error")
-                # self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
-            else:
-                self.more_button.set_visible(False)
-                self.c_count = False
-                self.bottom_revealer.set_reveal_child(False)
+                if charmap_count > self.char_display_limit:
+                    self.more_button.set_visible(True)
+                    self.c_count = True
+                else:
+                    self.more_button.set_visible(False)
+                    self.c_count = False
+                    self.bottom_revealer.set_reveal_child(False)
+
+                return name, style, user_added, self.c_count
+            return None, None, False, None
+        else:
+            treeiter = selection.get_selected()[1]
+            if treeiter:
+                return self.get_font_info_from_iter(model, treeiter)
+            return None, None, False, None
 
 
-            return name, style, user_added, self.c_count
-        return None, None, False, None
+    def get_font_info_from_iter(self, model, treeiter):
+        display_name, path = model[treeiter]
+        name, style = display_name[:-1].split(' (')
+        formatted_font_name = (name, style, path)
+
+        if formatted_font_name in self.font_names:
+            self.font_charmaps = font_charmaps.get_selected_font_charmaps(name, style)
+            _, charmap_count, user_added = self.font_charmaps[name, style]
+        else:
+            print(f"Font {name} not found in font_charmaps")
+            return None, None, False, None
+
+        if charmap_count > self.char_display_limit:
+            self.more_button.set_visible(True)
+            self.c_count = True
+        else:
+            self.more_button.set_visible(False)
+            self.c_count = False
+            self.bottom_revealer.set_reveal_child(False)
+
+        return name, style, user_added, self.c_count
 
 
     def get_remaining_elements(self, lst):
@@ -917,9 +939,24 @@ class MainWindow:
     def on_key_press_event(self, widget, event):
         keyname = Gdk.keyval_name(event.keyval)
         if keyname == "Delete":
-            _, user_added, _, _ = self.get_selected_font_info()
+            selected_fonts_info = self.get_selected_font_info()
+            if len(selected_fonts_info) == 1:
+                _, user_added, _, _ = selected_fonts_info[0]
+            else: # Multiple selection
+                _, user_added, _, _ = selected_fonts_info[0]
             if user_added:
                 self.delete_selected_font()
+                # After deletion, refresh the display to reflect the change
+                self.on_font_selected(None)
+
+        if event.keyval == Gdk.KEY_Control_L or event.keyval == Gdk.KEY_Control_R:
+            self.multiple_select_active = True
+            self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+
+
+    def on_row_activated(self, treeview, path, column):
+        self.multiple_select_active = False
+        self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
 
 
     def on_remove_button_clicked(self, button):
