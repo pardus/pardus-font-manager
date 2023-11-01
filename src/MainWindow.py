@@ -114,6 +114,7 @@ class MainWindow:
         self.bottom_progressbar = self.builder.get_object("bottom_progressbar")
         self.bottom_entry = self.builder.get_object("bottom_entry")
         self.bottom_scrolled = self.builder.get_object("bottom_scrolled")
+        self.revealer_scrolled = self.builder.get_object("revealer_scrolled")
         self.popover_seperator = self.builder.get_object("popover_seperator")
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
@@ -196,6 +197,8 @@ class MainWindow:
         self.c_count = False
         self.multiple_select_active = False
         self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+
+        self.font_charmaps_lock = threading.Lock()
 
         # Window properties setup
         self.window.set_title(_("Pardus Font Manager"))
@@ -834,10 +837,9 @@ class MainWindow:
             _("Are you sure you want to delete this font? This action cannot be undone.")
         )
         response = dialog.run()
-        dialog.destroy()  # Destroy the dialog regardless of the response
+        GLib.timeout_add(100, dialog.destroy) ###
 
         if response == Gtk.ResponseType.YES:
-            # Proceed with deletion
             return True
 
         return False
@@ -851,6 +853,9 @@ class MainWindow:
         Args:
         path (Gtk.TreePath): The path of the font in TreeView.
         """
+        if path is None:
+            return
+
         self.fonts_view.get_selection().select_path(path)
         self.fonts_view.scroll_to_cell(path, None, True, 0.5, 0.5)
 
@@ -905,53 +910,66 @@ class MainWindow:
 
         self.operation_in_progress = True
         selection = self.fonts_view.get_selection()
-        model, iter_ = selection.get_selected()
+        paths = selection.get_selected_rows()[1]
 
-        if not iter_:
-            self.operation_in_progress = False
-            return
+        for path in paths:
+            model = self.fonts_view.get_model()
+            treeiter = model.get_iter(path)
 
-        font_path = model[iter_][1]
-        display_name = model[iter_][0]
-        name, style = display_name[:-1].split(' (')
+            if not treeiter:
+                continue
 
-        if not self.confirm_delete():
-            self.operation_in_progress = False
-            return
+            font_path = model[treeiter][1]
+            display_name = model[treeiter][0]
+            name, style = display_name[:-1].split(' (')
 
-        def delete_font_and_update():
-            try:
-                del self.font_charmaps[(name, style)]
-                self.delete_font(font_path)
-                self.update_font_cache()
+            if not self.confirm_delete():
+                continue
 
-                GLib.idle_add(self.update_fonts_list)
-                GLib.idle_add(self.select_font_at_path, model.get_path(iter_))
-            finally:
-                self.operation_in_progress = False
-                # After deleting the font, apply the search filter.
-                GLib.idle_add(self.on_search_entry_changed, self.search_entry)
+            def delete_font_and_update():
+                try:
+                    # Ensure only one thread accesses font_charmaps at a time
+                    with self.font_charmaps_lock:
+                        if (name, style) in self.font_charmaps:
+                            del self.font_charmaps[(name, style)]
+                    self.delete_font(font_path)
+                    self.update_font_cache()
+
+                    GLib.idle_add(self.update_fonts_list)
+                    GLib.idle_add(self.select_font_at_path, model.get_path(treeiter))
+                    GLib.idle_add(self.on_search_entry_changed, self.search_entry)
+
+                finally:
+                    self.operation_in_progress = False
+                    # After deleting the font, apply the search filter.
+                    GLib.idle_add(self.on_search_entry_changed, self.search_entry)
 
 
-        threading.Thread(target=delete_font_and_update).start()
+            threading.Thread(target=delete_font_and_update).start()
 
 
     def on_key_press_event(self, widget, event):
-        keyname = Gdk.keyval_name(event.keyval)
-        if keyname == "Delete":
-            selected_fonts_info = self.get_selected_font_info()
-            if len(selected_fonts_info) == 1:
-                _, user_added, _, _ = selected_fonts_info[0]
-            else: # Multiple selection
-                _, user_added, _, _ = selected_fonts_info[0]
-            if user_added:
-                self.delete_selected_font()
-                # After deletion, refresh the display to reflect the change
-                self.on_font_selected(None)
+        selection = self.fonts_view.get_selection()
 
-        if event.keyval == Gdk.KEY_Control_L or event.keyval == Gdk.KEY_Control_R:
+        if event.keyval == Gdk.KEY_Delete:  # Using GDK constant for the Delete key
+            selected_fonts_info = self.get_selected_font_info()
+
+            if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
+                for font_info in selected_fonts_info:
+                    _, user_added, _, _ = font_info
+                    if user_added:
+                        self.delete_selected_font()
+                        break
+            elif selected_fonts_info:
+                _, user_added, _, _ = selected_fonts_info[0]
+                if user_added:
+                    self.delete_selected_font()
+
+            self.on_font_selected(None)
+
+        if event.keyval in [Gdk.KEY_Control_L, Gdk.KEY_Control_R]:
             self.multiple_select_active = True
-            self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.MULTIPLE)
+            selection.set_mode(Gtk.SelectionMode.MULTIPLE)
 
 
     def on_row_activated(self, treeview, path, column):
