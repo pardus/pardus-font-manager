@@ -776,21 +776,10 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkSeparator">
-                            <property name="visible">True</property>
-                            <property name="can-focus">False</property>
-                            <property name="orientation">vertical</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">True</property>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
                           <object class="GtkSpinButton" id="size_spin_button">
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
+                            <property name="margin-start">1</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
