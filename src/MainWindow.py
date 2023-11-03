@@ -956,7 +956,7 @@ class MainWindow:
             self.on_font_selected(None)
 
         if event.keyval in [Gdk.KEY_Control_L, Gdk.KEY_Control_R]:
-            self.multiple_select_active = False
+            self.multiple_select_active = True
             selection.set_mode(Gtk.SelectionMode.MULTIPLE)
 
 
