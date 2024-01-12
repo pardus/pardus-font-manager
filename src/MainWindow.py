@@ -10,6 +10,7 @@ import time
 import font_charmaps
 import threading
 from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
 
 import locale
 from locale import gettext as _
@@ -121,7 +122,8 @@ class MainWindow:
         self.dialog_font_manager.set_program_name(_("Pardus Font Manager"))
         self.dialog_font_manager.set_transient_for(self.window)
 
-        self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
+        # self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
+        self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
 
         # Set version
         # If not getted from __version__ file then accept version in MainWindow.glade file
@@ -355,7 +357,7 @@ class MainWindow:
                     self.font_charmaps = font_charmaps.get_selected_font_charmaps(name, style)
                     _, charmap_count, user_added = self.font_charmaps[name, style]
                 else:
-                    print(f"Font {name} not found in font_charmaps")
+                    # print(f"Font {name} not found in font_charmaps")
                     return None, None, False, None
 
                 if charmap_count > self.char_display_limit:
@@ -629,7 +631,7 @@ class MainWindow:
 
 
         for filepath in filepaths:
-            print("filepath ===", filepath)
+            # print("filepath ===", filepath)
             result = self.libfontadder.fontmain(filepath.encode('utf-8'))
 
             def load_font(filepath):
@@ -662,12 +664,10 @@ class MainWindow:
 
                     # Create the .fonts directory if it doesn't exist
                     os.makedirs(os.path.expanduser("~/.fonts"), exist_ok=True)
-                    time.sleep(0.5)
                     GLib.idle_add(self.start_progress_bar, 40)
 
                     # Copy the font file to ~/.fonts
                     shutil.copy2(filepath, os.path.expanduser("~/.fonts"))
-                    time.sleep(0.5)
                     GLib.idle_add(self.start_progress_bar, 70)
 
                     # Get charmaps of the new font
@@ -682,11 +682,9 @@ class MainWindow:
                     # update_cache_thread = Thread(target=self.update_font_cache)
                     # update_cache_thread.start()
                     self.update_font_cache()
-                    time.sleep(0.5)
                     GLib.idle_add(self.start_progress_bar, 90)
 
                     font_charmap = self.read_charmaps(filepath)
-                    time.sleep(0.5)
                     GLib.idle_add(self.start_progress_bar, 100)
 
                     self.added_fonts_from_dialog.append(fname)
@@ -739,7 +737,6 @@ class MainWindow:
 
     def update_font_cache(self):
         subprocess.run(["fc-cache", "-f", "-v"], capture_output=True)
-        subprocess.run(["fc-cache", "-f", "-v", "-r"], capture_output=True)
 
 
     def read_charmaps(self, filepath):
@@ -844,7 +841,11 @@ class MainWindow:
         response = dialog.run()
         dialog.destroy()
 
-        return response == Gtk.ResponseType.YES
+        if response == Gtk.ResponseType.YES:
+            # Proceed with deletion
+            return True
+
+        return False
 
 
     def select_font_at_path(self, path):
@@ -855,53 +856,50 @@ class MainWindow:
         Args:
         path (Gtk.TreePath): The path of the font in TreeView.
         """
-        if path is None:
-            return
-
         self.fonts_view.get_selection().select_path(path)
         self.fonts_view.scroll_to_cell(path, None, True, 0.5, 0.5)
 
 
     def show_info(self, message):
-        # Clear any existing message before showing a new one
-        self.bottom_revealer.set_reveal_child(False)
         self.bottom_revealer.set_reveal_child(True)
         self.bottom_stack.set_visible_child_name("error")
         self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(message))
-        # Hide the message after 4 seconds
+
         GLib.timeout_add_seconds(4, lambda: self.bottom_revealer.set_reveal_child(False))
 
 
     def delete_font(self, font_path):
         """Delete the font given its file path."""
-        def do_delete():
-            font_file = font_path
-            print(f"Deleting font_file: {font_file}")
-            if font_file:
-                font_folder = os.path.dirname(font_file)
 
-                GLib.idle_add(self.start_progress_bar, 0)
-                os.remove(font_file)
-                GLib.idle_add(self.start_progress_bar, 50)
+        font_file = font_path
+        # print(f"font_file: {font_file}")
+        if font_file:
+            font_folder = os.path.dirname(font_file)
 
-                font_name = os.path.basename(font_file)
-                self.info_message = "{}: {}".format(_("Deleted font file:"), font_file)
+            GLib.idle_add(self.start_progress_bar, 0)
 
-                # Delete the parent directory if it is empty
-                if not os.listdir(font_folder):
-                    os.rmdir(font_folder)
-                    print(f"Deleted empty folder: {font_folder}")
-                    GLib.idle_add(self.start_progress_bar, 80)
+            os.remove(font_file)
 
-            GLib.idle_add(self.start_progress_bar, 100)
-            GLib.idle_add(self.show_info, "{} {} {}".format(_("The font"), font_name, _("has been deleted successfully")))
+            GLib.idle_add(self.start_progress_bar, 50)
 
-        # Start the deletion in a new thread to avoid blocking the GUI
-        delete_thread = threading.Thread(target=do_delete)
-        delete_thread.start()
+            font_name = os.path.basename(font_file)
+            self.info_message = "{}: {}".format(_("Deleted font file:"), font_file)
+
+            # Delete the parent directory if it is empty
+            if not os.listdir(font_folder):
+                os.rmdir(font_folder)
+                # print(f"Deleted empty folder: {font_folder}")
+
+                # Update the progress bar to 80 after deleting the folder
+                time.sleep(0.5)
+                GLib.idle_add(self.start_progress_bar, 80)
+
+        GLib.idle_add(self.start_progress_bar, 100)
+        # GLib.timeout_add_seconds(1, self.show_info,
+        #                         "{} {} {}".format(_("The font"), font_name, _("has been deleted successfully")))
 
 
-    def delete_selected_fonts(self):
+    def delete_selected_fonts(self, callback=None):
         if self.operation_in_progress:
             return
 
@@ -910,59 +908,72 @@ class MainWindow:
         model, paths = selection.get_selected_rows()
 
         if not paths:
-            return
-
-        font_count = len(paths)
-        if not self.confirm_delete(font_count):
             self.operation_in_progress = False
             return
 
-        for path in paths:
-            model = self.fonts_view.get_model()
-            treeiter = model.get_iter(path)
+        if not self.confirm_delete(len(paths)):
+            self.operation_in_progress = False
+            return
 
-            if not treeiter:
-                continue
+        deleted_font_names = []
 
-            font_path = model[treeiter][1]
-            self.delete_font(font_path)
+        def delete_fonts_and_update():
+            for path in paths:
+                treeiter = model.get_iter(path)
+                if not treeiter:
+                    continue
 
-        self.show_info(f"{font_count} fonts deleted successfully.")
+                font_path = model[treeiter][1]
+                display_name = model[treeiter][0]
+                name, style = display_name[:-1].split(' (')
 
-        # Update UI after deletion
-        self.update_font_cache()
-        self.update_fonts_list()
-        self.on_search_entry_changed(self.search_entry)
-        self.operation_in_progress = False
+                try:
+                    del self.font_charmaps[(name, style)]
+                except KeyError:
+                    pass
+
+                self.delete_font(font_path)
+                deleted_font_names.append(display_name)
+
+            self.update_font_cache()
+            GLib.idle_add(self.update_fonts_list)
+            GLib.idle_add(self.on_search_entry_changed, self.search_entry)
+
+            # After deleting all selected font(s) show font names as a msg
+            deleted_fonts_message = ", ".join(deleted_font_names)
+            GLib.idle_add(self.show_info, f"Deleted fonts: {deleted_fonts_message}")
 
 
-    def on_key_press_event(self, widget, event):
-        selection = self.fonts_view.get_selection()
+            if callback:
+                GLib.idle_add(callback)
 
-        if event.keyval == Gdk.KEY_Delete:  # Using GDK constant for the Delete key
-            selected_fonts_info = self.get_selected_font_info()
+            self.operation_in_progress = False
 
-            if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
-                for font_info in selected_fonts_info:
-                    _, user_added, _, _ = font_info
-                    if user_added:
-                        self.delete_selected_font()
-                        break
-            elif selected_fonts_info:
-                _, user_added, _, _ = selected_fonts_info[0]
-                if user_added:
-                    self.delete_selected_font()
-
-            self.on_font_selected(None)
-
-        if event.keyval in [Gdk.KEY_Control_L, Gdk.KEY_Control_R]:
-            self.multiple_select_active = True
-            selection.set_mode(Gtk.SelectionMode.MULTIPLE)
+        threading.Thread(target=delete_fonts_and_update).start()
 
 
     def on_row_activated(self, treeview, path, column):
         self.multiple_select_active = False
         self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
+
+
+    def on_key_press_event(self, widget, event):
+        selection = self.fonts_view.get_selection()
+
+        if event.keyval == Gdk.KEY_Delete:
+            if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
+                # For multi-selected font deletion
+                self.delete_selected_fonts()
+            else:
+                # For single font deletion
+                self.delete_selected_font()
+
+            self.on_font_selected(None)
+
+        # Use CTRL + left mouse click to select fonts
+        if event.keyval in [Gdk.KEY_Control_L, Gdk.KEY_Control_R]:
+            self.multiple_select_active = True
+            selection.set_mode(Gtk.SelectionMode.MULTIPLE)
 
 
     def on_remove_button_clicked(self, button):
@@ -973,5 +984,4 @@ class MainWindow:
                    self.menu_button]
 
         self.make_widgets_insensitive(widgets)
-        self.delete_selected_fonts()
-        self.make_widgets_sensitive(widgets)
+        self.delete_selected_fonts(callback=lambda: self.make_widgets_sensitive(widgets))
