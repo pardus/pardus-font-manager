@@ -17,6 +17,6 @@ int fontmain(char *fontdesc) {
 
     FcConfigBuildFonts(FcConfigGetCurrent());
 
-    printf("Font added successfully: %s\n", fontdesc);
+    // printf("Font added successfully: %s\n", fontdesc);
     return 0;
 }
