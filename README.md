@@ -27,15 +27,7 @@ and manage existing fonts.
 
 The main window shows a list of fonts and their details:
 
-![Font List](img/font_list.png)
-
-Font preview window:
-
-![Font Preview](img/font_preview.png)
-
-Adding a new font:
-
-![Add Font](img/add_font.png)
+![Font List](screenshots/font_list.png)
 
 ### Font Management Features
 - Easy addition of new fonts to the system.
