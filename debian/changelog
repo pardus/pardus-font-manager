@@ -1,3 +1,36 @@
+pardus-font-manager (0.1.4) unstable; urgency=medium
+
+  [ Emel Öztürk ]
+  * Del blank line
+  * Fix typo
+  * Fix last typo
+  * Fix file path
+  * Ignore files generated during .deb packaging
+  * Prevent duplicate font names from appearing in search results
+  * Add multi-font selection support
+  * Add config files to see sample font style
+  * Add a simple sample test program that displays the style of a font
+  * Add cleanup func to rem temp added font file
+  * Add charmaps for font viewer
+  * Add multiple selection support for deletion
+  * Add scrolledwindow for long msgs in revealer
+  * Edit del funcs for multi/single choose
+  * Del unnecessary seperator
+  * Change del funcs for multi-deletion
+  * Correct ctrl control
+  * Implement async font deletion
+  * Fix path
+  * Del print
+  * Update readme
+  * Add ss for main window
+  * Add new ss for main window
+  * Delete 'screenshots/Screenshot from 2023-08-11 18-03-02.png'
+
+  [ Fatih Altun ]
+  * Update copyright to 2024
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Tue, 16 Jan 2024 11:10:56 +0300
+
 pardus-font-manager (0.1.3) unstable; urgency=medium
 
   * Fix typo
