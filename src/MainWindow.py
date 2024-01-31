@@ -117,13 +117,16 @@ class MainWindow:
         self.bottom_scrolled = self.builder.get_object("bottom_scrolled")
         self.revealer_scrolled = self.builder.get_object("revealer_scrolled")
         self.popover_seperator = self.builder.get_object("popover_seperator")
+        self.charmaps_combo = self.builder.get_object("charmaps_combo")
+        self.charmaps_combo.append_text(_("Char Maps"))
+        self.charmaps_combo.append_text(_("Waterfall"))
+        self.charmaps_combo.set_active(0)
 
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
         self.dialog_font_manager.set_program_name(_("Pardus Font Manager"))
         self.dialog_font_manager.set_transient_for(self.window)
 
         self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
-        # self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
 
         # Set version
         # If not getted from __version__ file then accept version in MainWindow.glade file
@@ -158,6 +161,7 @@ class MainWindow:
         self.more_button.connect("clicked", self.on_more_button_clicked)
         self.bottom_info_button.connect("clicked", self.on_bottom_info_button_clicked)
         self.install_button_view.connect("clicked", self.install_button_view_clicked)
+        self.charmaps_combo.connect("changed", self.charmaps_combo_changed)
 
         # Signal connection for spin buttons
         self.size_spin_button.connect("value-changed", self.on_size_spin_button_value_changed)
@@ -249,6 +253,11 @@ class MainWindow:
     def loading_finished(self):
         self.spinner_start.stop()
         self.stack_start.set_visible_child_name("page_list")
+
+
+    def charmaps_combo_changed(self, widget):
+        selected_element = self.charmaps_combo.get_active_text()
+        print("selected element: ", selected_element)
 
 
     def on_size_spin_button_value_changed(self, spin_button):
@@ -434,42 +443,50 @@ class MainWindow:
         if not selection:
             selection = self.fonts_view.get_selection()
 
+        selected_element = self.charmaps_combo.get_active_text()
+
         font_name, style, user_added, self.c_count = self.get_selected_font_info()
 
-        # Reset the display limit
-        self.char_display_limit = 2000
         if font_name is not None:
             font_description_str = f"{font_name} {style}"
             self.font_description = Pango.FontDescription.from_string(font_description_str)
 
-            # Show the remove button only for the fonts that have been added by the user
-            self.remove_button.set_sensitive(user_added)
-
             self.label.override_font(self.font_description)
-            self.label.set_text(self.entry.get_text() if self.entry.get_text().strip() != "" else self.sample_text)
+            display_text = self.entry.get_text().strip() if self.entry.get_text().strip() != "" else self.sample_text
+            self.label.set_text(display_text)
 
-            # Get the charmap, char_map_count and user_added flag for the selected font
-            font_charmap, _, _ = self.font_charmaps[(font_name, style)]
+            if selected_element == "Waterfall":
+                self.charmaps_label.set_line_wrap(False)
+                # self.charmaps_label.set_xalign(1.0)
+                waterfall_text = ""
+                for size in range(8, 49):  # From 8 to 48 points
+                    waterfall_text += (
+                        f'<span font="Sans 10">{size} pt. </span>'
+                        f'<span font="{font_name} {style} {size}">{display_text}</span>\n'
+                        )
 
-            # Gives more info about selected font
-            self.info_button.set_sensitive(True)
+                self.charmaps_label.set_markup(waterfall_text)
+            else:
+                self.charmaps_label.set_line_wrap(True)
+                self.char_display_limit = 2000  # Reset the display limit
+                # Get the charmap, char_map_count and user_added flag for the selected font
+                font_charmap, _, _ = self.font_charmaps[(font_name, style)]
 
-            # If the character count is more than char_display_limit,
-            # show only the first char_display_limit characters
-            if self.c_count:
-                font_charmap = font_charmap[:self.char_display_limit]
+                # Gives more info about selected font
+                self.info_button.set_sensitive(True)
 
-            # This section was added due to the problem of listing charmaps of fonts that
-            # contain spaces or similar characters in charmaps in charmaps
-            font_charmap_without_gap = self.get_remaining_elements(font_charmap)
-            font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
+                # If the character count is more than char_display_limit,
+                # show only the first char_display_limit characters
+                if self.c_count:
+                    font_charmap = font_charmap[:self.char_display_limit]
 
-            # # # font_charmap_string = '   '.join([char for char in font_charmap])
-            # # font_charmap_string = '   '.join([char for char in font_charmap if char.isprintable()])
-            # font_charmap_string = '   '.join([char for char in font_charmap if not char.isspace()])
+                # This section was added due to the problem of listing charmaps of fonts that
+                # contain spaces or similar characters in charmaps in charmaps
+                font_charmap_without_gap = self.get_remaining_elements(font_charmap)
+                font_charmap_string = '   '.join([char for char in font_charmap_without_gap if char != ' '])
 
-            self.charmaps_label.override_font(self.font_description)
-            self.charmaps_label.set_text(font_charmap_string)
+                self.charmaps_label.override_font(self.font_description)
+                self.charmaps_label.set_text(font_charmap_string)
 
 
     def on_more_button_clicked(self, button):

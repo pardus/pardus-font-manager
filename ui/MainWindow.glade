@@ -399,18 +399,14 @@
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <child>
-                          <object class="GtkLabel" id="charmap_title_label">
+                          <object class="GtkComboBoxText" id="charmaps_combo">
+                            <property name="width-request">150</property>
                             <property name="visible">True</property>
                             <property name="can-focus">False</property>
-                            <property name="label" translatable="yes">Char Maps</property>
-                            <attributes>
-                              <attribute name="weight" value="ultrabold"/>
-                            </attributes>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">True</property>
-                            <property name="padding">5</property>
                             <property name="position">0</property>
                           </packing>
                         </child>
