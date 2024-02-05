@@ -124,6 +124,13 @@ class MainWindow:
         self.dialog_font_manager = self.builder.get_object("dialog_font_manager")
         self.dialog_font_manager.set_program_name(_("Pardus Font Manager"))
         self.dialog_font_manager.set_transient_for(self.window)
+        if self.dialog_font_manager.get_titlebar() is None:
+            about_headerbar = Gtk.HeaderBar.new()
+            about_headerbar.set_show_close_button(True)
+            about_headerbar.set_title(_("About Pardus Font Manager"))
+            about_headerbar.pack_start(Gtk.Image.new_from_icon_name("pardus-font-manager", Gtk.IconSize.LARGE_TOOLBAR))
+            about_headerbar.show_all()
+            self.dialog_font_manager.set_titlebar(about_headerbar)
 
         self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
         # self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
