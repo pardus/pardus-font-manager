@@ -470,13 +470,16 @@ class MainWindow:
 
     def prepare_waterfall_view(self, font_name, style, display_text):
         self.charmaps_label.set_line_wrap(False)
-        waterfall_text = ""
         self.charmaps_label.set_xalign(0.0)
-        for size in range(8, 49):  # From 8 to 48 points
-            waterfall_text += (
-                f'<span font="Sans 10">{size} pt. </span>'
-                f'<span font="{font_name} {style} {size}">{display_text}</span>\n'
-            )
+
+        # From 8 to 48 points
+        # To see waterfall correctly, add 3x spaces if size in [8, 9]
+        waterfall_text = '\n'.join(
+            f'<span font="Sans 8">{"  " if size in [8, 9] else ""}{size} pt.   </span>'
+            f'<span font="{font_name} {style} {size}">{display_text}</span>'
+            for size in range(8, 49)
+        )
+
         self.charmaps_label.set_markup(waterfall_text)
 
 
@@ -1009,3 +1012,4 @@ class MainWindow:
 
         self.make_widgets_insensitive(widgets)
         self.delete_selected_fonts(callback=lambda: self.make_widgets_sensitive(widgets))
+
