@@ -117,7 +117,7 @@ class MainWindow:
         self.revealer_scrolled = self.builder.get_object("revealer_scrolled")
         self.popover_seperator = self.builder.get_object("popover_seperator")
         self.charmaps_combo = self.builder.get_object("charmaps_combo")
-        self.charmaps_combo.append_text(_("Char Maps"))
+        self.charmaps_combo.append_text(_("Characters"))
         self.charmaps_combo.append_text(_("Waterfall"))
         self.charmaps_combo.set_active(0)
 
@@ -371,6 +371,7 @@ class MainWindow:
                     # selected font
                     self.font_charmaps = font_charmaps.get_selected_font_charmaps(name, style)
                     _, charmap_count, user_added = self.font_charmaps[name, style]
+                    print("user added 1 = ", user_added)
                 else:
                     # print(f"Font {name} not found in font_charmaps")
                     return None, None, False, None
@@ -460,6 +461,9 @@ class MainWindow:
         selected_element = self.charmaps_combo.get_active_text()
 
         font_name, style, user_added, self.c_count = self.get_selected_font_info()
+
+        # If font was added by user, user can delete the font
+        self.remove_button.set_sensitive(user_added)
 
         if font_name is not None:
             font_description_str = f"{font_name} {style}"
@@ -756,7 +760,7 @@ class MainWindow:
 
         if error is None:
             self.bottom_stack.set_visible_child_name("error")
-            self.info_message = "{} {} {}".format(_("The following fonts have been added successfully:"), font_names_str, "")
+            self.info_message = "{} {} {}".format(_("Fonts have been added successfully:"), font_names_str, "")
 
             self.bottom_info_label.set_markup("<span color='green'>{}</span>".format(self.info_message))
         else:
@@ -1019,4 +1023,3 @@ class MainWindow:
 
         self.make_widgets_insensitive(widgets)
         self.delete_selected_fonts(callback=lambda: self.make_widgets_sensitive(widgets))
-
