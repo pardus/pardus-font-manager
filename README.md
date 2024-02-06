@@ -1,5 +1,7 @@
 
-# Pardus Font Manager Application
+[🇹🇷](README_TR.md) [🇬🇧](README.md)
+
+# Pardus Font Manager
 
 ## Introduction
 Pardus Font Manager is a versatile application for Linux users, designed to
@@ -17,7 +19,7 @@ and manage existing fonts.
 - Clone the repository:
 
     ```
-    git clone [your repository URL here]
+    git clone https://github.com/pardus/pardus-font-manager.git
     ```
 
 - To start the application, run:
