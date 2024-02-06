@@ -13,7 +13,7 @@
     <property name="comments" translatable="yes">Simple font manager.</property>
     <property name="website">https://github.com/pardus/pardus-font-manager</property>
     <property name="authors">Emel Öztürk</property>
-    <property name="translator-credits" translatable="yes">Emel Öztürk</property>
+    <property name="translator-credits">Emel Öztürk</property>
     <property name="logo-icon-name">pardus-font-manager</property>
     <property name="license-type">gpl-3-0</property>
     <child internal-child="vbox">
@@ -663,7 +663,6 @@
                                           </object>
                                           <packing>
                                             <property name="name">page_charmap</property>
-                                            <property name="title">page_charmap</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -1040,7 +1039,7 @@
                             <property name="can-focus">False</property>
                             <property name="halign">start</property>
                             <property name="valign">center</property>
-                            <property name="label" translatable="yes">font_name</property>
+                            <property name="label">font_name</property>
                             <attributes>
                               <attribute name="weight" value="ultrabold"/>
                             </attributes>
@@ -1056,7 +1055,7 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="install_button_view">
-                            <property name="label" translatable="yes">button</property>
+                            <property name="label">button</property>
                             <property name="visible">True</property>
                             <property name="can-focus">True</property>
                             <property name="receives-default">True</property>
@@ -1123,7 +1122,6 @@
                                           </object>
                                           <packing>
                                             <property name="name">page_charmap</property>
-                                            <property name="title" translatable="yes">page_charmap</property>
                                           </packing>
                                         </child>
                                       </object>

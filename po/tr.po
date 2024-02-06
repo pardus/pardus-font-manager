@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Emel Öztürk <emel.ozturk@pardus.org.tr>, 2023.
+# Emel Öztürk <emel.ozturk@pardus.org.tr>, 2023-2024.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-15 14:26+0300\n"
-"PO-Revision-Date: 2023-08-15 14:36+0300\n"
+"POT-Creation-Date: 2024-02-06 14:22+0300\n"
+"PO-Revision-Date: 2024-02-06 14:08+0300\n"
 "Last-Translator: Emel Öztürk <emel.ozturk@pardus.org.tr>\n"
 "Language-Team: Turkish <dev@pardus.org.tr>\n"
 "Language: tr\n"
@@ -17,145 +17,159 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0\n"
-"X-Generator: Gtranslator 3.38.0\n"
-
-#: ui/MainWindow.glade:7
-msgid "About Pardus Font Manager"
-msgstr "Pardus Yazı Tipi Yöneticisi Hakkında"
+"X-Generator: Gtranslator 42.0\n"
 
 #: ui/MainWindow.glade:13
 msgid "Simple font manager."
 msgstr "Basit yazı tipi yöneticisi"
 
-#: ui/MainWindow.glade:15
-msgid "Website"
-msgstr "Website"
-
-#: ui/MainWindow.glade:64 ui/MainWindow.glade:862 src/MainWindow.py:653
+#: ui/MainWindow.glade:65 ui/MainWindow.glade:863 ui/MainWindow.glade:1318
+#: src/MainWindow.py:836
 msgid "OK"
 msgstr "Tamam"
 
-#: ui/MainWindow.glade:77 src/MainWindow.py:656
+#: ui/MainWindow.glade:78 src/MainWindow.py:839
 msgid "Cancel"
 msgstr "İptal"
 
-#: ui/MainWindow.glade:104
+#: ui/MainWindow.glade:105
 msgid "Dark Theme :"
 msgstr "Koyu Tema:"
 
-#: ui/MainWindow.glade:144
+#: ui/MainWindow.glade:145
 msgid "Change Color :"
 msgstr "Renk Değiştir:"
 
-#: ui/MainWindow.glade:185
+#: ui/MainWindow.glade:186
 msgid "Text Colors :"
 msgstr "Metin Renkleri:"
 
-#: ui/MainWindow.glade:259
+#: ui/MainWindow.glade:260
 msgid "Settings"
 msgstr "Ayarlar"
 
-#: ui/MainWindow.glade:314
+#: ui/MainWindow.glade:315
 msgid "About"
 msgstr "Hakkında"
 
-#: ui/MainWindow.glade:376
+#: ui/MainWindow.glade:378
 msgid "System Fonts"
 msgstr "Sistem Yazı Tipleri"
 
-#: ui/MainWindow.glade:403
-msgid "Char Maps"
-msgstr "Karakter Haritaları"
-
-#: ui/MainWindow.glade:420
+#: ui/MainWindow.glade:418 ui/MainWindow.glade:973
 msgid "Increase character sizes"
 msgstr "Karakter boyutlarını artır"
 
-#: ui/MainWindow.glade:442
+#: ui/MainWindow.glade:440 ui/MainWindow.glade:995
 msgid "Decrease character sizes"
 msgstr "Karakter boyutlarını azalt"
 
-#: ui/MainWindow.glade:497
+#: ui/MainWindow.glade:495
 msgid "Search Families"
 msgstr "Yazı Tipi Ailelerini Ara"
 
-#: ui/MainWindow.glade:553
+#: ui/MainWindow.glade:551
 msgid "Add a new font"
 msgstr "Yeni bir yazı tipi ekle"
 
-#: ui/MainWindow.glade:568
+#: ui/MainWindow.glade:566
 msgid "Info about selected font"
 msgstr "Seçilen yazı tipi hakkında bilgi"
 
-#: ui/MainWindow.glade:590
+#: ui/MainWindow.glade:588
 msgid "Remove user-added font"
 msgstr "Kullanıcının eklediği yazı tipini sil"
 
-#: ui/MainWindow.glade:682
+#: ui/MainWindow.glade:679 ui/MainWindow.glade:1138
 msgid "Click the button for the rest of the characters"
 msgstr "Kalan karakterler için butona basın"
 
-#: ui/MainWindow.glade:743
+#: ui/MainWindow.glade:740 ui/MainWindow.glade:1199
 msgid "A sentence containing the letters of the alphabet"
 msgstr "Alfabedeki karakterleri içeren bir cümle"
 
-#: ui/MainWindow.glade:768
+#: ui/MainWindow.glade:765 ui/MainWindow.glade:1224
 msgid "type something .."
 msgstr "bir şeyler yaz .."
 
-#: ui/MainWindow.glade:971 src/MainWindow.py:100 src/MainWindow.py:169
+#: ui/MainWindow.glade:930
+msgid "Font Name"
+msgstr "Yazı Tipi"
+
+#: ui/MainWindow.glade:956
+msgid "Char Maps"
+msgstr "Karakter Haritaları"
+
+#: ui/MainWindow.glade:1426 src/MainWindow.py:125 src/MainWindow.py:217
 msgid "Pardus Font Manager"
 msgstr "Pardus Yazı Tipi Yöneticisi"
 
-#: src/MainWindow.py:37
+#: src/MainWindow.py:39
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "Pijamalı hasta, yağız şoföre çabucak güvendi."
 
-#: src/MainWindow.py:468
+#: src/MainWindow.py:120
+msgid "Characters"
+msgstr "Karakterler"
+
+#: src/MainWindow.py:121
+msgid "Waterfall"
+msgstr "Şelale"
+
+#: src/MainWindow.py:130
+msgid "About Pardus Font Manager"
+msgstr "Pardus Yazı Tipi Yöneticisi Hakkında"
+
+#: src/MainWindow.py:638
 msgid "Please choose a font file"
 msgstr "Lütfen bir yazı tipi dosyası seçin"
 
-#: src/MainWindow.py:472
+#: src/MainWindow.py:644
 msgid "TTF files"
 msgstr "TTF dosyaları"
 
-#: src/MainWindow.py:477
+#: src/MainWindow.py:649
 msgid "OTF files"
 msgstr "OTF dosyaları"
 
-#: src/MainWindow.py:517 src/MainWindow.py:585 src/MainWindow.py:751
-msgid "The font"
-msgstr "Yazı Tipi, "
+#: src/MainWindow.py:679
+msgid "Unable to extract font name from the selected file."
+msgstr ""
 
-#: src/MainWindow.py:517
+#: src/MainWindow.py:691
+msgid "The font"
+msgstr "Yazı Tipi "
+
+#: src/MainWindow.py:691
 msgid "is already installed!"
 msgstr "daha önce yüklenmiş!"
 
-#: src/MainWindow.py:585
-msgid "has been added successfully"
-msgstr "başarıyla eklendi"
+#: src/MainWindow.py:759
+msgid "Fonts have been added successfully:"
+msgstr "Fontlar başarıyla eklendi:"
 
-#: src/MainWindow.py:590
-msgid "An error occurred while adding the font"
+#: src/MainWindow.py:764
+msgid "An error occurred while adding the fonts"
 msgstr "Yazı tipi yüklenirken bir hata oluştu"
 
-#: src/MainWindow.py:643
+#: src/MainWindow.py:826
 msgid "Font Size:"
 msgstr "Yazı Tipi Boyutu:"
 
-#: src/MainWindow.py:683
-msgid "Delete Font?"
-msgstr "Yazı Tipi Silinsin Mi?"
-
-#: src/MainWindow.py:686
-msgid ""
-"Are you sure you want to delete this font? This action cannot be undone."
-msgstr "Bu yazı tipini silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
-
-#: src/MainWindow.py:735
+#: src/MainWindow.py:920
 msgid "Deleted font file:"
 msgstr "Yazı tipi dosyası silindi:"
 
-#: src/MainWindow.py:751
-msgid "has been deleted successfully"
-msgstr "başarıyla silindi"
+#~ msgid "Website"
+#~ msgstr "Website"
+
+#~ msgid "Delete Font?"
+#~ msgstr "Yazı Tipi Silinsin Mi?"
+
+#~ msgid ""
+#~ "Are you sure you want to delete this font? This action cannot be undone."
+#~ msgstr ""
+#~ "Bu yazı tipini silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+
+#~ msgid "has been deleted successfully"
+#~ msgstr "başarıyla silindi"
