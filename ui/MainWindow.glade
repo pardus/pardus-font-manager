@@ -559,28 +559,6 @@
                                   </packing>
                                 </child>
                                 <child>
-                                  <object class="GtkButton" id="info_button">
-                                    <property name="visible">True</property>
-                                    <property name="can-focus">True</property>
-                                    <property name="receives-default">True</property>
-                                    <property name="tooltip-text" translatable="yes">Info about selected font</property>
-                                    <property name="always-show-image">True</property>
-                                    <child>
-                                      <object class="GtkImage">
-                                        <property name="visible">True</property>
-                                        <property name="can-focus">False</property>
-                                        <property name="icon-name">document-edit-symbolic</property>
-                                      </object>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">True</property>
-                                    <property name="padding">5</property>
-                                    <property name="position">1</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkButton" id="remove_button">
                                     <property name="label">gtk-remove</property>
                                     <property name="can-focus">True</property>
@@ -663,6 +641,52 @@
                                           </object>
                                           <packing>
                                             <property name="name">page_charmap</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="waterfall_label">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="has-tooltip">True</property>
+                                            <property name="margin-left">10</property>
+                                            <property name="margin-right">10</property>
+                                            <property name="margin-start">10</property>
+                                            <property name="margin-end">10</property>
+                                            <property name="margin-top">10</property>
+                                            <property name="margin-bottom">10</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="label">..</property>
+                                            <property name="justify">fill</property>
+                                            <property name="wrap">True</property>
+                                            <property name="wrap-mode">word-char</property>
+                                            <property name="selectable">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="name">page_waterfall</property>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel" id="lipsum_label">
+                                            <property name="visible">True</property>
+                                            <property name="can-focus">False</property>
+                                            <property name="has-tooltip">True</property>
+                                            <property name="margin-left">10</property>
+                                            <property name="margin-right">10</property>
+                                            <property name="margin-start">10</property>
+                                            <property name="margin-end">10</property>
+                                            <property name="margin-top">10</property>
+                                            <property name="margin-bottom">10</property>
+                                            <property name="vexpand">True</property>
+                                            <property name="label">..</property>
+                                            <property name="justify">fill</property>
+                                            <property name="wrap">True</property>
+                                            <property name="wrap-mode">word-char</property>
+                                            <property name="selectable">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="name">page_lipsum</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -755,7 +779,7 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkBox" id="bottom_entry">
+                      <object class="GtkBox" id="bottom_entry_box">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
                         <child>
