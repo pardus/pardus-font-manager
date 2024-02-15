@@ -159,6 +159,7 @@ class MainWindow:
         self.charmaps_combo = self.builder.get_object("charmaps_combo")
         self.charmaps_combo.append_text(_("Characters"))
         self.charmaps_combo.append_text(_("Waterfall"))
+        self.charmaps_combo.append_text("Lorem Ipsum")
         self.charmaps_combo.set_active(0)
 
         # Dialogs
@@ -489,23 +490,10 @@ class MainWindow:
 
             if selected_element == _("Waterfall"):
                 self.prepare_waterfall_view(font_name, style, display_text)
+            elif selected_element == ("Lorem Ipsum"):
+                self.prepare_lorem_ipsum_view(font_name, style)
             else:
                 self.prepare_charmap_view(font_name, style)
-
-
-    def prepare_waterfall_view(self, font_name, style, display_text):
-        self.charmaps_label.set_line_wrap(False)
-        self.charmaps_label.set_xalign(0.0)
-
-        # From 8 to 48 points
-        # To see waterfall correctly, add 3x spaces if size in [8, 9]
-        waterfall_text = '\n'.join(
-            f'<span font="Sans 8">{"  " if size in [8, 9] else ""}{size} pt.   </span>'
-            f'<span font="{font_name} {style} {size}">{display_text}</span>'
-            for size in range(8, 49)
-        )
-
-        self.charmaps_label.set_markup(waterfall_text)
 
 
     def prepare_charmap_view(self, font_name, style):
@@ -523,6 +511,51 @@ class MainWindow:
 
         self.charmaps_label.override_font(self.font_description)
         self.charmaps_label.set_text(font_charmap_string)
+
+
+    def prepare_lorem_ipsum_view(self, font_name, style):
+        """
+        Prepares and displays the Lorem Ipsum text in the selected font and style.
+        """
+        self.more_button.set_visible(False)
+        self.charmaps_label.set_line_wrap(True)
+        self.charmaps_label.set_xalign(0.0)
+
+        lorem_ipsum_text = (
+            "   Lorem ipsum dolor sit amet, consectetuer adipiscing elit. "
+            "Aenean commodo ligula eget dolor. Aenean massa. Cum sociis "
+            "natoque penatibus et magnis dis parturient montes, nascetur "
+            "ridiculus mus. Donec quam felis, ultricies nec, pellentesque "
+            "eu, pretium quis, sem.\n\n"
+            "   Nulla consequat massa quis enim. Donec pede justo, fringilla vel, "
+            "aliquet nec, vulputate eget, arcu. In enim justo, rhoncus ut, "
+            "imperdiet a, venenatis vitae, justo. Nullam dictum felis eu pede "
+            "mollis pretium. Integer tincidunt. Cras dapibus. Vivamus elementum "
+            "semper nisi.\n\n"
+            "   Aenean vulputate eleifend tellus. Aenean leo ligula, porttitor eu, "
+            "consequat vitae, eleifend ac, enim. Aliquam lorem ante, dapibus in, "
+            "viverra quis, feugiat a, tellus. Phasellus viverra nulla ut metus "
+            "varius laoreet. Quisque rutrum. Aenean imperdiet. Etiam ultricies "
+            "nisi vel augue. Curabitur ullamcorper ultricies nisi."
+        )
+
+        formatted_lorem_ipsum = f'<span font="{font_name} {style}">{lorem_ipsum_text}</span>'
+        self.charmaps_label.set_markup(formatted_lorem_ipsum)
+
+
+    def prepare_waterfall_view(self, font_name, style, display_text):
+        self.charmaps_label.set_line_wrap(False)
+        self.charmaps_label.set_xalign(0.0)
+
+        # From 8 to 48 points
+        # To see waterfall correctly, add 3x spaces if size in [8, 9]
+        waterfall_text = '\n'.join(
+            f'<span font="Sans 8">{"  " if size in [8, 9] else ""}{size} pt.   </span>'
+            f'<span font="{font_name} {style} {size}">{display_text}</span>'
+            for size in range(8, 49)
+        )
+
+        self.charmaps_label.set_markup(waterfall_text)
 
 
     def on_more_button_clicked(self, button):
