@@ -490,10 +490,16 @@ class MainWindow:
 
             if selected_element == _("Waterfall"):
                 self.prepare_waterfall_view(font_name, style, display_text)
+                button_visibility = False
             elif selected_element == ("Lorem Ipsum"):
                 self.prepare_lorem_ipsum_view(font_name, style)
+                button_visibility = True
             else:
                 self.prepare_charmap_view(font_name, style)
+                button_visibility = True
+
+            self.increase_button.set_visible(button_visibility)
+            self.decrease_button.set_visible(button_visibility)
 
 
     def prepare_charmap_view(self, font_name, style):
