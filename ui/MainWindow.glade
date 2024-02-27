@@ -643,52 +643,6 @@
                                             <property name="name">page_charmap</property>
                                           </packing>
                                         </child>
-                                        <child>
-                                          <object class="GtkLabel" id="waterfall_label">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="has-tooltip">True</property>
-                                            <property name="margin-left">10</property>
-                                            <property name="margin-right">10</property>
-                                            <property name="margin-start">10</property>
-                                            <property name="margin-end">10</property>
-                                            <property name="margin-top">10</property>
-                                            <property name="margin-bottom">10</property>
-                                            <property name="vexpand">True</property>
-                                            <property name="label">..</property>
-                                            <property name="justify">fill</property>
-                                            <property name="wrap">True</property>
-                                            <property name="wrap-mode">word-char</property>
-                                            <property name="selectable">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="name">page_waterfall</property>
-                                            <property name="position">1</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel" id="lipsum_label">
-                                            <property name="visible">True</property>
-                                            <property name="can-focus">False</property>
-                                            <property name="has-tooltip">True</property>
-                                            <property name="margin-left">10</property>
-                                            <property name="margin-right">10</property>
-                                            <property name="margin-start">10</property>
-                                            <property name="margin-end">10</property>
-                                            <property name="margin-top">10</property>
-                                            <property name="margin-bottom">10</property>
-                                            <property name="vexpand">True</property>
-                                            <property name="label">..</property>
-                                            <property name="justify">fill</property>
-                                            <property name="wrap">True</property>
-                                            <property name="wrap-mode">word-char</property>
-                                            <property name="selectable">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="name">page_lipsum</property>
-                                            <property name="position">2</property>
-                                          </packing>
-                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
