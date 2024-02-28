@@ -212,8 +212,11 @@ class MainWindow:
         self.install_button_view.connect("clicked", self.install_button_view_clicked)
         self.charmaps_combo.connect("changed", self.charmaps_combo_changed)
         self.fonts_view.get_selection().connect("changed", self.on_font_selected)
-        self.fonts_view.connect("key-press-event", self.on_key_press_event)
         self.fonts_view.connect("row-activated", self.on_row_activated)
+        self.fonts_view.connect(
+            "key-press-event",
+            lambda widget, event: delete_font.on_key_press_event(widget, event, self)
+        )
         self.add_button.connect(
             "clicked", lambda button: add_font.on_add_button_clicked(self, button)
         )
@@ -794,22 +797,3 @@ class MainWindow:
     def on_row_activated(self, treeview, path, column):
         self.multiple_select_active = False
         self.fonts_view.get_selection().set_mode(Gtk.SelectionMode.SINGLE)
-
-
-    def on_key_press_event(self, widget, event):
-        selection = self.fonts_view.get_selection()
-
-        if event.keyval == Gdk.KEY_Delete:
-            if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
-                # For multi-selected font deletion
-                self.delete_selected_fonts()
-            else:
-                # For single font deletion
-                self.delete_selected_font()
-
-            self.on_font_selected(None)
-
-        # Use CTRL + left mouse click to select fonts
-        if event.keyval in [Gdk.KEY_Control_L, Gdk.KEY_Control_R]:
-            self.multiple_select_active = True
-            selection.set_mode(Gtk.SelectionMode.MULTIPLE)

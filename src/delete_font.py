@@ -42,7 +42,6 @@ def confirm_delete(self, font_count):
     return False
 
 
-
 def delete_font(self, font_path):
     font_file = font_path
     # print(f"font_file: {font_file}")
@@ -122,17 +121,11 @@ def delete_selected_fonts(self, callback=None):
     threading.Thread(target=delete_fonts_and_update).start()
 
 
-def on_key_press_event(self, widget, event):
+def on_key_press_event(widget, event, self):
     selection = self.fonts_view.get_selection()
 
     if event.keyval == Gdk.KEY_Delete:
-        if selection.get_mode() == Gtk.SelectionMode.MULTIPLE:
-            # For multi-selected font deletion
-            delete_selected_fonts()
-        else:
-            # For single font deletion
-            self.delete_selected_font()
-
+        delete_selected_fonts(self)
         self.on_font_selected(None)
 
     # Use CTRL + left mouse click to select fonts
