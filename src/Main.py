@@ -17,6 +17,7 @@ class Application(Gtk.Application):
             **kwargs)
 
         self.window = None
+        GLib.set_prgname("tr.org.pardus.font-manager")
 
         self.add_main_option(
             "details",
