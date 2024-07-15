@@ -83,6 +83,9 @@ class MainWindow:
         self.window.set_title(_("Pardus Font Manager"))
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
+
+        self.more_button.set_visible(False)
+
         self.controlArgs()
 
 
@@ -182,7 +185,6 @@ class MainWindow:
         # Button sensitivity and visibility setup
         self.bottom_info_button.set_visible(False)
         self.menu_button.set_sensitive(False)
-        self.more_button.set_visible(False)
         self.remove_button.set_sensitive(False)
         # self.info_button.set_sensitive(False)
         # self.info_button.set_visible(False)
