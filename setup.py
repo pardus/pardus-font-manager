@@ -44,8 +44,10 @@ data_files = [
     ("/usr/share/pardus/pardus-font-manager/src",
      ["src/Main.py",
       "src/MainWindow.py",
+      "src/add_font.py",
+      "src/delete_font.py",
       "src/font_charmaps.py",
-      "libfontadder.so",
+      "src/font_viewer.py",
       "src/__version__"]),
     ("/usr/share/icons/hicolor/scalable/apps/",
      ["data/pardus-font-manager.svg"])
