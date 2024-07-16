@@ -1,3 +1,44 @@
+pardus-font-manager (0.2.0) unstable; urgency=medium
+
+  [ Emel Öztürk ]
+  * Add waterfall to see font style
+  * Add combobox based font display switching
+  * Fix waterfall display for varying font sizes
+
+  [ bariscodefx ]
+  * ported xfce about dialog fix from pardus-software
+
+  [ Emel Öztürk ]
+  * Add Turkish README and fix URL for GitHub repo
+  * Enable to remove user-added fonts
+  * Add translate files
+
+  [ Hugo Carvalho ]
+  * Update Portuguese translations
+
+  [ Emel Öztürk ]
+  * Add widgets for font style views
+  * Optimize readability and pep-8 compliance
+  * Add lorem ipsum to see font style
+  * Hide inc/dec buttons for waterfall
+  * Move add operation to its own module
+  * Del add operation funcs,
+  * Del labels for lipsum & waterfall
+  * Write new module for del funcs
+  * Enable font deletion with del key
+
+  [ Hugo Carvalho ]
+  * Add Portuguese translation
+
+  [ sulincix ]
+  * fix kde wayland wrong icon issue
+
+  [ Fatih Altun ]
+  * Add missing files to setup.py
+  * Fix more button initial visibility
+
+ -- Fatih Altun <fatih.altun@pardus.org.tr>  Tue, 16 Jul 2024 12:22:14 +0300
+
 pardus-font-manager (0.1.4) unstable; urgency=medium
 
   [ Emel Öztürk ]
