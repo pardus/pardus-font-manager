@@ -52,6 +52,8 @@ class MainWindow:
         )
         # self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
 
+        self.defineComponents()
+
         # Set version if it cannot be retrieved from __version__ file,
         # then use MainWindow.glade file
         try:
@@ -60,8 +62,6 @@ class MainWindow:
             self.dialog_font_manager.set_version(version)
         except:
             pass
-
-        self.defineComponents()
 
         # Threading setup for background tasks
         p1 = Thread(target=self.worker, daemon=True)
