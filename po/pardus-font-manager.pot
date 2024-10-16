@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-06 14:22+0300\n"
+"POT-Creation-Date: 2024-10-16 15:18+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,12 +21,12 @@ msgstr ""
 msgid "Simple font manager."
 msgstr ""
 
-#: ui/MainWindow.glade:65 ui/MainWindow.glade:863 ui/MainWindow.glade:1318
-#: src/MainWindow.py:836
+#: ui/MainWindow.glade:65 ui/MainWindow.glade:841 ui/MainWindow.glade:1296
+#: src/MainWindow.py:750
 msgid "OK"
 msgstr ""
 
-#: ui/MainWindow.glade:78 src/MainWindow.py:839
+#: ui/MainWindow.glade:78 src/MainWindow.py:753
 msgid "Cancel"
 msgstr ""
 
@@ -54,11 +54,11 @@ msgstr ""
 msgid "System Fonts"
 msgstr ""
 
-#: ui/MainWindow.glade:418 ui/MainWindow.glade:973
+#: ui/MainWindow.glade:418 ui/MainWindow.glade:951
 msgid "Increase character sizes"
 msgstr ""
 
-#: ui/MainWindow.glade:440 ui/MainWindow.glade:995
+#: ui/MainWindow.glade:440 ui/MainWindow.glade:973
 msgid "Decrease character sizes"
 msgstr ""
 
@@ -71,89 +71,101 @@ msgid "Add a new font"
 msgstr ""
 
 #: ui/MainWindow.glade:566
-msgid "Info about selected font"
-msgstr ""
-
-#: ui/MainWindow.glade:588
 msgid "Remove user-added font"
 msgstr ""
 
-#: ui/MainWindow.glade:679 ui/MainWindow.glade:1138
+#: ui/MainWindow.glade:657 ui/MainWindow.glade:1116
 msgid "Click the button for the rest of the characters"
 msgstr ""
 
-#: ui/MainWindow.glade:740 ui/MainWindow.glade:1199
+#: ui/MainWindow.glade:718 ui/MainWindow.glade:1177
 msgid "A sentence containing the letters of the alphabet"
 msgstr ""
 
-#: ui/MainWindow.glade:765 ui/MainWindow.glade:1224
+#: ui/MainWindow.glade:743 ui/MainWindow.glade:1202
 msgid "type something .."
 msgstr ""
 
-#: ui/MainWindow.glade:930
+#: ui/MainWindow.glade:908
 msgid "Font Name"
 msgstr ""
 
-#: ui/MainWindow.glade:956
+#: ui/MainWindow.glade:934
 msgid "Char Maps"
 msgstr ""
 
-#: ui/MainWindow.glade:1426 src/MainWindow.py:125 src/MainWindow.py:217
+#: ui/MainWindow.glade:1404 src/MainWindow.py:83 src/MainWindow.py:171
 msgid "Pardus Font Manager"
 msgstr ""
 
-#: src/MainWindow.py:39
+#: src/MainWindow.py:43
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr ""
 
-#: src/MainWindow.py:120
+#: src/MainWindow.py:163
 msgid "Characters"
 msgstr ""
 
-#: src/MainWindow.py:121
+#: src/MainWindow.py:164 src/MainWindow.py:501
 msgid "Waterfall"
 msgstr ""
 
-#: src/MainWindow.py:130
+#: src/MainWindow.py:176
 msgid "About Pardus Font Manager"
 msgstr ""
 
-#: src/MainWindow.py:638
-msgid "Please choose a font file"
-msgstr ""
-
-#: src/MainWindow.py:644
-msgid "TTF files"
-msgstr ""
-
-#: src/MainWindow.py:649
-msgid "OTF files"
-msgstr ""
-
-#: src/MainWindow.py:679
-msgid "Unable to extract font name from the selected file."
-msgstr ""
-
-#: src/MainWindow.py:691
-msgid "The font"
-msgstr ""
-
-#: src/MainWindow.py:691
-msgid "is already installed!"
-msgstr ""
-
-#: src/MainWindow.py:759
-msgid "Fonts have been added successfully:"
-msgstr ""
-
-#: src/MainWindow.py:764
-msgid "An error occurred while adding the fonts"
-msgstr ""
-
-#: src/MainWindow.py:826
+#: src/MainWindow.py:738
 msgid "Font Size:"
 msgstr ""
 
-#: src/MainWindow.py:920
+#: src/delete_font.py:22
+msgid "fonts"
+msgstr ""
+
+#: src/delete_font.py:22
+msgid "font"
+msgstr ""
+
+#: src/delete_font.py:23
+msgid "Are you sure you want to delete the selected {}?"
+msgstr ""
+
+#: src/delete_font.py:24
+msgid "This action cannot be undone."
+msgstr ""
+
+#: src/delete_font.py:58
 msgid "Deleted font file:"
+msgstr ""
+
+#: src/delete_font.py:114
+msgid "Deleted fonts: {}"
+msgstr ""
+
+#: src/add_font.py:44
+msgid "Please choose a font file"
+msgstr ""
+
+#: src/add_font.py:58
+msgid "TTF files"
+msgstr ""
+
+#: src/add_font.py:63
+msgid "OTF files"
+msgstr ""
+
+#: src/add_font.py:108
+msgid "The font"
+msgstr ""
+
+#: src/add_font.py:108
+msgid "is already installed!"
+msgstr ""
+
+#: src/add_font.py:177
+msgid "Fonts have been added successfully:"
+msgstr ""
+
+#: src/add_font.py:186
+msgid "An error occurred while adding the fonts"
 msgstr ""

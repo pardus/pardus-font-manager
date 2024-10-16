@@ -19,9 +19,9 @@ _ = locale.gettext
 
 def confirm_delete(self, font_count):
     # Customize the confirmation dialog based on the number of fonts
-    number_of_fonts = "fonts" if font_count > 1 else "font"
-    question = f"Are you sure you want to delete the selected {number_of_fonts}?"
-    secondary_text = "This action cannot be undone."
+    number_of_fonts = _("fonts") if font_count > 1 else _("font")
+    question = _("Are you sure you want to delete the selected {}?").format(number_of_fonts)
+    secondary_text = _("This action cannot be undone.")
 
     dialog = Gtk.MessageDialog(
         transient_for=self.window,
@@ -111,7 +111,7 @@ def delete_selected_fonts(self, callback=None):
 
         # After deleting all selected font(s) show font names as a msg
         deleted_fonts_message = ", ".join(deleted_font_names)
-        GLib.idle_add(self.show_info, f"Deleted fonts: {deleted_fonts_message}")
+        GLib.idle_add(self.show_info, _("Deleted fonts: {}").format(deleted_fonts_message))
 
         if callback:
             GLib.idle_add(callback)
