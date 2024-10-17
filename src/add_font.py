@@ -68,7 +68,8 @@ def on_add_button_clicked(self, button):
     if response != Gtk.ResponseType.OK:
         dialog.destroy()
         self.operation_in_progress = False
-        widgets.remove(self.remove_button)
+        if self.remove_button in widgets:
+            widgets.remove(self.remove_button)
         GLib.idle_add(self.make_widgets_sensitive, widgets)
         return
 
@@ -107,7 +108,8 @@ def on_add_button_clicked(self, button):
                     self.info_message = "{} {} {}".format(
                         _("The font"), fname, _("is already installed!")
                     )
-                    widgets.remove(self.remove_button)
+                    if self.remove_button in widgets:
+                        widgets.remove(self.remove_button)
                     GLib.idle_add(self.show_error, self.info_message)
                     return
 
