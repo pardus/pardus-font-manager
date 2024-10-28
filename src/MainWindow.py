@@ -1,6 +1,5 @@
 import os
 import subprocess
-import time
 import threading
 from threading import Thread
 import locale
@@ -83,10 +82,7 @@ class MainWindow:
         self.window.set_title(_("Pardus Font Manager"))
         self.window.set_default_size(800, 600)
         self.window.set_application(app)
-
-        self.more_button.set_visible(False)
-
-        self.controlArgs()
+        self.control_args()
 
 
     def defineComponents(self):
@@ -185,6 +181,7 @@ class MainWindow:
         # Button sensitivity and visibility setup
         self.bottom_info_button.set_visible(False)
         self.menu_button.set_sensitive(False)
+        self.more_button.set_visible(False)
         self.remove_button.set_sensitive(False)
         # self.info_button.set_sensitive(False)
         # self.info_button.set_visible(False)
@@ -248,9 +245,25 @@ class MainWindow:
         self.set_page()
 
 
-    def controlArgs(self):
-        """Handle command line arguments passed to the application."""
-        pass
+    def control_args(self):
+        """
+        Checks for '--details' argument followed by a font file path
+        """
+        # Assuming 'details' is a key in self.application.args containing font path
+        if 'details' in self.application.args:
+            font_path = self.application.args['details']
+            if font_path:
+                self.run_font_viewer(font_path)
+            else:
+                print("Font path not provided.")
+
+
+    def run_font_viewer(self, font_path):
+        try:
+            script_path = os.path.join(os.path.dirname(__file__), 'font_viewer.py')
+            subprocess.run(['python3', script_path, '--details', font_path], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to run font_viewer.py: {e}")
 
 
     def check_if_font_exists(self, font_file_path):
