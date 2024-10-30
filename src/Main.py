@@ -6,8 +6,8 @@ import gi
 gi.require_version('Gtk', '3.0')
 
 from gi.repository import Gtk, Gio, GLib
-
 from MainWindow import MainWindow
+from font_viewer import FontViewer
 
 class Application(Gtk.Application):
     def __init__(self, *args, **kwargs):
@@ -15,8 +15,8 @@ class Application(Gtk.Application):
             application_id="tr.org.pardus.font-manager",
             flags=Gio.ApplicationFlags(8),
             **kwargs)
-
         self.window = None
+        self.args = None
         GLib.set_prgname("tr.org.pardus.font-manager")
 
         self.add_main_option(
@@ -32,8 +32,6 @@ class Application(Gtk.Application):
     def do_activate(self):
         # We only allow a single window and raise any existing ones
         if not self.window:
-            # Windows are associated with the application
-            # when the last one is closed the application shuts down
             self.window = MainWindow(self)
         else:
             self.window.controlArgs()
@@ -42,10 +40,18 @@ class Application(Gtk.Application):
     def do_command_line(self, command_line):
         options = command_line.get_options_dict()
         options = options.end().unpack()
+
         self.args = options
-        self.activate()
+
+        if 'details' in options:
+            font_path = options['details']
+            if font_path:
+                font_viewer = FontViewer(font_path)
+                font_viewer.show_all()
+                Gtk.main()
+        else:
+            self.activate()
         return 0
 
 app = Application()
-# Run the application and pass in the command line arguments
 app.run(sys.argv)

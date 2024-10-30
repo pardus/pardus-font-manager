@@ -249,8 +249,7 @@ class MainWindow:
         """
         Checks for '--details' argument followed by a font file path
         """
-        # Assuming 'details' is a key in self.application.args containing font path
-        if 'details' in self.application.args:
+        if self.application.args and 'details' in self.application.args:
             font_path = self.application.args['details']
             if font_path:
                 self.run_font_viewer(font_path)
@@ -259,11 +258,12 @@ class MainWindow:
 
 
     def run_font_viewer(self, font_path):
-        try:
-            script_path = os.path.join(os.path.dirname(__file__), 'font_viewer.py')
-            subprocess.run(['python3', script_path, '--details', font_path], check=True)
-        except subprocess.CalledProcessError as e:
-            print(f"Failed to run font_viewer.py: {e}")
+        """
+        Opens font viewer window to preview the given font file
+        """
+        font_viewer = FontViewer(font_path)
+        font_viewer.show_all()
+        Gtk.main()
 
 
     def check_if_font_exists(self, font_file_path):
