@@ -239,11 +239,11 @@ class MainWindow:
         )
         # self.info_button.connect("clicked", self.on_info_button_clicked)
 
-
     def worker(self):
-        self.update_fonts_list()
-        self.set_page()
+        self.font_names = font_charmaps.get_font_names()
 
+        GLib.idle_add(self.update_fonts_list)
+        GLib.idle_add(self.set_page)
 
     def control_args(self):
         """
