@@ -146,28 +146,38 @@ def get_selected_font_charmaps(font_name, style):
 def get_font_name_from_file(font_file_path):
     """
     Given a font file path, return the font's family and style.
-
     Args:
         font_file_path (str): The path to the font file.
-
     Returns:
         tuple: Font family, style. Returns (None, None) if not found.
     """
     try:
-        command = ['fc-query', '--format=%{family[0]}:%{style[0]}\n', font_file_path]
-        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+        basename = os.path.basename(font_file_path)
 
-        # Check if the command was successful
+        command = ['fc-query', '--format=%{family[0]}|%{style[0]}|%{fullname[0]}\n', font_file_path]
+        result = subprocess.run(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, timeout=3)
+
         if result.returncode != 0:
-            raise Exception(f"Error executing fc-query: {result.stderr.strip()}")
+            # Directly try filename parsing if fc-query fails
+            name_parts = basename.rsplit('.', 1)[0].split('-')
+            return (name_parts[0], name_parts[1] if len(name_parts) >= 2 else "Regular")
 
-        # Split the returned string into family and style
-        parts = result.stdout.strip().split(':')
-        if len(parts) != 2:
-            raise Exception('Unexpected output format from fc-query')
+        parts = result.stdout.strip().split('|')
 
-        font_family, font_style = parts
-        return (font_family, font_style)
+        if parts and parts[0]:  # If we have family name
+            font_family = parts[0]
+
+            if len(parts) < 2 or not parts[1]:  # If style is missing
+                style_part = basename.rsplit('.', 1)[0].split('-')[-1]
+                font_style = "Variable" if 'Variable' in style_part else style_part
+            else:
+                font_style = parts[1]
+
+            return (font_family, font_style)
+
+        # Fallback to filename parsing
+        name_parts = basename.rsplit('.', 1)[0].split('-')
+        return (name_parts[0], name_parts[1] if len(name_parts) >= 2 else "Regular")
 
     except Exception as e:
         print(f'Error: failed to get font details from "{font_file_path}": {e}')
