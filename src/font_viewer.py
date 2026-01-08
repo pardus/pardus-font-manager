@@ -10,6 +10,7 @@ import os
 import sys
 import shutil
 import subprocess
+import locale
 
 import gi
 gi.require_version('Gtk', '3.0')
@@ -17,10 +18,14 @@ from gi.repository import Gtk, Pango
 import font_charmaps
 from ctypes import CDLL
 
+locale.bindtextdomain('pardus-font-manager', '/usr/share/locale')
+locale.textdomain('pardus-font-manager')
+_ = locale.gettext
+
 
 class FontViewer(Gtk.Window):
     def __init__(self, font_path=None):
-        Gtk.Window.__init__(self, title="Pardus Font Viewer")
+        Gtk.Window.__init__(self, title=_("Pardus Font Viewer"))
         self.set_position(Gtk.WindowPosition.CENTER)
 
         # Set XDG_CONFIG_HOME for fontconfig to find the fonts.conf file

@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Emel Öztürk <emel.ozturk@pardus.org.tr>, 2023-2024.
+# Emel Öztürk <emel.ozturk@pardus.org.tr>, 2023-2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-16 15:18+0300\n"
-"PO-Revision-Date: 2024-10-16 15:31+0300\n"
+"POT-Creation-Date: 2026-01-08 15:45+0300\n"
+"PO-Revision-Date: 2026-01-08 15:47+0300\n"
 "Last-Translator: Emel Öztürk <emel.ozturk@pardus.org.tr>\n"
 "Language-Team: Turkish <dev@pardus.org.tr>\n"
 "Language: tr\n"
@@ -24,11 +24,11 @@ msgid "Simple font manager."
 msgstr "Basit yazı tipi yöneticisi"
 
 #: ui/MainWindow.glade:65 ui/MainWindow.glade:841 ui/MainWindow.glade:1296
-#: src/MainWindow.py:750
+#: src/MainWindow.py:763
 msgid "OK"
 msgstr "Tamam"
 
-#: ui/MainWindow.glade:78 src/MainWindow.py:753
+#: ui/MainWindow.glade:78 src/MainWindow.py:766
 msgid "Cancel"
 msgstr "İptal"
 
@@ -96,7 +96,7 @@ msgstr "Yazı Tipi"
 msgid "Char Maps"
 msgstr "Karakter Haritaları"
 
-#: ui/MainWindow.glade:1404 src/MainWindow.py:83 src/MainWindow.py:171
+#: ui/MainWindow.glade:1404 src/MainWindow.py:82 src/MainWindow.py:167
 msgid "Pardus Font Manager"
 msgstr "Pardus Yazı Tipi Yöneticisi"
 
@@ -104,45 +104,45 @@ msgstr "Pardus Yazı Tipi Yöneticisi"
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "Pijamalı hasta, yağız şoföre çabucak güvendi."
 
-#: src/MainWindow.py:163
+#: src/MainWindow.py:159
 msgid "Characters"
 msgstr "Karakterler"
 
-#: src/MainWindow.py:164 src/MainWindow.py:501
+#: src/MainWindow.py:160 src/MainWindow.py:514
 msgid "Waterfall"
 msgstr "Şelale"
 
-#: src/MainWindow.py:176
+#: src/MainWindow.py:172
 msgid "About Pardus Font Manager"
 msgstr "Pardus Yazı Tipi Yöneticisi Hakkında"
 
-#: src/MainWindow.py:738
+#: src/MainWindow.py:751
 msgid "Font Size:"
 msgstr "Yazı Tipi Boyutu:"
 
-#: src/delete_font.py:22
+#: src/delete_font.py:16
 msgid "fonts"
 msgstr "Yazı tiplerini"
 
-#: src/delete_font.py:22
+#: src/delete_font.py:16
 msgid "font"
 msgstr "Yazı tipini"
 
-#: src/delete_font.py:23
+#: src/delete_font.py:17
 msgid "Are you sure you want to delete the selected {}?"
 msgstr "{} silmek istediğinize emin misiniz?"
 
-#: src/delete_font.py:24
+#: src/delete_font.py:18
 msgid "This action cannot be undone."
 msgstr "Bu işlem geri alınamaz."
 
-#: src/delete_font.py:58
-msgid "Deleted font file:"
-msgstr "Yazı tipi dosyası silindi:"
-
-#: src/delete_font.py:114
+#: src/delete_font.py:87
 msgid "Deleted fonts: {}"
 msgstr "Yazı tipi dosyası silindi: {}"
+
+#: src/delete_font.py:121
+msgid "Error processing font: {}"
+msgstr "Yazı tipi işleme hatası: {}"
 
 #: src/add_font.py:44
 msgid "Please choose a font file"
@@ -156,21 +156,28 @@ msgstr "TTF dosyaları"
 msgid "OTF files"
 msgstr "OTF dosyaları"
 
-#: src/add_font.py:108
+#: src/add_font.py:109
 msgid "The font"
 msgstr "Yazı Tipi "
 
-#: src/add_font.py:108
+#: src/add_font.py:109
 msgid "is already installed!"
 msgstr "daha önce yüklenmiş!"
 
-#: src/add_font.py:177
+#: src/add_font.py:179
 msgid "Fonts have been added successfully:"
 msgstr "Fontlar başarıyla eklendi:"
 
-#: src/add_font.py:186
+#: src/add_font.py:188
 msgid "An error occurred while adding the fonts"
 msgstr "Yazı tipi yüklenirken bir hata oluştu"
+
+#: src/font_viewer.py:28
+msgid "Pardus Font Viewer"
+msgstr "Pardus Yazı Tipi Görüntüleyici"
+
+#~ msgid "Deleted font file:"
+#~ msgstr "Yazı tipi dosyası silindi:"
 
 #, python-brace-format
 #~ msgid "Deleted fonts: {deleted_fonts_message}"

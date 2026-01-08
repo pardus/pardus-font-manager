@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-10-16 15:18+0300\n"
+"POT-Creation-Date: 2026-01-08 15:45+0300\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,11 +22,11 @@ msgid "Simple font manager."
 msgstr ""
 
 #: ui/MainWindow.glade:65 ui/MainWindow.glade:841 ui/MainWindow.glade:1296
-#: src/MainWindow.py:750
+#: src/MainWindow.py:763
 msgid "OK"
 msgstr ""
 
-#: ui/MainWindow.glade:78 src/MainWindow.py:753
+#: ui/MainWindow.glade:78 src/MainWindow.py:766
 msgid "Cancel"
 msgstr ""
 
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Char Maps"
 msgstr ""
 
-#: ui/MainWindow.glade:1404 src/MainWindow.py:83 src/MainWindow.py:171
+#: ui/MainWindow.glade:1404 src/MainWindow.py:82 src/MainWindow.py:167
 msgid "Pardus Font Manager"
 msgstr ""
 
@@ -102,44 +102,44 @@ msgstr ""
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr ""
 
-#: src/MainWindow.py:163
+#: src/MainWindow.py:159
 msgid "Characters"
 msgstr ""
 
-#: src/MainWindow.py:164 src/MainWindow.py:501
+#: src/MainWindow.py:160 src/MainWindow.py:514
 msgid "Waterfall"
 msgstr ""
 
-#: src/MainWindow.py:176
+#: src/MainWindow.py:172
 msgid "About Pardus Font Manager"
 msgstr ""
 
-#: src/MainWindow.py:738
+#: src/MainWindow.py:751
 msgid "Font Size:"
 msgstr ""
 
-#: src/delete_font.py:22
+#: src/delete_font.py:16
 msgid "fonts"
 msgstr ""
 
-#: src/delete_font.py:22
+#: src/delete_font.py:16
 msgid "font"
 msgstr ""
 
-#: src/delete_font.py:23
+#: src/delete_font.py:17
 msgid "Are you sure you want to delete the selected {}?"
 msgstr ""
 
-#: src/delete_font.py:24
+#: src/delete_font.py:18
 msgid "This action cannot be undone."
 msgstr ""
 
-#: src/delete_font.py:58
-msgid "Deleted font file:"
+#: src/delete_font.py:87
+msgid "Deleted fonts: {}"
 msgstr ""
 
-#: src/delete_font.py:114
-msgid "Deleted fonts: {}"
+#: src/delete_font.py:121
+msgid "Error processing font: {}"
 msgstr ""
 
 #: src/add_font.py:44
@@ -154,18 +154,22 @@ msgstr ""
 msgid "OTF files"
 msgstr ""
 
-#: src/add_font.py:108
+#: src/add_font.py:109
 msgid "The font"
 msgstr ""
 
-#: src/add_font.py:108
+#: src/add_font.py:109
 msgid "is already installed!"
 msgstr ""
 
-#: src/add_font.py:177
+#: src/add_font.py:179
 msgid "Fonts have been added successfully:"
 msgstr ""
 
-#: src/add_font.py:186
+#: src/add_font.py:188
 msgid "An error occurred while adding the fonts"
+msgstr ""
+
+#: src/font_viewer.py:28
+msgid "Pardus Font Viewer"
 msgstr ""
