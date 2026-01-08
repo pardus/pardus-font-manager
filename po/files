@@ -2,3 +2,4 @@ ui/MainWindow.glade
 src/MainWindow.py
 src/delete_font.py
 src/add_font.py
+src/font_viewer.py

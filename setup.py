@@ -18,7 +18,7 @@ def create_mo_files():
     return mo
 
 def compile_c_code():
-    compile_cmd = "gcc src/font_adder.c -o libfontadder.so -shared -lfontconfig"
+    compile_cmd = "gcc src/font_adder.c -o libfontadder.so -shared -fPIC -lfontconfig"
     if subprocess.call(compile_cmd, shell=True) != 0:
         raise RuntimeError("C code compilation failed!")
     return [("/usr/share/pardus/pardus-font-manager/src", ["libfontadder.so"])]
@@ -38,7 +38,8 @@ if os.path.exists(changelog):
 data_files = [
     ("/usr/bin", ["pardus-font-manager"]),
     ("/usr/share/applications",
-     ["data/tr.org.pardus.font-manager.desktop"]),
+     ["data/tr.org.pardus.font-manager.desktop",
+      "data/tr.org.pardus.font-viewer.desktop"]),
     ("/usr/share/pardus/pardus-font-manager/ui",
      ["ui/MainWindow.glade"]),
     ("/usr/share/pardus/pardus-font-manager/src",
@@ -49,6 +50,8 @@ data_files = [
       "src/font_charmaps.py",
       "src/font_viewer.py",
       "src/__version__"]),
+    ("/usr/share/pardus/pardus-font-manager/src/fontconfig",
+     ["src/fontconfig/fonts.conf"]),
     ("/usr/share/icons/hicolor/scalable/apps/",
      ["data/pardus-font-manager.svg"])
 ] + create_mo_files() + compile_c_code()

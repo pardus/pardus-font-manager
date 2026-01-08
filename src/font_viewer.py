@@ -7,28 +7,40 @@
 #           ./Main.py --details /path/to/font/file
 
 import os
-import gi
 import sys
 import shutil
 import subprocess
+import locale
 
+import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Pango, Gdk, GLib
+from gi.repository import Gtk, Pango
 import font_charmaps
 from ctypes import CDLL
+
+locale.bindtextdomain('pardus-font-manager', '/usr/share/locale')
+locale.textdomain('pardus-font-manager')
+_ = locale.gettext
 
 
 class FontViewer(Gtk.Window):
     def __init__(self, font_path=None):
-        Gtk.Window.__init__(self, title="Pardus Font Viewer")
+        Gtk.Window.__init__(self, title=_("Pardus Font Viewer"))
         self.set_position(Gtk.WindowPosition.CENTER)
+
+        # Set XDG_CONFIG_HOME for fontconfig to find the fonts.conf file
+        os.environ["XDG_CONFIG_HOME"] = os.path.dirname(os.path.abspath(__file__))
 
         self.set_default_size(800, 600)
         self.connect("destroy", Gtk.main_quit)
         self.connect("destroy", self.cleanup)
 
-        # self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
-        self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
+        try:
+            self.libfontadder = CDLL(
+                os.path.join(os.path.dirname(os.path.abspath(__file__)), "libfontadder.so")
+            )
+        except Exception as e:
+            print(f"Error loading libfontadder: {e}")
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(vbox)
@@ -68,7 +80,7 @@ class FontViewer(Gtk.Window):
         else:
             print(f"Failed to copy font to {copied_font_path}.")
 
-        result = self.libfontadder.fontmain(copied_font_path.encode('utf-8'))
+        self.libfontadder.fontmain(copied_font_path.encode('utf-8'))
         result = subprocess.run(
             ["fc-cache", "-fv", "/tmp/.fonts/"], capture_output=True, text=True
         )
@@ -120,12 +132,10 @@ if __name__ == "__main__":
 
     if "--details" in sys.argv:
         try:
-            # index = sys.argv.index("--details")
-            font_path = sys.argv[2] # index + 1
-        except IndexError:
+            index = sys.argv.index("--details")
+            font_path = sys.argv[index + 1]
+        except (IndexError, ValueError):
             pass
-
-    os.environ["XDG_CONFIG_HOME"]= os.path.dirname(os.path.abspath(__file__))
 
     win = FontViewer(font_path)
     win.show_all()

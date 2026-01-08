@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Pardus Font Viewer
+Name[pt]=Visualizador de Tipos de Letra Pardus
+Name[tr]=Pardus Yazı Tipi Görüntüleyici
+Comment=View font details
+Comment[pt]=Visualizar detalhes do tipo de letra
+Comment[tr]=Yazı tipi detaylarını görüntüle
+Exec=pardus-font-manager --details %f
+Icon=pardus-font-manager
+Terminal=false
+Type=Application
+NoDisplay=true
+MimeType=font/ttf;font/ttc;font/otf;font/sfnt;application/x-font-ttf;application/x-font-otf;application/vnd.ms-opentype;

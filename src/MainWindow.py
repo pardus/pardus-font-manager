@@ -12,6 +12,7 @@ from gi.repository import Gtk, Pango, Gdk, GLib
 import font_charmaps
 import add_font
 import delete_font
+from font_viewer import FontViewer
 
 locale.bindtextdomain('pardus-font-manager', '/usr/share/locale')
 locale.textdomain('pardus-font-manager')
@@ -45,11 +46,10 @@ class MainWindow:
         # is currently ongoing in the application.
         self.operation_in_progress = False
 
-        # Dynamic library for font addition
-        self.libfontadder = CDLL(
-            "/usr/share/pardus/pardus-font-manager/src/libfontadder.so"
-        )
-        # self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
+        try:
+            self.libfontadder = CDLL(os.path.join(os.path.dirname(os.path.abspath(__file__)), "libfontadder.so"))
+        except Exception as e:
+            print(f"Error loading libfontadder: {e}")
 
         self.defineComponents()
 
