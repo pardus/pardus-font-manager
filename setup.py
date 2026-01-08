@@ -38,7 +38,8 @@ if os.path.exists(changelog):
 data_files = [
     ("/usr/bin", ["pardus-font-manager"]),
     ("/usr/share/applications",
-     ["data/tr.org.pardus.font-manager.desktop"]),
+     ["data/tr.org.pardus.font-manager.desktop",
+      "data/tr.org.pardus.font-viewer.desktop"]),
     ("/usr/share/pardus/pardus-font-manager/ui",
      ["ui/MainWindow.glade"]),
     ("/usr/share/pardus/pardus-font-manager/src",
