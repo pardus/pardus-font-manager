@@ -5,10 +5,11 @@ Name[tr]=Pardus Yazı Tipi Yöneticisi
 Comment=Simple Font Manager
 Comment[pt]=Gestor simples de tipos de letra
 Comment[tr]=Basit Yazı Tipi Yöneticisi
-Exec=pardus-font-manager
+Exec=pardus-font-manager --details %f
 Icon=pardus-font-manager
 Terminal=false
 Type=Application
 Categories=GTK;Utility;X-Pardus-Apps;
 StartupNotify=true
+MimeType=font/ttf;font/ttc;font/otf;font/sfnt;application/x-font-ttf;application/x-font-otf;application/vnd.ms-opentype;
 

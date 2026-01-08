@@ -34,7 +34,7 @@ class Application(Gtk.Application):
         if not self.window:
             self.window = MainWindow(self)
         else:
-            self.window.controlArgs()
+            self.window.control_args()
         self.window.window.present()
 
     def do_command_line(self, command_line):
