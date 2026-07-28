@@ -9,6 +9,7 @@
 import os
 import gi
 import sys
+import locale
 import shutil
 import subprocess
 
@@ -17,28 +18,34 @@ from gi.repository import Gtk, Pango, Gdk, GLib
 import font_charmaps
 from ctypes import CDLL
 
+locale.bindtextdomain('pardus-font-manager', '/usr/share/locale')
+locale.textdomain('pardus-font-manager')
+_ = locale.gettext
+
+# Resolve bundled files relative to this module, not the current directory.
+MODULE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 class FontViewer(Gtk.Window):
     def __init__(self, font_path=None):
-        Gtk.Window.__init__(self, title="Pardus Font Viewer")
+        Gtk.Window.__init__(self, title=_("Pardus Font Viewer"))
         self.set_position(Gtk.WindowPosition.CENTER)
 
         self.set_default_size(800, 600)
         self.connect("destroy", Gtk.main_quit)
         self.connect("destroy", self.cleanup)
 
-        # self.libfontadder = CDLL("/usr/share/pardus/pardus-font-manager/src/libfontadder.so")
-        self.libfontadder = CDLL(os.path.join(os.getcwd(), "libfontadder.so"))
+        self.libfontadder = CDLL(os.path.join(MODULE_DIR, "libfontadder.so"))
 
         vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         self.add(vbox)
 
-        self.font_name_label = Gtk.Label(label="Font Name")
+        self.font_name_label = Gtk.Label(label=_("Font Name"))
         self.font_charmaps_label = Gtk.Label(
-            label=font_path if font_path else "No font path provided."
+            label=font_path if font_path else _("No font path provided.")
         )
         self.font_charmaps_label.set_line_wrap(True)
-        self.sample_label = Gtk.Label(label="SAMPLE TEXT")
+        self.sample_label = Gtk.Label(label=_("SAMPLE TEXT"))
 
         # Create a ScrolledWindow to contain the font_charmaps_label
         scrolled_window = Gtk.ScrolledWindow()
