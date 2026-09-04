@@ -1,3 +1,11 @@
+pardus-font-manager (1.0.0) unstable; urgency=medium
+
+  * Fix font viewer bugs - Add missing import - Fix method name - Add missing files in data files - Add -fPIC flag for shared lib compilation - Clean up imports and argument parsing - Closes #PARDUS-1288
+  * Fix desktop file - Fixes & closes #PARDUS-1288
+  * Add translations - #PARDUS-1288
+
+ -- Emel Öztürk <emel.ozturk@pardus.org.tr>  Fri, 04 Sep 2026 13:32:06 +0300
+
 pardus-font-manager (0.2.2) unstable; urgency=medium
 
   * Change icon
