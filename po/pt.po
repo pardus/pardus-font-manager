@@ -2,14 +2,14 @@
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-# Hugo Carvalho <hugokarvalho@hotmail.com>, 2023, 2024.
+# Hugo Carvalho <hugokarvalho@hotmail.com>, 2023, 2024, 2025, 2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-06 14:22+0300\n"
-"PO-Revision-Date: 2024-02-06 23:28+0000\n"
+"POT-Creation-Date: 2026-01-08 15:45+0300\n"
+"PO-Revision-Date: 2026-09-10 15:01+0100\n"
 "Last-Translator: Hugo Carvalho <hugokarvalho@hotmail.com>\n"
 "Language-Team: Portuguese <hugokarvalho@hotmail.com>\n"
 "Language: pt\n"
@@ -17,18 +17,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.9\n"
 
 #: ui/MainWindow.glade:13
 msgid "Simple font manager."
 msgstr "Gestor simples de tipos de letra."
 
-#: ui/MainWindow.glade:65 ui/MainWindow.glade:863 ui/MainWindow.glade:1318
-#: src/MainWindow.py:836
+#: ui/MainWindow.glade:65 ui/MainWindow.glade:841 ui/MainWindow.glade:1296
+#: src/MainWindow.py:763
 msgid "OK"
 msgstr "Aceitar"
 
-#: ui/MainWindow.glade:78 src/MainWindow.py:839
+#: ui/MainWindow.glade:78 src/MainWindow.py:766
 msgid "Cancel"
 msgstr "Cancelar"
 
@@ -56,11 +56,11 @@ msgstr "Acerca"
 msgid "System Fonts"
 msgstr "Tipos de letra do sistema"
 
-#: ui/MainWindow.glade:418 ui/MainWindow.glade:973
+#: ui/MainWindow.glade:418 ui/MainWindow.glade:951
 msgid "Increase character sizes"
 msgstr "Aumentar o tamanho dos carateres"
 
-#: ui/MainWindow.glade:440 ui/MainWindow.glade:995
+#: ui/MainWindow.glade:440 ui/MainWindow.glade:973
 msgid "Decrease character sizes"
 msgstr "Diminuir o tamanho dos carateres"
 
@@ -73,101 +73,121 @@ msgid "Add a new font"
 msgstr "Adicionar um novo tipo de letra"
 
 #: ui/MainWindow.glade:566
-msgid "Info about selected font"
-msgstr "Informação sobre o tipo de letra selecionado"
-
-#: ui/MainWindow.glade:588
 msgid "Remove user-added font"
 msgstr "Remover o tipo de letra adicionado pelo utilizador"
 
-#: ui/MainWindow.glade:679 ui/MainWindow.glade:1138
+#: ui/MainWindow.glade:657 ui/MainWindow.glade:1116
 msgid "Click the button for the rest of the characters"
 msgstr "Clique no botão para ver o resto dos carateres"
 
-#: ui/MainWindow.glade:740 ui/MainWindow.glade:1199
+#: ui/MainWindow.glade:718 ui/MainWindow.glade:1177
 msgid "A sentence containing the letters of the alphabet"
 msgstr "Uma frase que contém as letras do alfabeto"
 
-#: ui/MainWindow.glade:765 ui/MainWindow.glade:1224
+#: ui/MainWindow.glade:743 ui/MainWindow.glade:1202
 msgid "type something .."
 msgstr "digitar algo ..."
 
-#: ui/MainWindow.glade:930
+#: ui/MainWindow.glade:908
 msgid "Font Name"
 msgstr "Nome do tipo de letra"
 
-#: ui/MainWindow.glade:956
+#: ui/MainWindow.glade:934
 msgid "Char Maps"
 msgstr "Mapas de carateres"
 
-#: ui/MainWindow.glade:1426 src/MainWindow.py:125 src/MainWindow.py:217
+#: ui/MainWindow.glade:1404 src/MainWindow.py:82 src/MainWindow.py:167
 msgid "Pardus Font Manager"
 msgstr "Gestor de tipos de letra Pardus"
 
-#: src/MainWindow.py:39
+#: src/MainWindow.py:43
 msgid "The quick brown fox jumps over the lazy dog."
 msgstr "A rápida raposa castanha salta sobre o cão preguiçoso."
 
-#: src/MainWindow.py:120
+#: src/MainWindow.py:159
 msgid "Characters"
 msgstr "Carateres"
 
-#: src/MainWindow.py:121
+#: src/MainWindow.py:160 src/MainWindow.py:514
 msgid "Waterfall"
 msgstr "Cascata"
 
-#: src/MainWindow.py:130
+#: src/MainWindow.py:172
 msgid "About Pardus Font Manager"
 msgstr "Acerca do Gestor de tipos de letra Pardus"
 
-#: src/MainWindow.py:638
-msgid "Please choose a font file"
-msgstr "Escolha um ficheiro de tipo de letra"
-
-#: src/MainWindow.py:644
-msgid "TTF files"
-msgstr "Ficheiros TTF"
-
-#: src/MainWindow.py:649
-msgid "OTF files"
-msgstr "Ficheiros OTF"
-
-#: src/MainWindow.py:679
-msgid "Unable to extract font name from the selected file."
-msgstr "Não foi possível extrair o nome do tipo de letra do ficheiro selecionado."
-
-#: src/MainWindow.py:691
-msgid "The font"
-msgstr "O tipo de letra"
-
-#: src/MainWindow.py:691
-msgid "is already installed!"
-msgstr "já está instalado!"
-
-#: src/MainWindow.py:759
-msgid "Fonts have been added successfully:"
-msgstr "Os tipos de letra foram adicionados com sucesso:"
-
-#: src/MainWindow.py:764
-msgid "An error occurred while adding the fonts"
-msgstr "Ocorreu um erro ao adicionar os tipos de letra"
-
-#: src/MainWindow.py:826
+#: src/MainWindow.py:751
 msgid "Font Size:"
 msgstr "Tamanho do tipo de letra:"
 
-#: src/MainWindow.py:920
-msgid "Deleted font file:"
-msgstr "Eliminar ficheiro de tipo de letra:"
+#: src/delete_font.py:16
+msgid "fonts"
+msgstr "tipos de letra"
+
+#: src/delete_font.py:16
+msgid "font"
+msgstr "tipo de letra"
+
+#: src/delete_font.py:17
+msgid "Are you sure you want to delete the selected {}?"
+msgstr "Eliminar o selecionado {}?"
+
+#: src/delete_font.py:18
+msgid "This action cannot be undone."
+msgstr "Essa ação não pode ser desfeita."
+
+#: src/delete_font.py:87
+#| msgid "Deleted font file:"
+msgid "Deleted fonts: {}"
+msgstr "Tipos de letra eliminados: {}"
+
+#: src/delete_font.py:121
+msgid "Error processing font: {}"
+msgstr "Erro ao processar o tipo de letra: {}"
+
+#: src/add_font.py:44
+msgid "Please choose a font file"
+msgstr "Escolha um ficheiro de tipo de letra"
+
+#: src/add_font.py:58
+msgid "TTF files"
+msgstr "Ficheiros TTF"
+
+#: src/add_font.py:63
+msgid "OTF files"
+msgstr "Ficheiros OTF"
+
+#: src/add_font.py:109
+msgid "The font"
+msgstr "O tipo de letra"
+
+#: src/add_font.py:109
+msgid "is already installed!"
+msgstr "já está instalado!"
+
+#: src/add_font.py:179
+msgid "Fonts have been added successfully:"
+msgstr "Os tipos de letra foram adicionados com sucesso:"
+
+#: src/add_font.py:188
+msgid "An error occurred while adding the fonts"
+msgstr "Ocorreu um erro ao adicionar os tipos de letra"
+
+#: src/font_viewer.py:28
+msgid "Pardus Font Viewer"
+msgstr "Visualizador de tipos de letra Pardus"
+
+#~ msgid "Info about selected font"
+#~ msgstr "Informação sobre o tipo de letra selecionado"
+
+#~ msgid "Unable to extract font name from the selected file."
+#~ msgstr "Não foi possível extrair o nome do tipo de letra do ficheiro selecionado."
 
 #~ msgid "Website"
 #~ msgstr "Website"
 
 #~ msgid "Delete Font?"
 #~ msgstr "Eliminar tipo de letra?"
-
-#~ msgid "Are you sure you want to delete this font? This action cannot be undone."
-#~ msgstr "Eliminar este tipo de letra? Esta ação não pode ser anulada."
 
 #~ msgid "has been deleted successfully"
 #~ msgstr "foi eliminado com sucesso"
