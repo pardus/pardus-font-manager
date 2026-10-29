@@ -50,8 +50,6 @@ data_files = [
       "src/font_charmaps.py",
       "src/font_viewer.py",
       "src/__version__"]),
-    ("/usr/share/pardus/pardus-font-manager/src/fontconfig",
-     ["src/fontconfig/fonts.conf"]),
     ("/usr/share/icons/hicolor/scalable/apps/",
      ["data/pardus-font-manager.svg"])
 ] + create_mo_files() + compile_c_code()

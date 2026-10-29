@@ -10,6 +10,7 @@ import os
 import sys
 import shutil
 import subprocess
+import tempfile
 import locale
 
 import gi
@@ -28,8 +29,22 @@ class FontViewer(Gtk.Window):
         Gtk.Window.__init__(self, title=_("Pardus Font Viewer"))
         self.set_position(Gtk.WindowPosition.CENTER)
 
+        # Private dir per viewer with its own fonts.conf. A shared /tmp/.fonts
+        # belongs to the first user who opens the viewer, so others can't
+        # write to it, and fonts other users put there were loaded too.
+        self.temp_dir = tempfile.mkdtemp(prefix="pardus-font-viewer-")
+        self.temp_font_dir = os.path.join(self.temp_dir, "fonts")
+        os.makedirs(self.temp_font_dir)
+        os.makedirs(os.path.join(self.temp_dir, "fontconfig"))
+        with open(os.path.join(self.temp_dir, "fontconfig", "fonts.conf"), "w") as f:
+            f.write("<?xml version='1.0'?>\n"
+                    "<!DOCTYPE fontconfig SYSTEM 'fonts.dtd'>\n"
+                    "<fontconfig>\n"
+                    f" <dir>{self.temp_font_dir}/</dir>\n"
+                    "</fontconfig>\n")
+
         # Set XDG_CONFIG_HOME for fontconfig to find the fonts.conf file
-        os.environ["XDG_CONFIG_HOME"] = os.path.dirname(os.path.abspath(__file__))
+        os.environ["XDG_CONFIG_HOME"] = self.temp_dir
 
         self.set_default_size(800, 600)
         self.connect("destroy", Gtk.main_quit)
@@ -69,11 +84,10 @@ class FontViewer(Gtk.Window):
         print("font name = ", font_name)
         self.font_name_label.set_text(font_name)
 
-        os.makedirs(os.path.expanduser("/tmp/.fonts"), exist_ok=True)
-        shutil.copy2(font_path, os.path.expanduser("/tmp/.fonts"))
+        shutil.copy2(font_path, self.temp_font_dir)
 
         copied_font_path = os.path.join(
-            os.path.expanduser("/tmp/.fonts"), os.path.basename(font_path)
+            self.temp_font_dir, os.path.basename(font_path)
         )
         if os.path.exists(copied_font_path):
             print(f"Font {copied_font_path} was successfully copied.")
@@ -82,7 +96,7 @@ class FontViewer(Gtk.Window):
 
         self.libfontadder.fontmain(copied_font_path.encode('utf-8'))
         result = subprocess.run(
-            ["fc-cache", "-fv", "/tmp/.fonts/"], capture_output=True, text=True
+            ["fc-cache", "-fv", self.temp_font_dir], capture_output=True, text=True
         )
 
         print(result.stdout)
@@ -113,15 +127,9 @@ class FontViewer(Gtk.Window):
 
     def cleanup(self, widget):
         try:
-            # Removing the font from /tmp/.fonts directory
-            copied_font_path = os.path.join(
-                os.path.expanduser("/tmp/.fonts"), os.path.basename(self.font_path)
-            )
-            if os.path.exists(copied_font_path):
-                os.remove(copied_font_path)
-                print(f"Font {copied_font_path} was successfully removed.")
-            else:
-                print(f"Font {copied_font_path} not found for removal.")
+            # Removing the temporary font and config directory
+            shutil.rmtree(self.temp_dir)
+            print(f"{self.temp_dir} was successfully removed.")
         except Exception as e:
             print(f"Error while cleaning up: {e}")
 
