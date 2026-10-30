@@ -180,7 +180,9 @@ def finish_adding_font(self, error=None):
         )
 
         self.bottom_info_label.set_markup(
-            "<span color='green'>{}</span>".format(self.info_message)
+            "<span color='green'>{}</span>".format(
+                GLib.markup_escape_text(self.info_message, -1)
+            )
         )
     else:
         self.bottom_stack.set_visible_child_name("error")
@@ -188,7 +190,9 @@ def finish_adding_font(self, error=None):
             _("An error occurred while adding the fonts"), font_names_str, error
         )
         self.bottom_info_label.set_markup(
-            "<span color='red'>{}</span>".format(self.info_message)
+            "<span color='red'>{}</span>".format(
+                GLib.markup_escape_text(self.info_message, -1)
+            )
         )
     self.bottom_revealer.set_reveal_child(True)
 
