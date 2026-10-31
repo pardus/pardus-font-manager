@@ -19,6 +19,13 @@ locale.textdomain('pardus-font-manager')
 _ = locale.gettext
 
 
+SEARCH_FOLD = str.maketrans({"ç": "c", "ğ": "g", "ı": "i", "ö": "o", "ş": "s", "ü": "u", "\u0307": None})
+
+
+def search_key(text):
+    return text.strip().casefold().translate(SEARCH_FOLD)
+
+
 class MainWindow:
 
     def __init__(self, app):
@@ -353,7 +360,7 @@ class MainWindow:
 
         self.operation_in_progress = True
 
-        search_text = search_entry.get_text().lower()
+        search_text = search_key(search_entry.get_text())
 
         try:
             # If search box is empty, show all fonts
@@ -365,8 +372,8 @@ class MainWindow:
             filtered_fonts = [
                 font_name
                 for font_name in self.font_names
-                if search_text in font_name[0].lower()
-                or search_text in font_name[1].lower()
+                if search_text in search_key(font_name[0])
+                or search_text in search_key(font_name[1])
             ]
 
             # Clear current list of fonts
